@@ -1,0 +1,6 @@
+#Wed Oct 19 14:26:24 EDT 2011
+eclipse.preferences.version=1
+org.eclipse.jpt.core.platform=eclipselink2_3
+org.eclipse.jpt.jpa.core.discoverAnnotatedClasses=false
+problem.JPQL_QUERY_VALIDATION=warning
+workspace_preferences_overriden=true
