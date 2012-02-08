@@ -1,5 +1,6 @@
 EclipseLink JPA: Temporal Entity Example
 
+
 This example implements an interpretation of the temporal object pattern (Fowler). In this example entities have current and future planned editions.
 
 CURRENT
