@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object-persistence xmlns="http://www.eclipse.org/eclipselink/xsds/persistence" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:eclipselink="http://www.eclipse.org/eclipselink/xsds/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="Eclipse Persistence Services - 2.3.2.v20111125-r10461">
+   <name>employee</name>
+   <class-mapping-descriptors>
+      <class-mapping-descriptor xsi:type="relational-class-mapping-descriptor">
+         <class>model.Address</class>
+         <alias>Address</alias>
+         <primary-key>
+            <field table="NAPI_ADDRESS" name="ID" xsi:type="column"/>
+         </primary-key>
+         <events/>
+         <querying/>
+         <attribute-mappings>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>city</attribute-name>
+               <field table="NAPI_ADDRESS" name="CITY" xsi:type="column"/>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>country</attribute-name>
+               <field table="NAPI_ADDRESS" name="COUNTRY" xsi:type="column"/>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>id</attribute-name>
+               <field table="NAPI_ADDRESS" name="ID" xsi:type="column"/>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>postalCode</attribute-name>
+               <field table="NAPI_ADDRESS" name="POSTALCODE" xsi:type="column"/>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>province</attribute-name>
+               <field table="NAPI_ADDRESS" name="PROVINCE" xsi:type="column"/>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>street</attribute-name>
+               <field table="NAPI_ADDRESS" name="STREET" xsi:type="column"/>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>version</attribute-name>
+               <field table="NAPI_ADDRESS" name="VERSION" xsi:type="column"/>
+            </attribute-mapping>
+         </attribute-mappings>
+         <descriptor-type>independent</descriptor-type>
+         <locking>
+            <version-field table="NAPI_ADDRESS" name="VERSION" xsi:type="column"/>
+            <store-version-in-cache>false</store-version-in-cache>
+         </locking>
+         <sequencing>
+            <sequence-name>SEQ</sequence-name>
+            <sequence-field table="NAPI_ADDRESS" name="ID"/>
+         </sequencing>
+         <instantiation/>
+         <copying xsi:type="instantiation-copy-policy"/>
+         <tables>
+            <table name="NAPI_ADDRESS"/>
+         </tables>
+      </class-mapping-descriptor>
+      <class-mapping-descriptor xsi:type="relational-class-mapping-descriptor">
+         <class>model.Employee</class>
+         <alias>Employee</alias>
+         <primary-key>
+            <field table="NAPI_EMPLOYEE" name="ID" xsi:type="column"/>
+         </primary-key>
+         <events/>
+         <querying/>
+         <attribute-mappings>
+            <attribute-mapping xsi:type="one-to-one-mapping">
+               <attribute-name>address</attribute-name>
+               <reference-class>model.Address</reference-class>
+               <foreign-key>
+                  <field-reference>
+                     <source-field table="NAPI_EMPLOYEE" name="ADDRESS_ID" xsi:type="column"/>
+                     <target-field table="NAPI_ADDRESS" name="ID" xsi:type="column"/>
+                  </field-reference>
+               </foreign-key>
+               <foreign-key-fields>
+                  <field table="NAPI_EMPLOYEE" name="ADDRESS_ID" xsi:type="column"/>
+               </foreign-key-fields>
+               <indirection xsi:type="value-holder-indirection-policy"/>
+               <selection-query xsi:type="read-object-query"/>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>firstName</attribute-name>
+               <field table="NAPI_EMPLOYEE" name="FIRSTNAME" xsi:type="column"/>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>id</attribute-name>
+               <field table="NAPI_EMPLOYEE" name="ID" xsi:type="column"/>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>lastName</attribute-name>
+               <field table="NAPI_EMPLOYEE" name="LASTNAME" xsi:type="column"/>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="one-to-many-mapping">
+               <attribute-name>phoneNumbers</attribute-name>
+               <reference-class>model.PhoneNumber</reference-class>
+               <target-foreign-key>
+                  <field-reference>
+                     <source-field table="NAPI_PHONE" name="OWNER_ID" xsi:type="column"/>
+                     <target-field table="NAPI_EMPLOYEE" name="ID" xsi:type="column"/>
+                  </field-reference>
+               </target-foreign-key>
+               <container xsi:type="list-container-policy">
+                  <collection-type>org.eclipse.persistence.indirection.IndirectList</collection-type>
+               </container>
+               <indirection xsi:type="transparent-collection-indirection-policy"/>
+               <selection-query xsi:type="read-all-query">
+                  <container xsi:type="list-container-policy">
+                     <collection-type>org.eclipse.persistence.indirection.IndirectList</collection-type>
+                  </container>
+               </selection-query>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>version</attribute-name>
+               <field table="NAPI_EMPLOYEE" name="VERSION" xsi:type="column"/>
+            </attribute-mapping>
+         </attribute-mappings>
+         <descriptor-type>independent</descriptor-type>
+         <locking>
+            <version-field table="NAPI_EMPLOYEE" name="VERSION" xsi:type="column"/>
+            <store-version-in-cache>false</store-version-in-cache>
+         </locking>
+         <sequencing>
+            <sequence-name>SEQ</sequence-name>
+            <sequence-field table="NAPI_EMPLOYEE" name="ID"/>
+         </sequencing>
+         <instantiation/>
+         <copying xsi:type="instantiation-copy-policy"/>
+         <tables>
+            <table name="NAPI_EMPLOYEE"/>
+         </tables>
+      </class-mapping-descriptor>
+      <class-mapping-descriptor xsi:type="relational-class-mapping-descriptor">
+         <class>model.PhoneNumber</class>
+         <alias>PhoneNumber</alias>
+         <primary-key>
+            <field table="NAPI_PHONE" name="ID" xsi:type="column"/>
+         </primary-key>
+         <events/>
+         <querying/>
+         <attribute-mappings>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>areaCode</attribute-name>
+               <field table="NAPI_PHONE" name="AREACODE" xsi:type="column"/>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>id</attribute-name>
+               <field table="NAPI_PHONE" name="ID" xsi:type="column"/>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>number</attribute-name>
+               <field table="NAPI_PHONE" name="PHONE_NUM" xsi:type="column"/>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="one-to-one-mapping">
+               <attribute-name>owner</attribute-name>
+               <reference-class>model.Employee</reference-class>
+               <foreign-key>
+                  <field-reference>
+                     <source-field table="NAPI_PHONE" name="OWNER_ID" xsi:type="column"/>
+                     <target-field table="NAPI_EMPLOYEE" name="ID" xsi:type="column"/>
+                  </field-reference>
+               </foreign-key>
+               <foreign-key-fields>
+                  <field table="NAPI_PHONE" name="OWNER_ID" xsi:type="column"/>
+               </foreign-key-fields>
+               <indirection xsi:type="value-holder-indirection-policy"/>
+               <selection-query xsi:type="read-object-query"/>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>type</attribute-name>
+               <field table="NAPI_PHONE" name="TYPE" xsi:type="column"/>
+            </attribute-mapping>
+            <attribute-mapping xsi:type="direct-mapping">
+               <attribute-name>version</attribute-name>
+               <field table="NAPI_PHONE" name="VERSION" xsi:type="column"/>
+            </attribute-mapping>
+         </attribute-mappings>
+         <descriptor-type>independent</descriptor-type>
+         <locking>
+            <version-field table="NAPI_PHONE" name="VERSION" xsi:type="column"/>
+            <store-version-in-cache>false</store-version-in-cache>
+         </locking>
+         <sequencing>
+            <sequence-name>SEQ</sequence-name>
+            <sequence-field table="NAPI_PHONE" name="ID"/>
+         </sequencing>
+         <instantiation/>
+         <copying xsi:type="instantiation-copy-policy"/>
+         <tables>
+            <table name="NAPI_PHONE"/>
+         </tables>
+      </class-mapping-descriptor>
+   </class-mapping-descriptors>
+   <login xsi:type="database-login">
+      <platform-class>org.eclipse.persistence.platform.database.oracle.Oracle11Platform</platform-class>
+      <user-name>scott</user-name>
+      <password>F82084BF4FD3F70492106EF07CFA5A62</password>
+      <driver-class>oracle.jdbc.OracleDriver</driver-class>
+      <connection-url>jdbc:oracle:thin:@localhost:1521:ORCL</connection-url>
+   </login>
+</object-persistence>

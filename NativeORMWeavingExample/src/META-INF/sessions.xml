@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sessions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.3.2">
+   <session xsi:type="server-session">
+      <name>employee</name>
+      <event-listener-classes/>
+      <logging xsi:type="eclipselink-log">
+         <log-level>fine</log-level>
+         <logging-options>
+            <log-exception-stacktrace>false</log-exception-stacktrace>
+            <print-thread>false</print-thread>
+            <print-session>false</print-session>
+            <print-connection>false</print-connection>
+            <print-date>false</print-date>
+         </logging-options>
+      </logging>
+      <primary-project xsi:type="xml">META-INF/employee.xml</primary-project>
+      <login xsi:type="database-login">
+         <platform-class>org.eclipse.persistence.platform.database.oracle.Oracle11Platform</platform-class>
+         <user-name>scott</user-name>
+         <password>F82084BF4FD3F70492106EF07CFA5A62</password>
+         <sequencing>
+            <default-sequence xsi:type="table-sequence">
+               <name>Default</name>
+            </default-sequence>
+         </sequencing>
+         <driver-class>oracle.jdbc.OracleDriver</driver-class>
+         <connection-url>jdbc:oracle:thin:@localhost:1521:ORCL</connection-url>
+         <struct-converters/>
+      </login>
+      <connection-pools/>
+      <connection-policy/>
+   </session>
+</sessions>
