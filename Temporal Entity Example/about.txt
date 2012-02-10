@@ -12,3 +12,4 @@ CONTINUITY: The continuity refers to the current or first future edition where t
 
 References
 - http://martinfowler.com/eaaDev/TemporalObject.html
+
