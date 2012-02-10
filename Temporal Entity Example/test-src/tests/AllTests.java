@@ -23,8 +23,6 @@ import org.junit.runners.Suite.SuiteClasses;
                 TemporalQueryRedirectorTests.class,
                 ProxyWrapperUpdateTests.class,
                 EditionSetTests.class,
-                //ModifyCurrentTests.class})
-                //DeleteContinuityTests.class,
                 MultipleEditionQueries.class})
 public class AllTests {
 }
