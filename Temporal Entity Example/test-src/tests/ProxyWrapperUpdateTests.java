@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Oracle. All rights reserved. This program and the
+ * Copyright (c) 2011-2012 Oracle. All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse
  * Public License v1.0 and Eclipse Distribution License v. 1.0 which accompanies
  * this distribution. The Eclipse Public License is available at
@@ -78,7 +78,7 @@ public class ProxyWrapperUpdateTests extends BaseTestCase {
     @Test
     public void createWrapperForPersonEdition() {
         EntityManager em = createEntityManager();
-        TemporalHelper.setEffectiveTime(em, T4, false);
+        TemporalHelper.setEffectiveTime(em, T4, true);
 
         em.getTransaction().begin();
         Person tempPerson = TemporalHelper.newInstance(em, Person.class);
@@ -95,25 +95,30 @@ public class ProxyWrapperUpdateTests extends BaseTestCase {
     @Test
     public void createWrapperForAddressEdition() {
         EntityManager em = createEntityManager();
-        TemporalHelper.setEffectiveTime(em, T4, false);
+        TemporalHelper.setEffectiveTime(em, T4, true);
 
+        em.getTransaction().begin();
         TemporalEntity<Address> wrapper = EditionWrapperHelper.wrap(em, TemporalHelper.newInstance(em, AddressEntity.class));
 
         Assert.assertNotNull(wrapper);
         Assert.assertTrue(wrapper instanceof Address);
         Assert.assertTrue(wrapper instanceof TemporalEdition);
+        
+        em.getTransaction().rollback();
     }
 
     @Test
     public void createWrapperForPhoneEdition() {
         EntityManager em = createEntityManager();
-        TemporalHelper.setEffectiveTime(em, T4, false);
+        TemporalHelper.setEffectiveTime(em, T4, true);
 
+        em.getTransaction().begin();
         TemporalEntity<Phone> wrapper = EditionWrapperHelper.wrap(em,TemporalHelper.newInstance(em, PhoneEntity.class));
 
         Assert.assertNotNull(wrapper);
         Assert.assertTrue(wrapper instanceof Phone);
         Assert.assertTrue(wrapper instanceof TemporalEdition);
+        em.getTransaction().rollback();
     }
 
     @SuppressWarnings("unchecked")

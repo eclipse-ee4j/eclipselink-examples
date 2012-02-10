@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Oracle. All rights reserved.
+ * Copyright (c) 2011-2012 Oracle. All rights reserved.
  * This program and the accompanying materials are made available under the 
  * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0 
  * which accompanies this distribution. 
@@ -78,12 +78,13 @@ public class TemporalHelper {
         }
         EditionSet editionSet = getEditionSet(em);
         if (editionSet != null && editionSet.getEffective() != startTime) {
-            em.setProperty(EDITION_SET_PROPERTY, null);
+            AbstractSession session = em.unwrap(RepeatableWriteUnitOfWork.class);
+            session.setProperty(EDITION_SET_PROPERTY, null);
         }
         if (initializeEditionSet) {
             return initializeEditionSet(em);
         }
-        return null;
+        return getEditionSet(em);
     }
 
     public static EditionSet setEffectiveTime(EntityManager em, Long startTime) {
@@ -96,6 +97,12 @@ public class TemporalHelper {
     }
 
     public static Long getEffectiveTime(EntityManager em) {
+        // Lookup the EditionSet and use its effective if one exists.
+        EditionSet editionSet = getEditionSet(em);
+        if (editionSet != null) {
+            return editionSet.getEffective();
+        }
+        
         AbstractSession session = em.unwrap(RepeatableWriteUnitOfWork.class);
         return (Long) session.getProperty(EFF_TS_PROPERTY);
     }
@@ -128,6 +135,9 @@ public class TemporalHelper {
      */
     @SuppressWarnings("unchecked")
     public static <T extends TemporalEntity<?>> T createEdition(EntityManager em, T source) {
+        if (source == null) {
+            return null;
+        }
         AbstractSession session = em.unwrap(RepeatableWriteUnitOfWork.class);
         Long start = (Long) session.getProperty(EFF_TS_PROPERTY);
 
@@ -141,7 +151,7 @@ public class TemporalHelper {
             throw new IllegalArgumentException("No edition descriptor for: " + source);
         }
 
-        // Create a task if none exists
+        // Lookup the EditionSet and throw and exception if one was not created.
         EditionSet editionSet = getEditionSet(em);
         if (editionSet == null) {
             throw new IllegalStateException("No EditionSet associated with this EntityManager");
@@ -163,6 +173,12 @@ public class TemporalHelper {
         em.persist(edition);
 
         editionSet.add(edition);
+
+        // Flush the transaction so that any changes made to the new edition are
+        // tracked and the EditionSet can be properly populated at commit.
+        if (em.getTransaction().isActive()) {
+            em.flush();
+        }
 
         return (T) edition;
     }
@@ -193,6 +209,11 @@ public class TemporalHelper {
         if (descriptor == null) {
             throw new IllegalArgumentException("No descriptor for: " + entityClass);
         }
+        // Lookup the EditionSet and throw and exception if one was not created.
+        EditionSet editionSet = getEditionSet(em);
+        if (editionSet == null && start != null) {
+            throw new IllegalStateException("No EditionSet associated with this EntityManager");
+        }
 
         TemporalEntity<T> edition = (TemporalEntity<T>) descriptor.getInstantiationPolicy().buildNewInstance();
         edition.setContinuity((T) edition);
@@ -200,6 +221,13 @@ public class TemporalHelper {
             edition.getEffectivity().setStart(start);
         }
         em.persist(edition);
+        
+        if (editionSet != null) {
+            editionSet.add(edition);
+        }
+        
+        em.flush();
+        
         return (T) edition;
     }
 

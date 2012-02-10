@@ -14,6 +14,8 @@ package temporal.persistence;
 
 import org.eclipse.persistence.dynamic.DynamicClassLoader;
 import org.eclipse.persistence.dynamic.DynamicClassWriter;
+import org.eclipse.persistence.internal.libraries.asm.*;
+import org.eclipse.persistence.internal.libraries.asm.commons.EmptyVisitor;
 
 /**
  * TODO
@@ -28,55 +30,15 @@ public class EditionClassWriter extends DynamicClassWriter {
     }
 
     @Override
-    public byte[] writeClass(DynamicClassLoader loader, String className) throws ClassNotFoundException {
+    public byte[] writeClass(DynamicClassLoader loader, String className)
+        throws ClassNotFoundException {
         return super.writeClass(loader, className);
         /*
-        EnumInfo enumInfo = loader.enumInfoRegistry.get(className);
-        if (enumInfo != null) {
-            return createEnum(enumInfo);
-        }
-
-        Class<?> parent = getParentClass(loader);
-        parentClassName = parent.getName();
-        if (parent == null || parent.isPrimitive() || parent.isArray() || parent.isEnum() || parent.isInterface() || Modifier.isFinal(parent.getModifiers())) {
-            throw new IllegalArgumentException("Invalid parent class: " + parent);
-        }
-        String classNameAsSlashes = className.replace('.', '/');
-        String parentClassNameAsSlashes = parentClassName.replace('.', '/');
-
-        ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
-
-        // public class Foo extends DynamicEntityImpl {
-        cw.visit(V1_5, ACC_PUBLIC + ACC_SUPER, classNameAsSlashes, null, parentClassNameAsSlashes, null);
-
-        // public static DynamicPropertiesManager DPM = new
-        // DynamicPropertiesManager();
-        cw.visitField(ACC_PUBLIC + ACC_STATIC, PROPERTIES_MANAGER_FIELD, "L" + DYNAMIC_PROPERTIES_MANAGER_CLASSNAME_SLASHES + ";", null, null);
-        MethodVisitor mv = cw.visitMethod(ACC_STATIC, CLINIT, "()V", null, null);
-        mv.visitTypeInsn(NEW, DYNAMIC_PROPERTIES_MANAGER_CLASSNAME_SLASHES);
-        mv.visitInsn(DUP);
-        mv.visitMethodInsn(INVOKESPECIAL, DYNAMIC_PROPERTIES_MANAGER_CLASSNAME_SLASHES, INIT, "()V");
-        mv.visitFieldInsn(PUTSTATIC, classNameAsSlashes, PROPERTIES_MANAGER_FIELD, "L" + DYNAMIC_PROPERTIES_MANAGER_CLASSNAME_SLASHES + ";");
-        mv.visitInsn(RETURN);
-        mv.visitMaxs(0, 0);
-
-        // public Foo() {
-        // super();
-        // }
-        mv = cw.visitMethod(ACC_PUBLIC, INIT, "()V", null, null);
-        mv.visitVarInsn(ALOAD, 0);
-        mv.visitMethodInsn(INVOKESPECIAL, parentClassNameAsSlashes, INIT, "()V");
-        mv.visitInsn(RETURN);
-        mv.visitMaxs(0, 0);
-
-        mv = cw.visitMethod(ACC_PUBLIC, "fetchPropertiesManager", "()L" + DYNAMIC_PROPERTIES_MANAGER_CLASSNAME_SLASHES + ";", null, null);
-        mv.visitFieldInsn(GETSTATIC, classNameAsSlashes, PROPERTIES_MANAGER_FIELD, "L" + DYNAMIC_PROPERTIES_MANAGER_CLASSNAME_SLASHES + ";");
-        mv.visitInsn(ARETURN);
-        mv.visitMaxs(0, 0);
-
-        cw.visitEnd();
+        ClassReader cr = new ClassReader(originalClassBytes);
+        ClassWriter cw = new ClassWriter(cr, ClassWriter.COMPUTE_MAXS);
+        cr.accept(new EditionClassAdapter(new EmptyVisitor()), ClassReader.SKIP_DEBUG);
         return cw.toByteArray();
-*/
+        */
     }
 
     @Override
@@ -84,4 +46,12 @@ public class EditionClassWriter extends DynamicClassWriter {
         return new EditionClassWriter(parentClass);
     }
 
+    class EditionClassAdapter extends ClassAdapter implements Opcodes {
+
+        public EditionClassAdapter(ClassVisitor cv) {
+            super(cv);
+            // TODO Auto-generated constructor stub
+        }
+        
+    }
 }
