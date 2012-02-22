@@ -24,6 +24,7 @@ import org.eclipse.persistence.internal.weaving.PersistenceWeavedChangeTracking;
 import org.eclipse.persistence.internal.weaving.PersistenceWeavedFetchGroups;
 import org.eclipse.persistence.internal.weaving.PersistenceWeavedLazy;
 import org.eclipse.persistence.jpa.JpaHelper;
+import org.eclipse.persistence.mappings.OneToManyMapping;
 import org.eclipse.persistence.sessions.Session;
 import org.eclipse.persistence.sessions.server.Server;
 import org.junit.Test;
@@ -125,13 +126,14 @@ public class VerifyConfigTests extends BaseTestCase {
         Server session = JpaHelper.getServerSession(getEMF());
 
         for (String alias : new String[] { "Person", "Address", "Phone" }) {
-            ClassDescriptor descriptor = session.getClassDescriptorForAlias(alias );
+            ClassDescriptor descriptor = session.getClassDescriptorForAlias(alias);
 
             Assert.assertNotNull(descriptor);
             Assert.assertNotNull(descriptor.getQueryManager().getAdditionalJoinExpression());
             Assert.assertFalse(descriptor.shouldBeReadOnly());
+            Assert.assertFalse(descriptor.isIsolated());
             Assert.assertTrue(descriptor.getObjectChangePolicy().isAttributeChangeTrackingPolicy());
-            
+
             Assert.assertEquals(1, descriptor.getPrimaryKeyFieldNames().size());
             Assert.assertEquals("OID", descriptor.getPrimaryKeyFields().get(0).getName());
         }
@@ -147,8 +149,9 @@ public class VerifyConfigTests extends BaseTestCase {
             Assert.assertNotNull(descriptor);
             Assert.assertNotNull(descriptor.getQueryManager().getAdditionalJoinExpression());
             Assert.assertFalse(descriptor.shouldBeReadOnly());
+            Assert.assertTrue(descriptor.isIsolated());
             Assert.assertTrue(descriptor.getObjectChangePolicy().isAttributeChangeTrackingPolicy());
-            
+
             Assert.assertEquals(1, descriptor.getPrimaryKeyFieldNames().size());
             Assert.assertEquals("OID", descriptor.getPrimaryKeyFields().get(0).getName());
         }
@@ -163,12 +166,11 @@ public class VerifyConfigTests extends BaseTestCase {
 
             Assert.assertNotNull(descriptor);
             Assert.assertNull(descriptor.getQueryManager().getAdditionalJoinExpression());
-            Assert.assertTrue(descriptor.shouldBeReadOnly());
             Assert.assertTrue(descriptor.getObjectChangePolicy().isAttributeChangeTrackingPolicy());
-            
+            Assert.assertTrue(descriptor.isIsolated());
             Assert.assertEquals(1, descriptor.getPrimaryKeyFieldNames().size());
             Assert.assertEquals("OID", descriptor.getPrimaryKeyFields().get(0).getName());
-       }
+        }
     }
 
     private void assertAttributeChangeTracking(Session session, String alias) {
@@ -179,6 +181,23 @@ public class VerifyConfigTests extends BaseTestCase {
         if (TemporalEntity.class.isAssignableFrom(descriptor.getJavaClass()) && !descriptor.getAlias().endsWith(TemporalHelper.EDITION)) {
             assertAttributeChangeTracking(session, alias + TemporalHelper.EDITION);
         }
+    }
+
+    @Test
+    public void verifyPersonPhonesDescriptor() {
+        Server session = JpaHelper.getServerSession(getEMF());
+        ClassDescriptor descriptor = session.getClassDescriptorForAlias("Person");
+
+        Assert.assertNotNull(descriptor);
+        Assert.assertEquals(PersonEntity.class, descriptor.getJavaClass());
+        
+        OneToManyMapping phonesMapping = (OneToManyMapping) descriptor.getMappingForAttributeName("phones");
+        Assert.assertNotNull(phonesMapping);
+
+        Assert.assertEquals("Phone", phonesMapping.getReferenceDescriptor().getAlias());
+        Assert.assertTrue(phonesMapping.isCacheable());
+        
+        // TODO: Verify FK fields
     }
 
 }

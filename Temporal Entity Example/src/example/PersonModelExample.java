@@ -92,7 +92,7 @@ public class PersonModelExample {
         futureAddress.getEffectivity().setStart(T3);
         this.futurePerson.setAddress(futureAddress);
         this.futurePerson.addPhone("Work", "321-654-0987").getEffectivity().setStart(T4);
-        this.futurePerson.addHobby(this.hobbies.get(GOLF)).getEffectivity().setStart(T2);
+        this.futurePerson.addHobby(this.hobbies.get(GOLF), T2);
     }
 
     public static void main(String[] args) {

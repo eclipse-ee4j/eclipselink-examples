@@ -10,7 +10,14 @@
  ******************************************************************************/
 package tests;
 
-import static example.PersonModelExample.*;
+import static example.PersonModelExample.GOLF;
+import static example.PersonModelExample.RUN;
+import static example.PersonModelExample.SKI;
+import static example.PersonModelExample.T1;
+import static example.PersonModelExample.T2;
+import static example.PersonModelExample.T3;
+import static example.PersonModelExample.T4;
+import static example.PersonModelExample.T5;
 import static temporal.Effectivity.BOT;
 import static temporal.Effectivity.EOT;
 
@@ -23,6 +30,7 @@ import javax.persistence.TypedQuery;
 import model.Address;
 import model.Person;
 import model.Phone;
+import model.entities.PhoneEntity;
 
 import org.eclipse.persistence.jpa.JpaHelper;
 import org.eclipse.persistence.sessions.CopyGroup;
@@ -64,11 +72,18 @@ public class FullPersonWithEditions extends BaseTestCase {
         Address aT2 = TemporalHelper.createEdition(em, example.fullPerson.getAddress());
         aT2.setCity("Toronto");
         aT2.setState("ON");
+
         personEditionT2.setAddress(aT2);
         Phone pT2 = TemporalHelper.createEdition(em, example.fullPerson.getPhone("Home"));
         personEditionT2.addPhone(pT2);
         pT2.setNumber("222-222-2222");
-        personEditionT2.addHobby(example.hobbies.get(GOLF)).getEffectivity().setStart(T2);
+        Phone pWT2 = TemporalHelper.newInstance(em, PhoneEntity.class);
+        pWT2.setType("Work");
+        pWT2.setNumber("333-333-3333");
+        personEditionT2.addPhone(pWT2);
+
+        em.persist(personEditionT2.addHobby(example.hobbies.get(GOLF), T2));
+
         em.flush();
 
         System.out.println("\n> Create T4 Edition");
@@ -80,12 +95,21 @@ public class FullPersonWithEditions extends BaseTestCase {
         aT4.setCity("San Francisco");
         aT4.setState("CA");
         personEditionT4.setAddress(aT4);
+
         Phone pT4 = TemporalHelper.createEdition(em, pT2);
         pT4.setNumber("444-444-4444");
         personEditionT4.addPhone(pT4);
+        pWT2.getEffectivity().setEnd(T4);
+        Phone pCT4 = TemporalHelper.newInstance(em, PhoneEntity.class);
+        pCT4.setType("Cell");
+        pCT4.setNumber("555-555-55555");
+        personEditionT4.addPhone(pCT4);
+
         personEditionT4.getPersonHobbies().get(GOLF).getEffectivity().setEnd(T4);
-        personEditionT4.addHobby(example.hobbies.get(RUN)).getEffectivity().setStart(T4);
-        personEditionT4.addHobby(example.hobbies.get(SKI)).getEffectivity().setStart(T4);
+        
+        em.persist(personEditionT4.addHobby(example.hobbies.get(RUN), T4));
+        em.persist(personEditionT4.addHobby(example.hobbies.get(SKI), T4));
+
         em.flush();
 
         System.out.println("\nFullPersonWithEditions.populate::DONE");
@@ -135,6 +159,13 @@ public class FullPersonWithEditions extends BaseTestCase {
         Assert.assertFalse(current.getAddress().getEffectivity().isFutureEdition());
         Assert.assertEquals(current.getAddress().getEffectivity().getStart(), BOT);
         Assert.assertEquals(current.getAddress().getEffectivity().getEnd(), T2);
+
+        // Phone
+        Assert.assertEquals(1, current.getPhones().size());
+        Phone currentHome = current.getPhone("Home");
+        Assert.assertNotNull(currentHome);
+        Assert.assertEquals("111-111-1111", currentHome.getNumber());
+        Assert.assertSame(current, currentHome.getPerson());
     }
 
     @Test
@@ -251,6 +282,8 @@ public class FullPersonWithEditions extends BaseTestCase {
 
         Assert.assertNotNull(address);
         Assert.assertEquals(getSample().getAddress().getCity(), address.getCity());
+
+        Assert.assertEquals(1, pEdition.getPhones().size());
     }
 
     @Test
@@ -278,6 +311,8 @@ public class FullPersonWithEditions extends BaseTestCase {
 
         Assert.assertNotNull(address);
         Assert.assertEquals(getSample().getAddress().getCity(), address.getCity());
+
+        Assert.assertEquals(1, pEdition.getPhones().size());
     }
 
     @Test
@@ -306,6 +341,7 @@ public class FullPersonWithEditions extends BaseTestCase {
         Assert.assertNotNull(address);
         Assert.assertEquals("Toronto", address.getCity());
 
+        Assert.assertEquals(2, pEdition.getPhones().size());
     }
 
     @Test
@@ -337,6 +373,8 @@ public class FullPersonWithEditions extends BaseTestCase {
         Assert.assertFalse(pEdition.getPersonHobbies().containsKey(SKI));
         Assert.assertFalse(pEdition.getPersonHobbies().containsKey(RUN));
         Assert.assertTrue(pEdition.getPersonHobbies().containsKey(GOLF));
+
+        Assert.assertEquals(2, pEdition.getPhones().size());
     }
 
     @Test
@@ -365,6 +403,7 @@ public class FullPersonWithEditions extends BaseTestCase {
         Assert.assertNotNull(address);
         Assert.assertEquals("Toronto", address.getCity());
 
+        Assert.assertEquals(2, pEdition.getPhones().size());
     }
 
     @Test
@@ -391,6 +430,8 @@ public class FullPersonWithEditions extends BaseTestCase {
         Address address = pEdition.getAddress();
 
         Assert.assertNotNull(address);
+
+        Assert.assertEquals(2, pEdition.getPhones().size());
     }
 
     @Test
@@ -413,6 +454,8 @@ public class FullPersonWithEditions extends BaseTestCase {
         Assert.assertTrue(pEdition.getPersonHobbies().containsKey(SKI));
         Assert.assertTrue(pEdition.getPersonHobbies().containsKey(RUN));
         Assert.assertFalse(pEdition.getPersonHobbies().containsKey(GOLF));
+
+        Assert.assertEquals(2, pEdition.getPhones().size());
     }
 
     @Test
@@ -494,11 +537,11 @@ public class FullPersonWithEditions extends BaseTestCase {
         Assert.assertFalse(pEdition.getPersonHobbies().containsKey(GOLF));
 
         long currentVersion = pEdition.getVersion();
-        
+
         em.getTransaction().begin();
         pEdition.setName(pEdition.getName().toUpperCase());
         em.flush();
-        
+
         Assert.assertEquals(currentVersion + 1, pEdition.getVersion());
     }
 
@@ -512,7 +555,7 @@ public class FullPersonWithEditions extends BaseTestCase {
         System.out.println("QUERY EDITION @ T4: " + pEdition);
 
         // Create new unregistered hobby and add.
-        
+
         Assert.assertNotNull("No Person Edition Found", pEdition);
         Assert.assertFalse(pEdition.getEffectivity().isCurrent());
         Assert.assertTrue(pEdition.getEffectivity().isFutureEdition());
@@ -525,15 +568,14 @@ public class FullPersonWithEditions extends BaseTestCase {
         Assert.assertFalse(pEdition.getPersonHobbies().containsKey(GOLF));
 
         long currentVersion = pEdition.getVersion();
-        
+
         em.getTransaction().begin();
         pEdition.setName(pEdition.getName().toUpperCase());
         em.flush();
-        
+
         Assert.assertEquals(currentVersion + 1, pEdition.getVersion());
     }
-    
+
     // TODO: Add future edition of a phone to an earlier edition of a person.
-    
-    
+
 }

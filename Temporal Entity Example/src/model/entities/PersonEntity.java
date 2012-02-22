@@ -14,22 +14,41 @@ package model.entities;
 
 import static org.eclipse.persistence.annotations.ChangeTrackingType.ATTRIBUTE;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.MapKey;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
-import model.*;
+import model.Address;
+import model.Hobby;
+import model.Person;
+import model.PersonHobby;
+import model.Phone;
 
 import org.eclipse.persistence.annotations.ChangeTracking;
 
-import temporal.BaseEntity;
-import temporal.Effectivity;
+import temporal.BaseTemporalEntity;
 
 @Entity(name = "Person")
 @Table(name = "TPERSON")
 @NamedQueries({ @NamedQuery(name = "Person.currentById", query = "SELECT p FROM Person p WHERE p.cid = :ID") })
 @ChangeTracking(ATTRIBUTE)
-public class PersonEntity extends BaseEntity implements Person {
+public class PersonEntity extends BaseTemporalEntity<Person> implements Person {
 
     @Column(name = "P_NAMES")
     private String name;
@@ -43,20 +62,11 @@ public class PersonEntity extends BaseEntity implements Person {
     private Map<String, Phone> phones = new HashMap<String, Phone>();
 
     @ElementCollection
-    @CollectionTable(name="TPERSON_NNAMES", joinColumns=@JoinColumn(name="OID", referencedColumnName="OID"))
-    @Column(name="NAME")
+    @CollectionTable(name = "TPERSON_NNAMES", joinColumns = @JoinColumn(name = "OID", referencedColumnName = "OID"))
+    @Column(name = "NAME")
     private Set<String> nicknames = new HashSet<String>();
-    
-    @Embedded
-    private Effectivity effectivity = new Effectivity();
 
-    /**
-     * M:1 relationship to continuity.
-     */
-    @Transient
-    private Person continuity;
-
-    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "person", cascade = CascadeType.MERGE)
     @MapKey(name = "name")
     private Map<String, PersonHobby> hobbies = new HashMap<String, PersonHobby>();
 
@@ -105,29 +115,28 @@ public class PersonEntity extends BaseEntity implements Person {
         return getPhones().remove(type);
     }
 
-    @Override
-    public Person getContinuity() {
-        return this.continuity;
-    }
-
-    @Override
-    public void setContinuity(Person continuity) {
-        this.continuity = continuity;
-    }
-
-    @Override
-    public Effectivity getEffectivity() {
-        return this.effectivity;
-    }
-
     public Map<String, PersonHobby> getPersonHobbies() {
         return this.hobbies;
     }
 
     @Override
-    public PersonHobby addHobby(Hobby hobby) {
+    public PersonHobby addHobby(Hobby hobby, long asOf) {
         PersonHobby personHobby = new PersonHobby(hobby, this);
         this.hobbies.put(hobby.getName(), personHobby);
+        personHobby.getEffectivity().setStart(asOf);
+        return personHobby;
+    }
+
+    @Override
+    public PersonHobby removeHobby(Hobby hobby, long asOf, long current) {
+        PersonHobby personHobby = getPersonHobbies().remove(hobby.getName());
+        if (personHobby == null) {
+            throw new IllegalArgumentException("Hobby not found: " + hobby);
+        }
+        if (current >= asOf) {
+            this.hobbies.remove(hobby.getName());
+        }
+        personHobby.getEffectivity().setEnd(asOf);
         return personHobby;
     }
 
@@ -139,11 +148,11 @@ public class PersonEntity extends BaseEntity implements Person {
     public Set<String> getNicknames() {
         return nicknames;
     }
-    
+
     public boolean addNickname(String name) {
         return getNicknames().add(name);
     }
-    
+
     public boolean removeNickname(String name) {
         return getNicknames().remove(name);
     }

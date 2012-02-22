@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<entity-mappings version="2.0"
-	xmlns="http://java.sun.com/xml/ns/persistence/orm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<entity-mappings version="2.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd">
 	<mapped-superclass class="temporal.BaseEntity" />
+	<mapped-superclass class="temporal.BaseTemporalEntity" />
 	<entity class="model.entities.PersonEntity">
 		<attributes>
-			<many-to-one name="continuity" fetch="LAZY"
-				target-entity="model.entities.PersonEntity">
+			<many-to-one name="continuity" fetch="LAZY" target-entity="model.entities.PersonEntity">
 				<join-column name="CID" />
 			</many-to-one>
-			<one-to-many name="phones" mapped-by="person"
-				target-entity="model.entities.PhoneEntity">
+			<many-to-one name="previousEdition" fetch="LAZY" target-entity="model.entities.PersonEntity">
+				<join-column name="PREVIOUS_ID" />
+			</many-to-one>
+			<one-to-many name="phones" mapped-by="person" target-entity="model.entities.PhoneEntity">
 				<map-key name="type" />
 				<cascade>
 					<cascade-all />
@@ -20,18 +22,23 @@
 	</entity>
 	<entity class="model.entities.AddressEntity">
 		<attributes>
-			<many-to-one name="continuity" fetch="LAZY"
-				target-entity="model.entities.AddressEntity">
+			<many-to-one name="continuity" fetch="LAZY" target-entity="model.entities.AddressEntity">
 				<join-column name="CID" />
+			</many-to-one>
+			<many-to-one name="previousEdition" fetch="LAZY" target-entity="model.entities.AddressEntity">
+				<join-column name="PREVIOUS_ID" />
 			</many-to-one>
 		</attributes>
 	</entity>
 	<entity class="model.entities.PhoneEntity">
 		<attributes>
-			<many-to-one name="person" target-entity="model.entities.PersonEntity" />
-			<many-to-one name="continuity" fetch="LAZY"
-				target-entity="model.entities.PhoneEntity">
+			<many-to-one name="person" target-entity="model.entities.PersonEntity">
+			</many-to-one>
+			<many-to-one name="continuity" fetch="LAZY" target-entity="model.entities.PhoneEntity">
 				<join-column name="CID" />
+			</many-to-one>
+			<many-to-one name="previousEdition" fetch="LAZY" target-entity="model.entities.PhoneEntity">
+				<join-column name="PREVIOUS_ID" />
 			</many-to-one>
 		</attributes>
 	</entity>

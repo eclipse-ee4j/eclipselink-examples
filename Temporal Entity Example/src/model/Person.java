@@ -42,7 +42,9 @@ public interface Person extends TemporalEntity<Person> {
 
     public Iterator<Hobby> getHobbies();
 
-    public PersonHobby addHobby(Hobby hobby);
+    public PersonHobby addHobby(Hobby hobby, long asOf);
+
+    public PersonHobby removeHobby(Hobby hobby, long asOf, long current);
 
     public Set<String> getNicknames();
 

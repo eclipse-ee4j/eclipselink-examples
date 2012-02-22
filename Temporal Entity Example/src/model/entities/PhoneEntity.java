@@ -14,20 +14,23 @@ package model.entities;
 
 import static org.eclipse.persistence.annotations.ChangeTrackingType.ATTRIBUTE;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import model.Person;
 import model.Phone;
 
 import org.eclipse.persistence.annotations.ChangeTracking;
 
-import temporal.BaseEntity;
-import temporal.Effectivity;
+import temporal.BaseTemporalEntity;
 
 @Entity(name = "Phone")
 @Table(name = "TPHONE")
 @ChangeTracking(ATTRIBUTE)
-public class PhoneEntity extends BaseEntity implements Phone {
+public class PhoneEntity extends BaseTemporalEntity<Phone> implements Phone {
 
     @Column(name = "PTYPE")
     private String type;
@@ -37,15 +40,6 @@ public class PhoneEntity extends BaseEntity implements Phone {
 
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = PersonEntity.class)
     private Person person;
-
-    @Embedded
-    private Effectivity effectivity = new Effectivity();
-
-    /**
-     * M:1 relationship to continuity.
-     */
-    @Transient
-    private Phone continuity;
 
     public PhoneEntity() {
         setContinuity(this);
@@ -78,21 +72,6 @@ public class PhoneEntity extends BaseEntity implements Phone {
 
     public void setPerson(Person person) {
         this.person = person;
-    }
-
-    @Override
-    public Phone getContinuity() {
-        return this.continuity;
-    }
-
-    @Override
-    public void setContinuity(Phone continuity) {
-        this.continuity = continuity;
-    }
-
-    @Override
-    public Effectivity getEffectivity() {
-        return this.effectivity;
     }
 
     public String toString() {

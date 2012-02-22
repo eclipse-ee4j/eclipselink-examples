@@ -99,12 +99,16 @@ public class DeleteTests extends BaseTestCase {
     }
 
     @After
-    public void deletePersonAddressPhones() {
+    public void deleteAll() {
         EntityManager em = getEMF().createEntityManager();
         em.getTransaction().begin();
-        em.createQuery("DELETE FROM Address a").executeUpdate();
-        em.createQuery("DELETE FROM Person p").executeUpdate();
-        em.createQuery("DELETE FROM Phone p").executeUpdate();
+        em.createQuery("DELETE FROM PersonHobby ph").executeUpdate();
+        em.createQuery("DELETE FROM Hobby h").executeUpdate();
+        em.createNativeQuery("DELETE FROM TADDRESS").executeUpdate();
+        em.createNativeQuery("DELETE FROM TPERSON_NNAMES").executeUpdate();
+        em.createNativeQuery("UPDATE TPERSON SET CID = NULL").executeUpdate();
+        em.createNativeQuery("DELETE FROM TPERSON").executeUpdate();
+        em.createNativeQuery("DELETE FROM TPHONE").executeUpdate();
         em.getTransaction().commit();
         em.close();
     }

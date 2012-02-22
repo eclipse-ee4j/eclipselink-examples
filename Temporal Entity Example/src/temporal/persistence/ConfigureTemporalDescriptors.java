@@ -12,9 +12,14 @@
  ******************************************************************************/
 package temporal.persistence;
 
-import static temporal.TemporalHelper.*;
+import static temporal.TemporalHelper.EDITION;
+import static temporal.TemporalHelper.EDITION_VIEW;
+import static temporal.TemporalHelper.INTERFACE;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.persistence.config.CacheIsolationType;
@@ -25,14 +30,18 @@ import org.eclipse.persistence.descriptors.DescriptorEventAdapter;
 import org.eclipse.persistence.descriptors.DescriptorEventListener;
 import org.eclipse.persistence.descriptors.changetracking.AttributeChangeTrackingPolicy;
 import org.eclipse.persistence.dynamic.DynamicClassLoader;
-import org.eclipse.persistence.dynamic.DynamicClassWriter;
 import org.eclipse.persistence.expressions.ExpressionBuilder;
 import org.eclipse.persistence.internal.helper.DatabaseField;
 import org.eclipse.persistence.internal.jpa.CMP3Policy;
 import org.eclipse.persistence.internal.sessions.AbstractRecord;
 import org.eclipse.persistence.internal.sessions.AbstractSession;
 import org.eclipse.persistence.internal.sessions.DatabaseSessionImpl;
-import org.eclipse.persistence.mappings.*;
+import org.eclipse.persistence.mappings.DatabaseMapping;
+import org.eclipse.persistence.mappings.ForeignReferenceMapping;
+import org.eclipse.persistence.mappings.ManyToOneMapping;
+import org.eclipse.persistence.mappings.OneToManyMapping;
+import org.eclipse.persistence.mappings.OneToOneMapping;
+import org.eclipse.persistence.mappings.VariableOneToOneMapping;
 import org.eclipse.persistence.queries.DatabaseQuery;
 import org.eclipse.persistence.queries.QueryRedirector;
 import org.eclipse.persistence.queries.ReadAllQuery;
@@ -41,7 +50,11 @@ import org.eclipse.persistence.queries.SQLCall;
 import org.eclipse.persistence.sessions.Record;
 import org.eclipse.persistence.sessions.Session;
 
-import temporal.*;
+import temporal.EditionSetEntry;
+import temporal.Effectivity;
+import temporal.TemporalEdition;
+import temporal.TemporalEntity;
+import temporal.TemporalHelper;
 
 /**
  * Customize the persistence unit by adding edition {@link ClassDescriptor}
@@ -73,6 +86,11 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
 
                 configureQueries(current, editionDesc, session);
                 setupInterfaceDescriptor(current, session, interfaceDescriptors);
+
+                // Since the redirector can cause queries to run against
+                // different types it is important that no expression to query
+                // caching be used.
+                current.getQueryManager().setExpressionQueryCacheMaxSize(0);
             }
         }
 
@@ -86,7 +104,6 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
         for (ClassDescriptor desc : editionViewDescriptors) {
             fixEditionRelationships(desc, dcl, EDITION_VIEW);
             desc.setCacheIsolation(CacheIsolationType.ISOLATED);
-            desc.setReadOnly();
         }
 
         session.getProject().addDescriptors(editionDescriptors, (DatabaseSessionImpl) session);
@@ -157,7 +174,21 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
                 } else if (frMapping.isOneToOneMapping()) {
                     fixFKNames(((OneToOneMapping) frMapping).getSourceToTargetKeyFields());
                 } else if (frMapping.isOneToManyMapping()) {
-                    fixFKNames(((OneToManyMapping) frMapping).getTargetForeignKeysToSourceKeys());
+                    OneToManyMapping otMMapping = (OneToManyMapping) frMapping;
+                    fixFKNames(otMMapping.getTargetForeignKeysToSourceKeys());
+                    List<DatabaseField> sourceFields = (List<DatabaseField>) otMMapping.getSourceKeyFields().clone();
+                    otMMapping.getSourceKeyFields().clear();
+                    List<DatabaseField> targetFields = (List<DatabaseField>) otMMapping.getTargetForeignKeyFields().clone();
+                    otMMapping.getTargetForeignKeyFields().clear();
+                    
+                    for (int i  = 0; i < sourceFields.size(); i++) {
+                        DatabaseField sourceField = sourceFields.get(0).clone();
+                        DatabaseField targetField = targetFields.get(0).clone();
+                        if (sourceField.getName().equals("OID")) {
+                            sourceField.setName("CID");
+                        }
+                        otMMapping.addTargetForeignKeyFieldName(sourceField.getQualifiedName(), targetField.getQualifiedName());
+                    }
                 } else {
                     throw new RuntimeException("Unsupported mapping: " + frMapping);
                 }

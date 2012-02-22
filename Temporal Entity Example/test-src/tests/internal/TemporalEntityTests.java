@@ -21,7 +21,6 @@ import temporal.TemporalEntity;
 import static temporal.Effectivity.*;
 
 /**
- * TODO
  *
  * @author dclarke
  * @since EclipseLink 2.3.1
@@ -49,6 +48,8 @@ public class TemporalEntityTests {
         
         private TestEntity continuity;
         
+        private TestEntity previous;
+
         @Override
         public Effectivity getEffectivity() {
             return this.effectivity;
@@ -62,6 +63,16 @@ public class TemporalEntityTests {
         @Override
         public void setContinuity(TestEntity continuity) {
             this.continuity = continuity;
+        }
+
+        @Override
+        public TestEntity getPreviousEdition() {
+            return this.previous;
+        }
+
+        @Override
+        public void setPreviousEdition(TestEntity edition) {
+            this.previous = edition;
         }
 
     }

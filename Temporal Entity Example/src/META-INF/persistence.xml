@@ -8,10 +8,10 @@
 		<class>temporal.EditionSetEntry</class>
 		<properties>
 			<!-- Database Connection config -->
-			<property name="javax.persistence.jdbc.url" value="jdbc:oracle:thin:@localhost:1521:DJCLARKEORCL"/>
-			<property name="javax.persistence.jdbc.user" value="scott"/>
-			<property name="javax.persistence.jdbc.password" value="tiger"/>
-			<property name="javax.persistence.jdbc.driver" value="oracle.jdbc.OracleDriver"/>
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/test"/>
+			<property name="javax.persistence.jdbc.user" value="root"/>
+			<property name="javax.persistence.jdbc.password" value="password"/>
+			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
 			<property name="eclipselink.jdbc.read-connections.min" value="1"/>
 			<property name="eclipselink.jdbc.write-connections.min" value="1"/>
 			

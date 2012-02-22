@@ -10,7 +10,12 @@
  ******************************************************************************/
 package tests;
 
-import static example.PersonModelExample.*;
+import static example.PersonModelExample.GOLF;
+import static example.PersonModelExample.RUN;
+import static example.PersonModelExample.SKI;
+import static example.PersonModelExample.T2;
+import static example.PersonModelExample.T4;
+import static example.PersonModelExample.T6;
 
 import java.util.List;
 
@@ -201,7 +206,7 @@ public class EditionSetTests extends BaseTestCase {
             Phone pT2 = TemporalHelper.createEdition(em, personEditionT2.getPhone("Home"));
             personEditionT2.addPhone(pT2);
             pT2.setNumber("222-222-2222");
-            personEditionT2.addHobby(example.hobbies.get(GOLF)).getEffectivity().setStart(T2);
+            em.persist(personEditionT2.addHobby(example.hobbies.get(GOLF), T2));
             em.flush();
 
             System.out.println("\nEditionSetTests.populateT2Edition::DONE");
@@ -231,8 +236,10 @@ public class EditionSetTests extends BaseTestCase {
             pT4.setNumber("444-444-4444");
             personEditionT4.addPhone(pT4);
             personEditionT4.getPersonHobbies().get(GOLF).getEffectivity().setEnd(T4);
-            personEditionT4.addHobby(example.hobbies.get(RUN)).getEffectivity().setStart(T4);
-            personEditionT4.addHobby(example.hobbies.get(SKI)).getEffectivity().setStart(T4);
+            
+            em.persist(personEditionT4.addHobby(example.hobbies.get(RUN), T4));            
+            em.persist(personEditionT4.addHobby(example.hobbies.get(SKI), T4));
+            
             em.flush();
 
             System.out.println("\nEditionSetTests.populateT4Edition:DONE");

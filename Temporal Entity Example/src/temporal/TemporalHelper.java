@@ -159,6 +159,7 @@ public class TemporalHelper {
 
         TemporalEntity<T> edition = (TemporalEntity<T>) editionDesc.getInstantiationPolicy().buildNewInstance();
         edition.setContinuity((T) source.getContinuity());
+        edition.setPreviousEdition(source);
 
         // Copy the mapped values from source to new edition
         for (DatabaseMapping mapping : editionDesc.getMappings()) {

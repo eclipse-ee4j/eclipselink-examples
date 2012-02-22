@@ -22,6 +22,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 import model.Person;
+import model.PersonHobby;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -44,6 +45,9 @@ public class FuturePersonTests extends BaseTestCase {
     @Override
     public void populate(EntityManager em) {
         example.populateHobbies(em);
+        for (PersonHobby ph: example.futurePerson.getPersonHobbies().values()) {
+            em.persist(ph);
+        }
         em.persist(example.futurePerson);
     }
 

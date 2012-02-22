@@ -12,34 +12,21 @@
  ******************************************************************************/
 package model.entities;
 
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import temporal.BaseEntity;
-import temporal.Effectivity;
 
 import model.Address;
+import temporal.BaseTemporalEntity;
 
 @Entity(name = "Address")
 @Table(name = "TADDRESS")
-public class AddressEntity extends BaseEntity implements Address {
+public class AddressEntity extends BaseTemporalEntity<Address> implements Address {
 
     private String street;
 
     private String city;
 
     private String state;
-
-    @Embedded
-    private Effectivity effectivity = new Effectivity();
-
-    /**
-     * M:1 relationship to continuity.
-     */
-    @Transient
-    private Address continuity;
 
     public AddressEntity() {
         super();
@@ -81,21 +68,6 @@ public class AddressEntity extends BaseEntity implements Address {
 
     public void setState(String state) {
         this.state = state;
-    }
-
-    @Override
-    public Address getContinuity() {
-        return this.continuity;
-    }
-
-    @Override
-    public void setContinuity(Address continuity) {
-        this.continuity = continuity;
-    }
-
-    @Override
-    public Effectivity getEffectivity() {
-        return this.effectivity;
     }
 
     public String toString() {
