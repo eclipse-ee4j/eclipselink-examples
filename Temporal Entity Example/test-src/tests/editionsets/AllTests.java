@@ -8,24 +8,17 @@
  * 
  * Contributors: dclarke - Bug 361016: Future Versions Examples
  ******************************************************************************/
-package tests;
+package tests.editionsets;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ tests.internal.AllTests.class, 
-                VerifyInitialConfigTests.class, 
-                FullPersonWithEditions.class, 
-                FuturePersonTests.class,
-                DeleteTests.class,
-                TemporalQueryRedirectorTests.class,
-                ProxyWrapperUpdateTests.class,
-                //ModifyCurrentTests.class})
-                //DeleteContinuityTests.class,
-                MultipleEditionQueries.class,
-                DuplicateInsertOnCreateMerge.class,
-                tests.editionsets.AllTests.class})
+@SuiteClasses({ EditionSetConfigTests.class, 
+                CreateEditionSetTests.class, 
+                ApplySimpleEditionSetTests.class, 
+                MoveSimpleEditionSetTests.class,
+                PropagateChangesTests.class})
 public class AllTests {
 }

@@ -20,7 +20,7 @@
 			<property name="eclipselink.logging.timestamp" value="false"/>
 			<property name="eclipselink.logging.thread" value="false"/>
 			<property name="eclipselink.logging.session" value="false"/>
-			<property name="eclipselink.logging.exceptions" value="false"/>
+			<property name="eclipselink.logging.exceptions" value="true"/>
 			<property name="eclipselink.logging.connection" value="true"/>
 			<property name="eclipselink.logging.level.ejb_or_metadata" value="WARNING"/>
 

@@ -12,7 +12,7 @@
  ******************************************************************************/
 package model;
 
-import java.util.Iterator;
+import java.sql.Date;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,36 +20,42 @@ import temporal.TemporalEntity;
 
 public interface Person extends TemporalEntity<Person> {
 
-    public String getName();
+    String getName();
 
-    public void setName(String name);
+    void setName(String name);
 
-    public Address getAddress();
+    Address getAddress();
 
-    public void setAddress(Address address);
+    void setAddress(Address address);
 
-    public Map<String, Phone> getPhones();
+    Map<String, Phone> getPhones();
 
-    public Phone getPhone(String type);
+    Phone getPhone(String type);
 
-    public Phone addPhone(Phone phone);
+    Phone addPhone(Phone phone);
 
-    public Phone addPhone(String type, String number);
+    Phone addPhone(String type, String number);
 
-    public Phone removePhone(String type);
+    Phone removePhone(String type);
 
-    public Map<String, PersonHobby> getPersonHobbies();
+    Map<String, PersonHobby> getPersonHobbies();
 
-    public Iterator<Hobby> getHobbies();
+    PersonHobby addHobby(Hobby hobby, long asOf);
 
-    public PersonHobby addHobby(Hobby hobby, long asOf);
+    PersonHobby removeHobby(Hobby hobby, long asOf, long current);
 
-    public PersonHobby removeHobby(Hobby hobby, long asOf, long current);
+    Set<String> getNicknames();
 
-    public Set<String> getNicknames();
+    boolean addNickname(String name);
 
-    public boolean addNickname(String name);
+    boolean removeNickname(String name);
 
-    public boolean removeNickname(String name);
+    Date getDateOfBirth();
+
+    void setDateOfBirth(Date dateOfBirth);
+
+    String getEmail();
+
+    void setEmail(String email);
 
 }

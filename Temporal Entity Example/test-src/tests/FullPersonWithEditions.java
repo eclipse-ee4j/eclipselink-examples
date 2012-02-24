@@ -21,6 +21,7 @@ import static example.PersonModelExample.T5;
 import static temporal.Effectivity.BOT;
 import static temporal.Effectivity.EOT;
 
+import java.sql.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -72,6 +73,7 @@ public class FullPersonWithEditions extends BaseTestCase {
         Address aT2 = TemporalHelper.createEdition(em, example.fullPerson.getAddress());
         aT2.setCity("Toronto");
         aT2.setState("ON");
+        personEditionT2.setDateOfBirth(new Date(75, 1, 5));
 
         personEditionT2.setAddress(aT2);
         Phone pT2 = TemporalHelper.createEdition(em, example.fullPerson.getPhone("Home"));
@@ -106,7 +108,7 @@ public class FullPersonWithEditions extends BaseTestCase {
         personEditionT4.addPhone(pCT4);
 
         personEditionT4.getPersonHobbies().get(GOLF).getEffectivity().setEnd(T4);
-        
+
         em.persist(personEditionT4.addHobby(example.hobbies.get(RUN), T4));
         em.persist(personEditionT4.addHobby(example.hobbies.get(SKI), T4));
 
@@ -576,6 +578,16 @@ public class FullPersonWithEditions extends BaseTestCase {
         Assert.assertEquals(currentVersion + 1, pEdition.getVersion());
     }
 
-    // TODO: Add future edition of a phone to an earlier edition of a person.
+    @Test
+    public void testDateOfBirthNonTemporalStorage() {
+        EntityManager em = createEntityManager();
 
+        List<?> results = em.createNativeQuery("SELECT DATEOFBIRTH FROM TPERSON WHERE CID = 1 ORDER BY OID").getResultList();
+
+        Assert.assertNotNull(results);
+        Assert.assertEquals(3, results.size());
+        Assert.assertEquals(new Date(75, 1, 5), results.get(0));
+        Assert.assertNull(results.get(1));
+        Assert.assertNull(results.get(2));
+    }
 }

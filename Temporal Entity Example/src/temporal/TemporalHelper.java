@@ -39,6 +39,12 @@ import temporal.persistence.TemporalQueryRedirector;
 public class TemporalHelper {
 
     /**
+     * Property name used to cache current descriptor on edition and edition
+     * view descriptors
+     */
+    public static final String CURRENT = "Current";
+
+    /**
      * Entity type name prefix prepended to current entity type
      */
     public static final String EDITION = "Edition";
@@ -67,9 +73,15 @@ public class TemporalHelper {
     public static final String ENTITY_MANAGER = EntityManager.class.getName();
 
     /**
-     * 
+     * {@link TemporalEntity} interface name
      */
     public static final String INTERFACE = TemporalEntity.class.getName();
+
+    /**
+     * Mapping property used to indicate that a mapping holds a non-temporal
+     * value. The result is that only the continuity row will hold the value.
+     */
+    public static final String NON_TEMPORAL = "example.NonTemporal";
 
     public static EditionSet setEffectiveTime(EntityManager em, Long startTime, boolean initializeEditionSet) {
         em.setProperty(ENTITY_MANAGER, em);
@@ -102,7 +114,7 @@ public class TemporalHelper {
         if (editionSet != null) {
             return editionSet.getEffective();
         }
-        
+
         AbstractSession session = em.unwrap(RepeatableWriteUnitOfWork.class);
         return (Long) session.getProperty(EFF_TS_PROPERTY);
     }
@@ -163,9 +175,7 @@ public class TemporalHelper {
 
         // Copy the mapped values from source to new edition
         for (DatabaseMapping mapping : editionDesc.getMappings()) {
-            if (!mapping.getAttributeName().equals("effectivity")) {
-                copyValue(session, mapping, source, edition);
-            }
+            copyValue(session, mapping, source, edition);
         }
 
         edition.getEffectivity().setStart(start);
@@ -222,13 +232,13 @@ public class TemporalHelper {
             edition.getEffectivity().setStart(start);
         }
         em.persist(edition);
-        
+
         if (editionSet != null) {
             editionSet.add(edition);
         }
-        
+
         em.flush();
-        
+
         return (T) edition;
     }
 
@@ -236,8 +246,18 @@ public class TemporalHelper {
      * Copy mapped value from source to new edition. This copies the real
      * attribute value.
      */
-    private static void copyValue(AbstractSession session, DatabaseMapping mapping, TemporalEntity<?> source, TemporalEntity<?> target) {
+    protected static void copyValue(AbstractSession session, DatabaseMapping mapping, TemporalEntity<?> source, TemporalEntity<?> target) {
+        if (mapping.getAttributeName().equals("effectivity")) {
+            return;
+        }
+
+        String nonTemporal = (String) mapping.getProperty(NON_TEMPORAL);
+        if (nonTemporal != null && Boolean.valueOf(nonTemporal)) {
+            return;
+        }
+
         Member member = null;
+
         if (mapping.getAttributeAccessor().isInstanceVariableAttributeAccessor()) {
             member = ((InstanceVariableAttributeAccessor) mapping.getAttributeAccessor()).getAttributeField();
         } else {
@@ -329,6 +349,17 @@ public class TemporalHelper {
     public static boolean isEditionClass(Class<BaseEntity> entityClass) {
         // TODO: Change to adding a marker interface on created edition class
         return entityClass.getName().endsWith(EDITION);
+    }
+
+    /**
+     * TODO
+     * 
+     * @param entityClass
+     * @return
+     */
+    public static boolean isEditionViewClass(Class<BaseEntity> entityClass) {
+        // TODO: Change to adding a marker interface on created edition class
+        return entityClass.getName().endsWith(EDITION_VIEW);
     }
 
     /**

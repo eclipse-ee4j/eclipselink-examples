@@ -34,5 +34,7 @@ public interface TemporalEntity<T extends TemporalEntity<?>> extends Temporal {
     void setPreviousEdition(T edition);
 
     long getVersion();
+    
+    boolean isContinuity();
 
 }

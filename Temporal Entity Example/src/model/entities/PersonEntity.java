@@ -14,12 +14,13 @@ package model.entities;
 
 import static org.eclipse.persistence.annotations.ChangeTrackingType.ATTRIBUTE;
 
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -41,8 +42,10 @@ import model.PersonHobby;
 import model.Phone;
 
 import org.eclipse.persistence.annotations.ChangeTracking;
+import org.eclipse.persistence.annotations.Property;
 
 import temporal.BaseTemporalEntity;
+import temporal.TemporalHelper;
 
 @Entity(name = "Person")
 @Table(name = "TPERSON")
@@ -52,6 +55,8 @@ public class PersonEntity extends BaseTemporalEntity<Person> implements Person {
 
     @Column(name = "P_NAMES")
     private String name;
+
+    private String email;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, targetEntity = AddressEntity.class)
     @JoinColumn(name = "ADDR_ID")
@@ -66,9 +71,13 @@ public class PersonEntity extends BaseTemporalEntity<Person> implements Person {
     @Column(name = "NAME")
     private Set<String> nicknames = new HashSet<String>();
 
-    @OneToMany(mappedBy = "person", cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "person", cascade = { CascadeType.MERGE })
     @MapKey(name = "name")
     private Map<String, PersonHobby> hobbies = new HashMap<String, PersonHobby>();
+
+    @Basic
+    @Property(name = TemporalHelper.NON_TEMPORAL, value = "true")
+    private Date dateOfBirth;
 
     public PersonEntity() {
         setContinuity(this);
@@ -140,11 +149,6 @@ public class PersonEntity extends BaseTemporalEntity<Person> implements Person {
         return personHobby;
     }
 
-    @Override
-    public Iterator<Hobby> getHobbies() {
-        return new HobbyIterator(getPersonHobbies().values().iterator());
-    }
-
     public Set<String> getNicknames() {
         return nicknames;
     }
@@ -157,30 +161,28 @@ public class PersonEntity extends BaseTemporalEntity<Person> implements Person {
         return getNicknames().remove(name);
     }
 
+    public Date getDateOfBirth() {
+        return isContinuity() ? this.dateOfBirth : getContinuity().getDateOfBirth();
+    }
+
+    public void setDateOfBirth(Date dateOfBirth) {
+        if (isContinuity()) {
+            this.dateOfBirth = dateOfBirth;
+        } else {
+            getContinuity().setDateOfBirth(dateOfBirth);
+        }
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String toString() {
         return getEffectivity().toString(this);
     }
 
-    class HobbyIterator implements Iterator<Hobby> {
-        Iterator<PersonHobby> personHobbies;
-
-        public HobbyIterator(Iterator<PersonHobby> iterator) {
-            personHobbies = iterator;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return personHobbies.hasNext();
-        }
-
-        @Override
-        public Hobby next() {
-            return personHobbies.next().getHobby();
-        }
-
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
-    }
 }

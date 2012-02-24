@@ -44,7 +44,6 @@ public class EditionSetEntry {
 
     /**
      * Set of attributes that have been modified in this edition. 
-     * @see TODO
      */
     @ElementCollection
     @CollectionTable(name="TEDITIONSET_ENTRY_ATTR")
@@ -75,6 +74,12 @@ public class EditionSetEntry {
 
     public Set<String> getAttributes() {
         return attributes;
+    }
+
+    public void addAttribute(String attr) {
+        if (!getAttributes().contains(attr)) {
+            getAttributes().add(attr);
+        }
     }
     
 }
