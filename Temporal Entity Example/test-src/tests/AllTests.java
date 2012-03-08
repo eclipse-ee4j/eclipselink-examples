@@ -16,7 +16,6 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({ tests.internal.AllTests.class, 
-                VerifyInitialConfigTests.class, 
                 FullPersonWithEditions.class, 
                 FuturePersonTests.class,
                 DeleteTests.class,
