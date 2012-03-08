@@ -12,6 +12,11 @@
  ******************************************************************************/
 package temporal;
 
+import static temporal.persistence.DescriptorHelper.EDITION;
+import static temporal.persistence.DescriptorHelper.EDITION_VIEW;
+import static temporal.persistence.DescriptorHelper.getCurrentDescriptor;
+import static temporal.persistence.DescriptorHelper.getEditionDescriptor;
+
 import java.lang.reflect.Member;
 import java.util.Collection;
 import java.util.Map;
@@ -37,22 +42,6 @@ import temporal.persistence.TemporalQueryRedirector;
  * @since EclipseLink 2.3.1
  */
 public class TemporalHelper {
-
-    /**
-     * Property name used to cache current descriptor on edition and edition
-     * view descriptors
-     */
-    public static final String CURRENT = "Current";
-
-    /**
-     * Entity type name prefix prepended to current entity type
-     */
-    public static final String EDITION = "Edition";
-
-    /**
-     * Entity type name prefix prepended to current entity type
-     */
-    public static final String EDITION_VIEW = "EditionView";
 
     /**
      * Property named used to specify the current effective time for all queries
@@ -269,32 +258,6 @@ public class TemporalHelper {
 
         Object value = mapping.getRealAttributeValueFromObject(source, session);
         mapping.setRealAttributeValueInObject(target, value);
-    }
-
-    /**
-     * TODO
-     */
-    // TODO: Need better way to link edition descriptor to current
-    @SuppressWarnings("unchecked")
-    public static ClassDescriptor getCurrentDescriptor(Session session, Class<?> entityClass) {
-        ClassDescriptor desc = session.getClassDescriptor(entityClass);
-        if (isEditionClass(desc.getJavaClass())) {
-            String currentAlias = desc.getAlias().substring(0, desc.getAlias().indexOf(EDITION));
-            desc = session.getClassDescriptorForAlias(currentAlias);
-        }
-        return desc;
-    }
-
-    /**
-     * TODO
-     */
-    @SuppressWarnings("unchecked")
-    protected static ClassDescriptor getEditionDescriptor(Session session, Class<?> entityClass) {
-        ClassDescriptor desc = session.getClassDescriptor(entityClass);
-        if (desc == null || !isEditionClass(desc.getJavaClass())) {
-            desc = session.getClassDescriptorForAlias(desc.getAlias() + EDITION);
-        }
-        return desc;
     }
 
     /**

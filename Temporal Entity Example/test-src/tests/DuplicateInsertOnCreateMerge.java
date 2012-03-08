@@ -98,7 +98,7 @@ public class DuplicateInsertOnCreateMerge extends BaseTestCase {
         em.getTransaction().commit();
 
         em.clear();
-        personEditionT2 = em.find(PersonEntity.class, getSample().getId());
+        personEditionT2 = em.find(Person.class, getSample().getId());
 
         Assert.assertNotNull(personEditionT2);
         Assert.assertEquals(T2, personEditionT2.getEffectivity().getStart());

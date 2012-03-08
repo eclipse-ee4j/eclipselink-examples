@@ -34,6 +34,7 @@ import temporal.Effectivity;
 import temporal.TemporalEdition;
 import temporal.TemporalEntity;
 import temporal.TemporalHelper;
+import temporal.persistence.DescriptorHelper;
 import tests.BaseTestCase;
 
 /**
@@ -147,7 +148,7 @@ public class VerifyConfigTests extends BaseTestCase {
         Server session = JpaHelper.getServerSession(getEMF());
 
         for (String alias : new String[] { "Person", "Address", "Phone" }) {
-            ClassDescriptor descriptor = session.getClassDescriptorForAlias(alias + TemporalHelper.EDITION);
+            ClassDescriptor descriptor = session.getClassDescriptorForAlias(alias + DescriptorHelper.EDITION);
 
             Assert.assertNotNull(descriptor);
             Assert.assertNotNull(descriptor.getQueryManager().getAdditionalJoinExpression());
@@ -167,7 +168,7 @@ public class VerifyConfigTests extends BaseTestCase {
         Server session = JpaHelper.getServerSession(getEMF());
 
         for (String alias : new String[] { "Person", "Address", "Phone" }) {
-            ClassDescriptor descriptor = session.getClassDescriptorForAlias(alias + TemporalHelper.EDITION_VIEW);
+            ClassDescriptor descriptor = session.getClassDescriptorForAlias(alias + DescriptorHelper.EDITION_VIEW);
 
             Assert.assertNotNull(descriptor);
             Assert.assertNull(descriptor.getQueryManager().getAdditionalJoinExpression());
@@ -185,8 +186,8 @@ public class VerifyConfigTests extends BaseTestCase {
         Assert.assertNotNull(descriptor);
         Assert.assertTrue(descriptor.getObjectChangePolicy().isAttributeChangeTrackingPolicy());
 
-        if (TemporalEntity.class.isAssignableFrom(descriptor.getJavaClass()) && !descriptor.getAlias().endsWith(TemporalHelper.EDITION)) {
-            assertAttributeChangeTracking(session, alias + TemporalHelper.EDITION);
+        if (TemporalEntity.class.isAssignableFrom(descriptor.getJavaClass()) && !descriptor.getAlias().endsWith(DescriptorHelper.EDITION)) {
+            assertAttributeChangeTracking(session, alias + DescriptorHelper.EDITION);
         }
     }
 

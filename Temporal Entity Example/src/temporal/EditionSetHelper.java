@@ -23,6 +23,8 @@ import org.eclipse.persistence.internal.sessions.AbstractSession;
 import org.eclipse.persistence.internal.sessions.RepeatableWriteUnitOfWork;
 import org.eclipse.persistence.mappings.DatabaseMapping;
 
+import temporal.persistence.DescriptorHelper;
+
 /**
  * Apply an {@link EditionSet} making all of its contained editions the current.
  * This involves copying all relevant values into the current including the
@@ -55,7 +57,7 @@ public class EditionSetHelper {
         TemporalEntity<?> continuity = entry.getEdition().getContinuity();
 
         AbstractSession session = em.unwrap(RepeatableWriteUnitOfWork.class);
-        ClassDescriptor descriptor = TemporalHelper.getCurrentDescriptor(session, edition.getClass());
+        ClassDescriptor descriptor = DescriptorHelper.getCurrentDescriptor(session, edition.getClass());
 
         for (String attr : entry.getAttributes()) {
             DatabaseMapping mapping = descriptor.getMappingForAttributeName(attr);

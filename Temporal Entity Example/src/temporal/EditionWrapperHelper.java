@@ -19,9 +19,10 @@ import java.util.Collection;
 
 import javax.persistence.EntityManager;
 
-
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.internal.sessions.RepeatableWriteUnitOfWork;
+
+import temporal.persistence.DescriptorHelper;
 
 
 /**
@@ -64,7 +65,7 @@ public class EditionWrapperHelper {
         RepeatableWriteUnitOfWork uow = em.unwrap(RepeatableWriteUnitOfWork.class);
         ClassLoader classLoader = uow.getPlatform().getConversionManager().getLoader();
         ClassDescriptor descriptor = uow.getClassDescriptor(entity);
-        ClassDescriptor currentDesc = TemporalHelper.getCurrentDescriptor(uow, descriptor.getJavaClass());
+        ClassDescriptor currentDesc = DescriptorHelper.getCurrentDescriptor(uow, descriptor.getJavaClass());
         Class<?> wrapperInterface = (Class<?>) currentDesc.getProperty(TemporalHelper.INTERFACE);
 
         EditionWrapperHandler<?> handler = new EditionWrapperHandler<TemporalEntity<?>>(entity, em);

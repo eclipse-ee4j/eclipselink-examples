@@ -12,9 +12,10 @@
  ******************************************************************************/
 package temporal.persistence;
 
-import static temporal.TemporalHelper.*;
-import static temporal.TemporalHelper.EDITION_VIEW;
 import static temporal.TemporalHelper.INTERFACE;
+import static temporal.persistence.DescriptorHelper.CURRENT;
+import static temporal.persistence.DescriptorHelper.EDITION;
+import static temporal.persistence.DescriptorHelper.EDITION_VIEW;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -89,7 +90,7 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
                 editionViewDescriptors.add(editionViewDesc);
 
                 configureQueries(current, editionDesc, editionViewDesc, session);
-                
+
                 // Cache related descriptors for easy lookup
                 current.setProperty(CURRENT, current);
                 current.setProperty(EDITION, editionDesc);
@@ -100,7 +101,7 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
                 editionViewDesc.setProperty(CURRENT, current);
                 editionViewDesc.setProperty(EDITION, editionDesc);
                 editionViewDesc.setProperty(EDITION_VIEW, editionViewDesc);
-                
+
                 setupInterfaceDescriptor(current, session, interfaceDescriptors);
 
                 // Since the redirector can cause queries to run against
@@ -127,7 +128,7 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
         session.getProject().getDescriptors().putAll(interfaceDescriptors);
 
         configureEditionSetEntryVariableMapping(session, editionDescriptors);
-        
+
         session.getEventManager().addListener(new PropagateEditionChangesListener());
     }
 
@@ -313,7 +314,6 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
         raq.setCall(call);
         raq.addArgument("CID", int.class);
         session.addQuery(raq.getName(), raq);
-
     }
 
     private void addCidQueryKey(String keyName, ClassDescriptor desc, Session session) {
@@ -375,7 +375,7 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
         mapping.setIsCacheable(false);
 
         for (ClassDescriptor editionDesc : editionDescriptors) {
-            String shortAlias = editionDesc.getAlias().substring(0, editionDesc.getAlias().indexOf(TemporalHelper.EDITION));
+            String shortAlias = editionDesc.getAlias().substring(0, editionDesc.getAlias().indexOf(EDITION));
             mapping.addClassIndicator(editionDesc.getJavaClass(), shortAlias);
         }
 
@@ -424,7 +424,7 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
             if (entity.getEffectivity().getStart() == Effectivity.BOT) {
                 AbstractSession session = event.getSession().getRootSession(event.getQuery());
                 Object pk = event.getDescriptor().getObjectBuilder().extractPrimaryKeyFromObject(entity.getContinuity(), session);
-                ClassDescriptor currentDesc = TemporalHelper.getCurrentDescriptor(session, entity.getClass());
+                ClassDescriptor currentDesc = DescriptorHelper.getCurrentDescriptor(session, entity.getClass());
                 session.getIdentityMapAccessor().invalidateObject(pk, currentDesc.getJavaClass());
             }
         }

@@ -74,7 +74,7 @@ public class PropagateEditionChangesListener extends SessionEventAdapter {
     @SuppressWarnings("unchecked")
     private List<TemporalEntity<?>> findFutureEditions(RepeatableWriteUnitOfWork uow, EditionSetEntry entry) {
         ClassDescriptor desc = uow.getClassDescriptor(entry.getEdition());
-        desc = (ClassDescriptor) desc.getProperty(TemporalHelper.EDITION_VIEW);
+        desc = (ClassDescriptor) desc.getProperty(DescriptorHelper.EDITION_VIEW);
 
         ReadAllQuery raq = new ReadAllQuery(desc.getJavaClass());
         ExpressionBuilder eb = raq.getExpressionBuilder();
