@@ -35,13 +35,19 @@ import temporal.TemporalHelper;
  * is no {@link ObjectChangeSet} for the new edition instance and thus the
  * attributes modified are not known.
  * 
- * @see TemporalHelper#createEdition(javax.persistence.EntityManager, temporal.TemporalEntity)
+ * @see TemporalHelper#createEdition(javax.persistence.EntityManager,
+ *      temporal.TemporalEntity)
  * 
  * @author dclarke
  * @since EclipseLink 2.3.1
  */
 public class EditionSetEventListener extends DescriptorEventAdapter implements DescriptorCustomizer {
 
+    /**
+     * Listener enabled through the use of {@link DescriptorCustomizer}
+     * 
+     * @see EditionSet - @Customizer(EditionSetEventListener.class)
+     */
     @Override
     public void customize(ClassDescriptor descriptor) throws Exception {
         descriptor.getEventManager().addListener(this);
@@ -57,8 +63,8 @@ public class EditionSetEventListener extends DescriptorEventAdapter implements D
             for (EditionSetEntry entry : es.getEntries()) {
                 ObjectChangeSet objCS = uowCS.getCloneToObjectChangeSet().get(entry.getEdition());
                 if (objCS != null && objCS.hasChanges()) {
-                    for (Object attr : objCS.getAttributesToChanges().keySet()) {
-                        entry.getAttributes().add((String) attr);
+                    for (String attr : objCS.getChangedAttributeNames()) {
+                        entry.addAttribute(attr);
                     }
                 }
             }

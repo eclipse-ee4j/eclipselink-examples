@@ -10,18 +10,18 @@
  ******************************************************************************/
 package tests.internal;
 
-
+import static temporal.Effectivity.BOT;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import temporal.BaseEntity;
-import temporal.Effectivity;
+import temporal.BaseTemporalEntity;
 import temporal.TemporalEntity;
-import static temporal.Effectivity.*;
 
 /**
- *
+ * Simple tests verifying the functionality of the interfaces and base classes
+ * used in this temporal extension framework.
+ * 
  * @author dclarke
  * @since EclipseLink 2.3.1
  */
@@ -30,54 +30,71 @@ public class TemporalEntityTests {
 
     @Test
     public void verifyTestEntityConstructor() {
-        TestEntity entity = new TestEntity();
+        TestEntity entity = new TestEntityImpl();
 
+        Assert.assertNotNull(entity.getEffectivity());
+        Assert.assertNull(entity.getContinuity());
+        Assert.assertNull(entity.getPreviousEdition());
+        Assert.assertEquals(0, entity.getVersion());
         Assert.assertEquals(BOT, entity.getEffectivity().getStart());
     }
 
     @Test
     public void verifyTestEntityEditionConstructor() {
-        TestEntityEdition entity = new TestEntityEdition();
+        TestEntity entity = new TestEntityEdition();
 
+        Assert.assertNotNull(entity.getEffectivity());
+        Assert.assertNull(entity.getContinuity());
+        Assert.assertNull(entity.getPreviousEdition());
+        Assert.assertEquals(0, entity.getVersion());
         Assert.assertEquals(BOT, entity.getEffectivity().getStart());
     }
 
-    public static class TestEntity extends BaseEntity implements TemporalEntity<TestEntity> {
+    @Test
+    public void verifyTestEntityEditionViewConstructor() {
+        TestEntity entity = new TestEntityEditionView();
 
-        private Effectivity effectivity = new Effectivity();
-        
-        private TestEntity continuity;
-        
-        private TestEntity previous;
+        Assert.assertNotNull(entity.getEffectivity());
+        Assert.assertNull(entity.getContinuity());
+        Assert.assertNull(entity.getPreviousEdition());
+        Assert.assertEquals(0, entity.getVersion());
+        Assert.assertEquals(BOT, entity.getEffectivity().getStart());
+    }
+
+    @Test
+    public void testIsContinuity() {
+        TestEntity entity = new TestEntityEditionView();
+
+        Assert.assertFalse(entity.isContinuity());
+
+        entity.setId(1);
+        entity.setContinuity(entity);
+
+        Assert.assertTrue(entity.isContinuity());
+    }
+
+    /**
+     * Static test classes
+     */
+
+    public static interface TestEntity extends TemporalEntity<TestEntity> {
+        void setId(int id);
+    }
+
+    public static class TestEntityImpl extends BaseTemporalEntity<TestEntity> implements TestEntity {
 
         @Override
-        public Effectivity getEffectivity() {
-            return this.effectivity;
-        }
-
-        @Override
-        public TestEntity getContinuity() {
-            return this.continuity;
-        }
-
-        @Override
-        public void setContinuity(TestEntity continuity) {
-            this.continuity = continuity;
-        }
-
-        @Override
-        public TestEntity getPreviousEdition() {
-            return this.previous;
-        }
-
-        @Override
-        public void setPreviousEdition(TestEntity edition) {
-            this.previous = edition;
+        public void setId(int id) {
+            super.setId(id);
         }
 
     }
 
-    public static class TestEntityEdition extends TestEntity {
+    public static class TestEntityEdition extends TestEntityImpl {
+
+    }
+
+    public static class TestEntityEditionView extends TestEntityEdition {
 
     }
 }

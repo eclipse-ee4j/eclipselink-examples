@@ -24,7 +24,7 @@ import javax.persistence.Transient;
  * @since EclipseLink 2.3.1
  */
 @MappedSuperclass
-public abstract class BaseTemporalEntity<T> extends BaseEntity {
+public abstract class BaseTemporalEntity<T extends TemporalEntity<?>> extends BaseEntity {
 
     public BaseTemporalEntity() {
     }
@@ -62,6 +62,10 @@ public abstract class BaseTemporalEntity<T> extends BaseEntity {
 
     public void setPreviousEdition(T previousEdition) {
         this.previousEdition = previousEdition;
+    }
+    
+    public boolean isContinuity() {
+        return getContinuity() != null &&  getId() == getContinuity().getId();
     }
 
 }

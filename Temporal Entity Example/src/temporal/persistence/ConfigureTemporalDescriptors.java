@@ -12,7 +12,7 @@
  ******************************************************************************/
 package temporal.persistence;
 
-import static temporal.TemporalHelper.EDITION;
+import static temporal.TemporalHelper.*;
 import static temporal.TemporalHelper.EDITION_VIEW;
 import static temporal.TemporalHelper.INTERFACE;
 
@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Vector;
 
 import org.eclipse.persistence.config.CacheIsolationType;
 import org.eclipse.persistence.config.SessionCustomizer;
@@ -28,8 +29,10 @@ import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.descriptors.DescriptorEvent;
 import org.eclipse.persistence.descriptors.DescriptorEventAdapter;
 import org.eclipse.persistence.descriptors.DescriptorEventListener;
+import org.eclipse.persistence.descriptors.InheritancePolicy;
 import org.eclipse.persistence.descriptors.changetracking.AttributeChangeTrackingPolicy;
 import org.eclipse.persistence.dynamic.DynamicClassLoader;
+import org.eclipse.persistence.dynamic.DynamicClassWriter;
 import org.eclipse.persistence.expressions.ExpressionBuilder;
 import org.eclipse.persistence.internal.helper.DatabaseField;
 import org.eclipse.persistence.internal.jpa.CMP3Policy;
@@ -42,6 +45,7 @@ import org.eclipse.persistence.mappings.ManyToOneMapping;
 import org.eclipse.persistence.mappings.OneToManyMapping;
 import org.eclipse.persistence.mappings.OneToOneMapping;
 import org.eclipse.persistence.mappings.VariableOneToOneMapping;
+import org.eclipse.persistence.mappings.querykeys.DirectQueryKey;
 import org.eclipse.persistence.queries.DatabaseQuery;
 import org.eclipse.persistence.queries.QueryRedirector;
 import org.eclipse.persistence.queries.ReadAllQuery;
@@ -84,7 +88,19 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
                 ClassDescriptor editionViewDesc = createEditionType(session, dcl, current, EDITION_VIEW);
                 editionViewDescriptors.add(editionViewDesc);
 
-                configureQueries(current, editionDesc, session);
+                configureQueries(current, editionDesc, editionViewDesc, session);
+                
+                // Cache related descriptors for easy lookup
+                current.setProperty(CURRENT, current);
+                current.setProperty(EDITION, editionDesc);
+                current.setProperty(EDITION_VIEW, editionViewDesc);
+                editionDesc.setProperty(CURRENT, current);
+                editionDesc.setProperty(EDITION, editionDesc);
+                editionDesc.setProperty(EDITION_VIEW, editionViewDesc);
+                editionViewDesc.setProperty(CURRENT, current);
+                editionViewDesc.setProperty(EDITION, editionDesc);
+                editionViewDesc.setProperty(EDITION_VIEW, editionViewDesc);
+                
                 setupInterfaceDescriptor(current, session, interfaceDescriptors);
 
                 // Since the redirector can cause queries to run against
@@ -111,6 +127,8 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
         session.getProject().getDescriptors().putAll(interfaceDescriptors);
 
         configureEditionSetEntryVariableMapping(session, editionDescriptors);
+        
+        session.getEventManager().addListener(new PropagateEditionChangesListener());
     }
 
     /**
@@ -121,7 +139,7 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
      */
     private ClassDescriptor createEditionType(Session session, DynamicClassLoader dcl, ClassDescriptor source, String suffix) {
         String className = source.getJavaClassName() + suffix;
-        Class<?> cls = dcl.createDynamicClass(className, new EditionClassWriter(source.getJavaClass()));
+        Class<?> cls = dcl.createDynamicClass(className, new DynamicClassWriter(source.getJavaClass()));
 
         ClassDescriptor desc = (ClassDescriptor) source.clone();
         desc.setJavaClassName(className);
@@ -136,7 +154,49 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
         // weaving interfaces directly on each class
         desc.setObjectChangePolicy(new AttributeChangeTrackingPolicy());
 
+        if (desc.hasInheritance()) {
+            Map<?, ?> classIndicatorMapping = fixEditionMap(source.getInheritancePolicy().getClassIndicatorMapping(), dcl, suffix);
+            desc.getInheritancePolicy().setClassIndicatorMapping(classIndicatorMapping);
+            Map<?, ?> classNameIndicatorMapping = fixEditionMap(desc.getInheritancePolicy().getClassNameIndicatorMapping(), dcl, suffix);
+            desc.getInheritancePolicy().setClassNameIndicatorMapping(classNameIndicatorMapping);
+            fixParentClass(desc.getInheritancePolicy(), dcl, suffix);
+        }
+
         return desc;
+    }
+
+    private void fixParentClass(InheritancePolicy inheritancePolicy, DynamicClassLoader dcl, String sufix) {
+        if (inheritancePolicy.getParentClass() != null && inheritancePolicy.getParentClassName() != null) {
+            Class<?> parent = dcl.createDynamicClass(inheritancePolicy.getParentClassName() + sufix, new DynamicClassWriter(inheritancePolicy.getParentClass()));
+            inheritancePolicy.setParentClass(parent);
+            inheritancePolicy.setParentClassName(inheritancePolicy.getParentClassName() + sufix);
+        }
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private Map<?, ?> fixEditionMap(Map sourceClassIndicatorMapping, DynamicClassLoader dcl, String sufix) {
+        Map newMap = new HashMap();
+        for (Object key : sourceClassIndicatorMapping.keySet()) {
+            try {
+                // indicator mappings
+                if (key instanceof String && sourceClassIndicatorMapping.get(key) instanceof Class) {
+                    Class<?> value = dcl.createDynamicClass(((Class) sourceClassIndicatorMapping.get(key)).getName() + sufix, new DynamicClassWriter((Class) sourceClassIndicatorMapping.get(key)));
+                    newMap.put(key, value);
+                } else if (key instanceof Class && sourceClassIndicatorMapping.get(key) instanceof String) {
+                    Class<?> newkey = dcl.createDynamicClass(((Class) key).getName() + sufix, new DynamicClassWriter((Class) key));
+                    newMap.put(newkey, sourceClassIndicatorMapping.get(key));
+                }
+                // indicator name mapping
+                else if (key instanceof String && sourceClassIndicatorMapping.get(key) instanceof String) {
+                    newMap.put(key + sufix, sourceClassIndicatorMapping.get(key));
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return newMap;
     }
 
     /**
@@ -150,6 +210,7 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
      * by the additional criteria. This method assumes that only simple FK
      * structures are in use.
      */
+    @SuppressWarnings("unchecked")
     private void fixEditionRelationships(ClassDescriptor descriptor, DynamicClassLoader dcl, String suffix) throws ClassNotFoundException {
 
         // Point all reference mappings to TemporalEntity to edition classes
@@ -176,12 +237,13 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
                 } else if (frMapping.isOneToManyMapping()) {
                     OneToManyMapping otMMapping = (OneToManyMapping) frMapping;
                     fixFKNames(otMMapping.getTargetForeignKeysToSourceKeys());
+
                     List<DatabaseField> sourceFields = (List<DatabaseField>) otMMapping.getSourceKeyFields().clone();
                     otMMapping.getSourceKeyFields().clear();
                     List<DatabaseField> targetFields = (List<DatabaseField>) otMMapping.getTargetForeignKeyFields().clone();
                     otMMapping.getTargetForeignKeyFields().clear();
-                    
-                    for (int i  = 0; i < sourceFields.size(); i++) {
+
+                    for (int i = 0; i < sourceFields.size(); i++) {
                         DatabaseField sourceField = sourceFields.get(0).clone();
                         DatabaseField targetField = targetFields.get(0).clone();
                         if (sourceField.getName().equals("OID")) {
@@ -213,7 +275,7 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
     /**
      * Configure queries for current and edition descriptors.
      */
-    private void configureQueries(ClassDescriptor currentDesc, ClassDescriptor editionDesc, Session session) {
+    private void configureQueries(ClassDescriptor currentDesc, ClassDescriptor editionDesc, ClassDescriptor editionViewDesc, Session session) {
         // Add query redirector to handle edition query redirection to edition
         // class when effectivity time is provided.
         TemporalQueryRedirector redirector = new TemporalQueryRedirector(currentDesc, editionDesc);
@@ -221,15 +283,19 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
         currentDesc.setDefaultReadObjectQueryRedirector(redirector);
         currentDesc.setDefaultReportQueryRedirector(redirector);
 
+        // EDITION VIEW: Add query keys
+        addCidQueryKey("id", editionViewDesc, session);
+        addCidQueryKey("cid", editionViewDesc, session);
+
         // EDITION: Add additional criteria and query keys
         editionDesc.getDescriptorQueryManager().setAdditionalCriteria(":EFF_TS >= this.effectivity.start AND :EFF_TS < this.effectivity.end");
-        editionDesc.addDirectQueryKey("id", "CID");
-        editionDesc.addDirectQueryKey("cid", "CID");
+        addCidQueryKey("id", editionDesc, session);
+        addCidQueryKey("cid", editionDesc, session);
 
         // CURRENT: Add additional criteria to current descriptor
         currentDesc.getQueryManager().setAdditionalCriteria("this.effectivity.start = " + Effectivity.BOT);
-        currentDesc.addDirectQueryKey("cid", "CID");
-        currentDesc.addDirectQueryKey("id", "OID");
+        addCidQueryKey("id", currentDesc, session);
+        addCidQueryKey("cid", currentDesc, session);
 
         // Add Named Queries for editions
         ReadAllQuery raq = new ReadAllQuery(editionDesc.getJavaClass());
@@ -250,10 +316,39 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
 
     }
 
+    private void addCidQueryKey(String keyName, ClassDescriptor desc, Session session) {
+        DatabaseField cidField = getCidField(desc, session);
+        if (cidField != null) {
+            DirectQueryKey cidKey = new DirectQueryKey();
+            cidKey.setName(keyName);
+            cidKey.setField(cidField);
+            cidKey.setFieldName(cidField.getQualifiedName());
+            cidKey.initialize(desc);
+            desc.addQueryKey(cidKey);
+        }
+    }
+
+    private DatabaseField getCidField(ClassDescriptor desc, Session session) {
+        DatabaseMapping prop = desc.getMappingForAttributeName("continuity");
+        if (prop != null) {
+            if (prop.isForeignReferenceMapping()) {
+                Vector<DatabaseField> fields = ((ManyToOneMapping) prop).getForeignKeyFields();
+                return fields.iterator().next();
+            }
+
+        }
+        // try to find it in the parent
+        if (desc.hasInheritance() && desc.getInheritancePolicy().getParentClass() != null) {
+            ClassDescriptor parentDesc = session.getClassDescriptor(desc.getInheritancePolicy().getParentClass());
+            if (parentDesc != null) {
+                return getCidField(parentDesc, session);
+            }
+        }
+        return null;
+    }
+
     /**
-     * TODO
-     * 
-     * @param interfaceDescriptors
+     * Calculate interface descriptors.
      */
     private void setupInterfaceDescriptor(ClassDescriptor currentDesc, Session session, Map<Class<?>, ClassDescriptor> interfaceDescriptors) {
         Class<?>[] interfaces = currentDesc.getJavaClass().getInterfaces();
@@ -274,8 +369,9 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
     @SuppressWarnings("unchecked")
     private void configureEditionSetEntryVariableMapping(Session session, List<ClassDescriptor> editionDescriptors) {
         ClassDescriptor editionSetEntryDesc = session.getClassDescriptor(EditionSetEntry.class);
-        VariableOneToOneMapping mapping = (VariableOneToOneMapping) editionSetEntryDesc.getMappingForAttributeName("edition");
-
+        VariableOneToOneMapping originalMapping = (VariableOneToOneMapping) editionSetEntryDesc.removeMappingForAttributeName("edition");
+        CustomVariableOneToOneMaping mapping = new CustomVariableOneToOneMaping(originalMapping);
+        editionSetEntryDesc.addMapping(mapping);
         mapping.setIsCacheable(false);
 
         for (ClassDescriptor editionDesc : editionDescriptors) {

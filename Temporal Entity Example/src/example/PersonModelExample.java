@@ -12,6 +12,7 @@ package example;
 
 import static temporal.TemporalHelper.EFF_TS_PROPERTY;
 
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,6 +84,7 @@ public class PersonModelExample {
         this.fullPerson.setName("Jim");
         this.fullPerson.setAddress(new AddressEntity("123 Anywhere St", "Miami", "Florida"));
         this.fullPerson.addPhone("Home", "111-111-1111");
+        this.fullPerson.setDateOfBirth(new Date(70, 8, 13));
 
         // create futurePerson
         this.futurePerson = new PersonEntity();

@@ -18,6 +18,7 @@ import model.entities.AddressEntity;
 import model.entities.PersonEntity;
 import model.entities.PhoneEntity;
 
+import org.eclipse.persistence.config.CacheIsolationType;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.internal.weaving.PersistenceWeaved;
 import org.eclipse.persistence.internal.weaving.PersistenceWeavedChangeTracking;
@@ -136,6 +137,8 @@ public class VerifyConfigTests extends BaseTestCase {
 
             Assert.assertEquals(1, descriptor.getPrimaryKeyFieldNames().size());
             Assert.assertEquals("OID", descriptor.getPrimaryKeyFields().get(0).getName());
+
+            Assert.assertEquals(CacheIsolationType.PROTECTED,descriptor.getCacheIsolation());
         }
     }
 
@@ -154,6 +157,8 @@ public class VerifyConfigTests extends BaseTestCase {
 
             Assert.assertEquals(1, descriptor.getPrimaryKeyFieldNames().size());
             Assert.assertEquals("OID", descriptor.getPrimaryKeyFields().get(0).getName());
+
+            Assert.assertEquals(CacheIsolationType.ISOLATED,descriptor.getCacheIsolation());
         }
     }
 
@@ -170,6 +175,8 @@ public class VerifyConfigTests extends BaseTestCase {
             Assert.assertTrue(descriptor.isIsolated());
             Assert.assertEquals(1, descriptor.getPrimaryKeyFieldNames().size());
             Assert.assertEquals("OID", descriptor.getPrimaryKeyFields().get(0).getName());
+
+            Assert.assertEquals(CacheIsolationType.ISOLATED,descriptor.getCacheIsolation());
         }
     }
 
@@ -190,13 +197,13 @@ public class VerifyConfigTests extends BaseTestCase {
 
         Assert.assertNotNull(descriptor);
         Assert.assertEquals(PersonEntity.class, descriptor.getJavaClass());
-        
+
         OneToManyMapping phonesMapping = (OneToManyMapping) descriptor.getMappingForAttributeName("phones");
         Assert.assertNotNull(phonesMapping);
 
         Assert.assertEquals("Phone", phonesMapping.getReferenceDescriptor().getAlias());
         Assert.assertTrue(phonesMapping.isCacheable());
-        
+
         // TODO: Verify FK fields
     }
 

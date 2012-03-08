@@ -16,6 +16,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -43,6 +44,7 @@ public class PersonHobby implements Temporal {
     private Hobby hobby;
 
     @ManyToOne(fetch = FetchType.EAGER, targetEntity = PersonEntity.class)
+    @JoinColumn(name="PERSON_ID")
     private Person person;
 
     @Embedded

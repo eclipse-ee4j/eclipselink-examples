@@ -49,7 +49,7 @@ public abstract class BaseTestCase {
             Server session = JpaHelper.getServerSession(emf);
 
             SchemaManager sm = new TemporalSchemaManager(session);
-            sm.replaceDefaultTables();
+            sm.replaceDefaultTables(false, false);
             sm.replaceSequences();
 
             // Populate test case example instances
