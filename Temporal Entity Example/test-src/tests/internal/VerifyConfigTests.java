@@ -12,7 +12,9 @@ package tests.internal;
 
 import junit.framework.Assert;
 import model.Address;
+import model.Hobby;
 import model.Person;
+import model.PersonHobby;
 import model.Phone;
 import model.entities.AddressEntity;
 import model.entities.PersonEntity;
@@ -20,12 +22,14 @@ import model.entities.PhoneEntity;
 
 import org.eclipse.persistence.config.CacheIsolationType;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
+import org.eclipse.persistence.internal.helper.DatabaseField;
 import org.eclipse.persistence.internal.weaving.PersistenceWeaved;
 import org.eclipse.persistence.internal.weaving.PersistenceWeavedChangeTracking;
 import org.eclipse.persistence.internal.weaving.PersistenceWeavedFetchGroups;
 import org.eclipse.persistence.internal.weaving.PersistenceWeavedLazy;
 import org.eclipse.persistence.jpa.JpaHelper;
 import org.eclipse.persistence.mappings.OneToManyMapping;
+import org.eclipse.persistence.mappings.OneToOneMapping;
 import org.eclipse.persistence.sessions.Session;
 import org.eclipse.persistence.sessions.server.Server;
 import org.junit.Test;
@@ -139,8 +143,29 @@ public class VerifyConfigTests extends BaseTestCase {
             Assert.assertEquals(1, descriptor.getPrimaryKeyFieldNames().size());
             Assert.assertEquals("OID", descriptor.getPrimaryKeyFields().get(0).getName());
 
-            Assert.assertEquals(CacheIsolationType.PROTECTED,descriptor.getCacheIsolation());
+            Assert.assertEquals(CacheIsolationType.PROTECTED, descriptor.getCacheIsolation());
         }
+    }
+
+    /**
+     * Verify the {@link PersonHobby} and {@link Hobby} mappings are correct.
+     * These mappings are temporal but they are not {@link TemporalEntity}
+     */
+    @Test
+    public void verifyPersonHobbyMappings() {
+        Server session = JpaHelper.getServerSession(getEMF());
+        ClassDescriptor phDesc = session.getDescriptorForAlias("PersonHobby");
+        Assert.assertNotNull(phDesc);
+        
+        OneToOneMapping personMapping = (OneToOneMapping) phDesc.getMappingForAttributeName("person");
+        Assert.assertNotNull(personMapping);
+        
+        Assert.assertEquals(1, personMapping.getForeignKeyFields().size());
+        DatabaseField fkField = personMapping.getForeignKeyFields().firstElement();
+        Assert.assertEquals("PERSON_ID", fkField.getName());
+        
+        DatabaseField targetField = personMapping.getSourceToTargetKeyFields().get(fkField);
+        Assert.assertEquals("OID", targetField.getName());
     }
 
     @Test
@@ -159,7 +184,7 @@ public class VerifyConfigTests extends BaseTestCase {
             Assert.assertEquals(1, descriptor.getPrimaryKeyFieldNames().size());
             Assert.assertEquals("OID", descriptor.getPrimaryKeyFields().get(0).getName());
 
-            Assert.assertEquals(CacheIsolationType.ISOLATED,descriptor.getCacheIsolation());
+            Assert.assertEquals(CacheIsolationType.ISOLATED, descriptor.getCacheIsolation());
         }
     }
 
@@ -177,7 +202,7 @@ public class VerifyConfigTests extends BaseTestCase {
             Assert.assertEquals(1, descriptor.getPrimaryKeyFieldNames().size());
             Assert.assertEquals("OID", descriptor.getPrimaryKeyFields().get(0).getName());
 
-            Assert.assertEquals(CacheIsolationType.ISOLATED,descriptor.getCacheIsolation());
+            Assert.assertEquals(CacheIsolationType.ISOLATED, descriptor.getCacheIsolation());
         }
     }
 

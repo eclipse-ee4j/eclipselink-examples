@@ -44,7 +44,7 @@ public class PersonHobby implements Temporal {
     private Hobby hobby;
 
     @ManyToOne(fetch = FetchType.EAGER, targetEntity = PersonEntity.class)
-    @JoinColumn(name="PERSON_ID")
+    @JoinColumn(name="PERSON_ID", referencedColumnName="OID")
     private Person person;
 
     @Embedded
