@@ -49,7 +49,9 @@ public abstract class BaseTestCase {
             Server session = JpaHelper.getServerSession(emf);
 
             SchemaManager sm = new TemporalSchemaManager(session);
-            sm.replaceDefaultTables(false, false);
+            // Cache SchemaManager so it can be verified in test cases
+            session.setProperty(SchemaManager.class.getName(), sm);
+            sm.replaceDefaultTables(false, true);
             sm.replaceSequences();
 
             // Populate test case example instances

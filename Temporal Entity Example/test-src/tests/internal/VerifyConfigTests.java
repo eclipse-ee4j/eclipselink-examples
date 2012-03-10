@@ -159,13 +159,14 @@ public class VerifyConfigTests extends BaseTestCase {
         
         OneToOneMapping personMapping = (OneToOneMapping) phDesc.getMappingForAttributeName("person");
         Assert.assertNotNull(personMapping);
+        Assert.assertSame(PersonEntity.class, personMapping.getReferenceClass());
         
         Assert.assertEquals(1, personMapping.getForeignKeyFields().size());
         DatabaseField fkField = personMapping.getForeignKeyFields().firstElement();
         Assert.assertEquals("PERSON_ID", fkField.getName());
         
         DatabaseField targetField = personMapping.getSourceToTargetKeyFields().get(fkField);
-        Assert.assertEquals("OID", targetField.getName());
+        Assert.assertEquals("CID", targetField.getName());
     }
 
     @Test

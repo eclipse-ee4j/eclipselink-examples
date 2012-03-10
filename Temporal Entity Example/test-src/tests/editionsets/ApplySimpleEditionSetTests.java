@@ -100,6 +100,7 @@ public class ApplySimpleEditionSetTests extends BaseTestCase {
             personEditionT2.addPhone(pT2);
             pT2.setNumber("222-222-2222");
             em.persist(personEditionT2.addHobby(example.hobbies.get(GOLF), T2));
+            
             em.flush();
 
             System.out.println("\nEditionSetTests.populateT2Edition::DONE");

@@ -22,6 +22,7 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({ VerifyConfigTests.class, 
+                VerifySchemaManager.class,
                 ConfigureTemporalDescriptorsTests.class, 
                 TemporalHelperTests.class, 
                 TemporalEntityTests.class})

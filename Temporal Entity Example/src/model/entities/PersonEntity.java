@@ -45,6 +45,7 @@ import org.eclipse.persistence.annotations.ChangeTracking;
 import org.eclipse.persistence.annotations.Property;
 
 import temporal.BaseTemporalEntity;
+import temporal.TemporalEntity;
 import temporal.TemporalHelper;
 
 @Entity(name = "Person")
@@ -71,7 +72,7 @@ public class PersonEntity extends BaseTemporalEntity<Person> implements Person {
     @Column(name = "NAME")
     private Set<String> nicknames = new HashSet<String>();
 
-    @OneToMany(mappedBy = "person", cascade = { CascadeType.MERGE })
+    @OneToMany(mappedBy = "person", cascade = { CascadeType.MERGE, CascadeType.REMOVE })
     @MapKey(name = "name")
     private Map<String, PersonHobby> hobbies = new HashMap<String, PersonHobby>();
 
@@ -179,6 +180,17 @@ public class PersonEntity extends BaseTemporalEntity<Person> implements Person {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Override
+    public void applyEdition(TemporalEntity edition) {
+       Person personEdition = (Person) edition;
+       
+       for (PersonHobby ph: personEdition.getPersonHobbies().values()) {
+           addHobby(ph.getHobby(), getEffectivity().getStart());
+       }
+       personEdition.getPersonHobbies().clear();
     }
 
     public String toString() {

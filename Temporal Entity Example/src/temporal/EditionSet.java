@@ -39,6 +39,7 @@ import temporal.persistence.EditionSetEventListener;
 public class EditionSet {
 
     @Id
+    @Column(name="ID")
     private long effective;
 
     private String description;

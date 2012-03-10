@@ -380,7 +380,7 @@ public class TemporalHelper {
      */
     public static boolean isTemporal(Object value) {
         if (value instanceof Class) {
-            return isTemporal((Class<?>) value);
+            return isTemporal((Class<?>) value, true);
         }
         if (value instanceof Temporal) {
             return true;
@@ -396,8 +396,11 @@ public class TemporalHelper {
         return false;
     }
 
-    public static boolean isTemporal(Class<?> value) {
-        return value != null && Temporal.class.isAssignableFrom(value);
+    public static boolean isTemporal(Class<?> value, boolean includeTemporalEntity) {
+        if (value == null || (!includeTemporalEntity && isTemporalEntity(value))) {
+            return false;
+        }
+        return Temporal.class.isAssignableFrom(value);
     }
 
     /**

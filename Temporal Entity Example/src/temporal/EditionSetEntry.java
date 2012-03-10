@@ -34,9 +34,11 @@ public class EditionSetEntry {
 
     @Id
     @GeneratedValue
+    @Column(name="ID")
     private long id;
     
     @ManyToOne
+    @JoinColumn(name="EDITION_SET_ID" , referencedColumnName="ID")
     private EditionSet editionSet;
 
     @VariableOneToOne(fetch=FetchType.LAZY)
@@ -46,7 +48,7 @@ public class EditionSetEntry {
      * Set of attributes that have been modified in this edition. 
      */
     @ElementCollection
-    @CollectionTable(name="TEDITIONSET_ENTRY_ATTR")
+    @CollectionTable(name="TEDITIONSET_ENTRY_ATTR" , joinColumns=@JoinColumn(name="ID", referencedColumnName="ID"))
     @Column(name="ATTRIBUTE")
     private Set<String> attributes = new HashSet<String>();
 

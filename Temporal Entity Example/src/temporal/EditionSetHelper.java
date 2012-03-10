@@ -72,6 +72,8 @@ public class EditionSetHelper {
                 }
             }
         }
+        
+       continuity.applyEdition(edition);
 
         continuity.getEffectivity().setEnd(edition.getEffectivity().getEnd());
     }

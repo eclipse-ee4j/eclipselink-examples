@@ -34,7 +34,17 @@ public interface TemporalEntity<T extends TemporalEntity<?>> extends Temporal {
     void setPreviousEdition(T edition);
 
     long getVersion();
-    
+
     boolean isContinuity();
+
+    /**
+     * When an edition is promoted to become the continuity this method is
+     * invoked. This method is invoked after the {@link EditionSetHelper} has
+     * copied all of the mapped values over and allows for entity specific logic
+     * to be applied.
+     */
+    @SuppressWarnings("rawtypes")
+    void applyEdition(TemporalEntity edition);
+
 
 }

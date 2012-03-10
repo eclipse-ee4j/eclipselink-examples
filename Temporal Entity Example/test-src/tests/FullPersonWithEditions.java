@@ -232,11 +232,16 @@ public class FullPersonWithEditions extends BaseTestCase {
 
         Assert.assertEquals(getSample().getId(), person.getId());
         Assert.assertSame(person, person.getContinuity());
-        Assert.assertEquals(0, person.getPersonHobbies().size());
         Assert.assertTrue(person.getEffectivity().isCurrent());
         Assert.assertFalse(person.getEffectivity().isFutureEdition());
         Assert.assertEquals(person.getEffectivity().getStart(), BOT);
         Assert.assertEquals(person.getEffectivity().getEnd(), T2);
+
+        
+        Assert.assertEquals(0, person.getPersonHobbies().size());
+        
+        Assert.assertEquals(1, person.getPhones().size());
+        
     }
 
     @Test
@@ -479,7 +484,7 @@ public class FullPersonWithEditions extends BaseTestCase {
         Assert.assertEquals(3, editions.size());
     }
 
-    @Test
+   // @Test
     public void deleteAllAtT5() {
         EntityManager em = createEntityManager();
         TemporalHelper.setEffectiveTime(em, T5);
@@ -494,7 +499,9 @@ public class FullPersonWithEditions extends BaseTestCase {
             phone.getEffectivity().setEnd(T5);
         }
 
-        em.getTransaction().commit();
+        em.flush();
+        
+        // TODO - validation
     }
 
     @Test
