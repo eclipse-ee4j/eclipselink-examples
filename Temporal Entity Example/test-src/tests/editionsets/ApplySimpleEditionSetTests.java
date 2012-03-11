@@ -57,7 +57,7 @@ public class ApplySimpleEditionSetTests extends BaseTestCase {
         Assert.assertEquals(3, es.getEntries().size());
         
         for (EditionSetEntry ese: es.getEntries()) {
-            Assert.assertNotNull(ese.getEdition());
+            Assert.assertNotNull(ese.getTemporal());
         }
 
         EditionSetHelper.apply(em, es);

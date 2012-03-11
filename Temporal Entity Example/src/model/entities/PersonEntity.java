@@ -132,8 +132,13 @@ public class PersonEntity extends BaseTemporalEntity<Person> implements Person {
     @Override
     public PersonHobby addHobby(Hobby hobby, long asOf) {
         PersonHobby personHobby = new PersonHobby(hobby, this);
-        this.hobbies.put(hobby.getName(), personHobby);
         personHobby.getEffectivity().setStart(asOf);
+        return addHobby(personHobby);
+    }
+
+    @Override
+    public PersonHobby addHobby(PersonHobby personHobby) {
+        this.hobbies.put(personHobby.getName(), personHobby);
         return personHobby;
     }
 

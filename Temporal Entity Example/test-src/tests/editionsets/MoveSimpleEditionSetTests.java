@@ -57,7 +57,7 @@ public class MoveSimpleEditionSetTests extends BaseTestCase {
         Assert.assertEquals(3, es.getEntries().size());
 
         for (EditionSetEntry entry : es.getEntries()) {
-            System.out.println("> " + entry.getEdition());
+            System.out.println("> " + entry.getTemporal());
             for (String attrName : entry.getAttributes()) {
                 System.out.println("\t>> " + attrName);
             }

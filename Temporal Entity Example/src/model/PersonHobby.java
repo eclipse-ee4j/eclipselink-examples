@@ -55,9 +55,8 @@ public class PersonHobby implements Temporal {
 
     public PersonHobby(Hobby hobby, Person person) {
         this();
-        this.name = hobby.getName();
-        this.hobby = hobby;
         this.person = person;
+        setHobby(hobby);
     }
 
     public PersonHobby(Hobby hobby, Person person, long effectiveTS) {
@@ -71,6 +70,11 @@ public class PersonHobby implements Temporal {
 
     public Hobby getHobby() {
         return hobby;
+    }
+
+    public void setHobby(Hobby hobby) {
+        this.name = hobby.getName();
+        this.hobby = hobby;
     }
 
     public Person getPerson() {

@@ -198,6 +198,51 @@ public class TemporalHelper {
      * @return the new edition entity
      */
     @SuppressWarnings("unchecked")
+    public static  <T extends Temporal> T  newTemporal(EntityManager em, Class<T> temporalClass) {
+        AbstractSession session = em.unwrap(RepeatableWriteUnitOfWork.class);
+        Long start = (Long) session.getProperty(EFF_TS_PROPERTY);
+        ClassDescriptor descriptor = session.getClassDescriptor(temporalClass);
+
+        if (descriptor == null) {
+            throw new IllegalArgumentException("No descriptor for: " + temporalClass);
+        }
+        // Lookup the EditionSet and throw and exception if one was not created.
+        EditionSet editionSet = getEditionSet(em);
+        if (editionSet == null && start != null) {
+            throw new IllegalStateException("No EditionSet associated with this EntityManager");
+        }
+
+        Temporal newInstance = (Temporal) descriptor.getInstantiationPolicy().buildNewInstance();
+        if (start != null) {
+            newInstance.getEffectivity().setStart(start);
+        }
+        em.persist(newInstance);
+
+        if (editionSet != null) {
+            editionSet.add(newInstance);
+        }
+
+        // TODO: Enable if change tracking required
+        //em.flush();
+
+        return (T) newInstance;
+    }
+
+    /**
+     * Create a new entity that is planned to exist at some future time. The
+     * entity created will have a start time greater than
+     * {@link TemporalEntity#BOT} (beginning of time) and will be the continuity
+     * as well. The start team is specified by the effective time of the
+     * {@link EntityManager} specified by its {@value #EFF_TS_PROPERTY}
+     * property.
+     * 
+     * @param em
+     *            {@link EntityManager} to persist the new edition into
+     * @param entityClass
+     *            the edition or current class
+     * @return the new edition entity
+     */
+    @SuppressWarnings("unchecked")
     public static <T extends TemporalEntity<?>> T newInstance(EntityManager em, Class<T> entityClass) {
         AbstractSession session = em.unwrap(RepeatableWriteUnitOfWork.class);
         Long start = (Long) session.getProperty(EFF_TS_PROPERTY);

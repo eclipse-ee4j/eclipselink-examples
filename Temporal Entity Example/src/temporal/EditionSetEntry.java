@@ -15,7 +15,16 @@ package temporal;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.*;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import org.eclipse.persistence.annotations.VariableOneToOne;
 
@@ -34,40 +43,48 @@ public class EditionSetEntry {
 
     @Id
     @GeneratedValue
-    @Column(name="ID")
+    @Column(name = "ID")
     private long id;
-    
+
     @ManyToOne
-    @JoinColumn(name="EDITION_SET_ID" , referencedColumnName="ID")
+    @JoinColumn(name = "EDITION_SET_ID", referencedColumnName = "ID")
     private EditionSet editionSet;
 
-    @VariableOneToOne(fetch=FetchType.LAZY)
-    private TemporalEntity<?> edition;
+    /**
+     * The {@link Temporal} or {@link TemporalEntity} that has been created or
+     * modified
+     */
+    @VariableOneToOne(fetch = FetchType.LAZY)
+    private Temporal temporal;
 
     /**
-     * Set of attributes that have been modified in this edition. 
+     * Set of attributes that have been modified in this edition.
      */
     @ElementCollection
-    @CollectionTable(name="TEDITIONSET_ENTRY_ATTR" , joinColumns=@JoinColumn(name="ID", referencedColumnName="ID"))
-    @Column(name="ATTRIBUTE")
+    @CollectionTable(name = "TEDITIONSET_ENTRY_ATTR", joinColumns = @JoinColumn(name = "ID", referencedColumnName = "ID"))
+    @Column(name = "ATTRIBUTE")
     private Set<String> attributes = new HashSet<String>();
 
     private EditionSetEntry() {
         super();
     }
 
-    public EditionSetEntry(EditionSet editionSet, TemporalEntity<?> edition) {
+    public EditionSetEntry(EditionSet editionSet, Temporal temporal) {
         this();
         this.editionSet = editionSet;
-        this.edition = edition;
+        this.temporal = temporal;
     }
 
     public long getId() {
         return id;
     }
 
-    public TemporalEntity<?> getEdition() {
-        return edition;
+    public Temporal getTemporal() {
+        return temporal;
+    }
+
+    public TemporalEntity<?> getTemporalEntity() {
+        return (TemporalEntity<?>) temporal;
     }
 
     public EditionSet getEditionSet() {
@@ -83,5 +100,5 @@ public class EditionSetEntry {
             getAttributes().add(attr);
         }
     }
-    
+
 }

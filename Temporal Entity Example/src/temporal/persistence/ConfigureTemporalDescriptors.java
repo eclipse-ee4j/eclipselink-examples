@@ -406,7 +406,7 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
     @SuppressWarnings("unchecked")
     private void configureEditionSetEntryVariableMapping(Session session, List<ClassDescriptor> editionDescriptors) {
         ClassDescriptor editionSetEntryDesc = session.getClassDescriptor(EditionSetEntry.class);
-        VariableOneToOneMapping originalMapping = (VariableOneToOneMapping) editionSetEntryDesc.removeMappingForAttributeName("edition");
+        VariableOneToOneMapping originalMapping = (VariableOneToOneMapping) editionSetEntryDesc.removeMappingForAttributeName("temporal");
         CustomVariableOneToOneMaping mapping = new CustomVariableOneToOneMaping(originalMapping);
         editionSetEntryDesc.addMapping(mapping);
         mapping.setIsCacheable(false);
@@ -414,6 +414,12 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
         for (ClassDescriptor editionDesc : editionDescriptors) {
             String shortAlias = editionDesc.getAlias().substring(0, editionDesc.getAlias().indexOf(EDITION));
             mapping.addClassIndicator(editionDesc.getJavaClass(), shortAlias);
+        }
+        
+        for (ClassDescriptor desc: session.getDescriptors().values()) {
+            if (!desc.isDescriptorForInterface() && TemporalHelper.isTemporal(desc.getJavaClass(), false)) {
+                mapping.addClassIndicator(desc.getJavaClass(), desc.getAlias());
+            }
         }
 
         for (Entry<?, String> entry : ((Map<?, String>) mapping.getSourceToTargetQueryKeyNames()).entrySet()) {

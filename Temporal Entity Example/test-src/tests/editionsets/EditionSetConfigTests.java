@@ -54,6 +54,7 @@ public class EditionSetConfigTests extends BaseTestCase {
         Assert.assertNotNull(otmMapping);
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Test
     public void verifyEditionSetEntryMapping() {
         EntityManager em = createEntityManager();
@@ -61,8 +62,22 @@ public class EditionSetConfigTests extends BaseTestCase {
         ClassDescriptor desc = em.unwrap(Server.class).getClassDescriptorForAlias("EditionSetEntry");
         Assert.assertNotNull(desc);
 
-        VariableOneToOneMapping votoMapping = (VariableOneToOneMapping) desc.getMappingForAttributeName("edition");
+        VariableOneToOneMapping votoMapping = (VariableOneToOneMapping) desc.getMappingForAttributeName("temporal");
         Assert.assertNotNull(votoMapping);
+
+        Assert.assertEquals(8, votoMapping.getTypeIndicatorTranslation().size());
+
+        Assert.assertTrue(votoMapping.getTypeIndicatorTranslation().containsKey("Person"));
+        Assert.assertTrue(TemporalHelper.isEditionClass((Class) votoMapping.getTypeIndicatorTranslation().get("Person")));
+
+        Assert.assertTrue(votoMapping.getTypeIndicatorTranslation().containsKey("Phone"));
+        Assert.assertTrue(TemporalHelper.isEditionClass((Class) votoMapping.getTypeIndicatorTranslation().get("Phone")));
+
+        Assert.assertTrue(votoMapping.getTypeIndicatorTranslation().containsKey("Address"));
+        Assert.assertTrue(TemporalHelper.isEditionClass((Class) votoMapping.getTypeIndicatorTranslation().get("Address")));
+
+        Assert.assertTrue(votoMapping.getTypeIndicatorTranslation().containsKey("PersonHobby"));
+        Assert.assertTrue(TemporalHelper.isTemporal((Class) votoMapping.getTypeIndicatorTranslation().get("PersonHobby"), false));
     }
 
     @Test
@@ -121,7 +136,6 @@ public class EditionSetConfigTests extends BaseTestCase {
 
         Assert.assertNull(es);
     }
-
 
     /**
      * Populate initial sample entity

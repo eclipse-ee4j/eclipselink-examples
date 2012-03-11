@@ -237,11 +237,10 @@ public class FullPersonWithEditions extends BaseTestCase {
         Assert.assertEquals(person.getEffectivity().getStart(), BOT);
         Assert.assertEquals(person.getEffectivity().getEnd(), T2);
 
-        
         Assert.assertEquals(0, person.getPersonHobbies().size());
-        
+
         Assert.assertEquals(1, person.getPhones().size());
-        
+
     }
 
     @Test
@@ -484,7 +483,7 @@ public class FullPersonWithEditions extends BaseTestCase {
         Assert.assertEquals(3, editions.size());
     }
 
-   // @Test
+    // @Test
     public void deleteAllAtT5() {
         EntityManager em = createEntityManager();
         TemporalHelper.setEffectiveTime(em, T5);
@@ -500,7 +499,7 @@ public class FullPersonWithEditions extends BaseTestCase {
         }
 
         em.flush();
-        
+
         // TODO - validation
     }
 
@@ -596,5 +595,53 @@ public class FullPersonWithEditions extends BaseTestCase {
         Assert.assertEquals(new Date(75, 1, 5), results.get(0));
         Assert.assertNull(results.get(1));
         Assert.assertNull(results.get(2));
+    }
+
+    /**
+     * Verify the query result and relationship to person
+     */
+    @Test
+    public void queryHomePhoneAtBOT() {
+        Assert.fail("NOT YET IMPLEMENTED");
+    }
+
+    /**
+     * Verify the query result and relationship to person
+     */
+    @Test
+    public void queryHomePhoneAtT1() {
+        Assert.fail("NOT YET IMPLEMENTED");
+    }
+
+    /**
+     * Verify the query result and relationship to person
+     */
+    @Test
+    public void queryHomePhoneAtT2() {
+        Assert.fail("NOT YET IMPLEMENTED");
+    }
+
+    /**
+     * Verify the query result and relationship to person
+     */
+    @Test
+    public void queryHomePhoneAtT3() {
+        Assert.fail("NOT YET IMPLEMENTED");
+    }
+
+    /**
+     * Verify the query result and relationship to person
+     */
+    @Test
+    public void queryHomePhoneAtT4() {
+        Assert.fail("NOT YET IMPLEMENTED");
+    }
+
+    /**
+     * Verify the query result and relationship to person
+     */
+    @Test
+    public void queryHomePhoneAtT5() {
+        Assert.fail("NOT YET IMPLEMENTED");
     }
 }

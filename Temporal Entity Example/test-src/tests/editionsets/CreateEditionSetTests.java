@@ -15,14 +15,17 @@ import static example.PersonModelExample.RUN;
 import static example.PersonModelExample.SKI;
 import static example.PersonModelExample.T2;
 import static example.PersonModelExample.T4;
+import static example.PersonModelExample.T5;
 
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Temporal;
 
 import junit.framework.Assert;
 import model.Address;
 import model.Person;
+import model.PersonHobby;
 import model.Phone;
 import model.entities.PersonEntity;
 
@@ -62,8 +65,8 @@ public class CreateEditionSetTests extends BaseTestCase {
         Assert.assertEquals(3, es.getEntries().size());
 
         for (EditionSetEntry entry : es.getEntries()) {
-            Assert.assertNotNull(entry.getEdition());
-            System.out.println("> " + entry.getEdition());
+            Assert.assertNotNull(entry.getTemporal());
+            System.out.println("> " + entry.getTemporal());
             for (String attrName : entry.getAttributes()) {
                 System.out.println("\t>> " + attrName);
             }
@@ -89,6 +92,33 @@ public class CreateEditionSetTests extends BaseTestCase {
         EditionSet t2 = editionSets.get(1);
         Assert.assertNotNull(t2);
         Assert.assertEquals(T4, t2.getEffective());
+    }
+
+    /**
+     * Verify that the addition of a {@link Temporal} value in a 1:M collection
+     * causes an EditionSetEntry to be created.
+     */
+    @Test
+    public void addHobbyAtT5WithInitializedEditionSet() {
+        EntityManager em = createEntityManager();
+        EditionSet es = TemporalHelper.setEffectiveTime(em, T5, true);
+
+        Assert.assertNotNull(es);
+        
+        Person person = em.find(Person.class, getSample().getId());
+        Assert.assertNotNull(person);
+        Assert.assertTrue(TemporalHelper.isTemporalEntity(person));
+        Assert.assertEquals(T5, es.getEffective());
+        
+        PersonHobby runHobby = TemporalHelper.newTemporal(em, PersonHobby.class);
+        runHobby.setHobby(example.hobbies.get(RUN));
+        person.addHobby(runHobby);
+        
+        Assert.assertEquals(1, es.getEntries().size());
+        
+        EditionSetEntry entry = es.getEntries().get(0);
+        
+        Assert.assertTrue(entry.getTemporal() instanceof PersonHobby);
     }
 
     /**
@@ -124,7 +154,11 @@ public class CreateEditionSetTests extends BaseTestCase {
             Phone pT2 = TemporalHelper.createEdition(em, personEditionT2.getPhone("Home"));
             personEditionT2.addPhone(pT2);
             pT2.setNumber("222-222-2222");
-            em.persist(personEditionT2.addHobby(example.hobbies.get(GOLF), T2));
+ 
+            PersonHobby golfHobby = TemporalHelper.newTemporal(em, PersonHobby.class);
+            golfHobby.setHobby(example.hobbies.get(GOLF));
+            personEditionT2.addHobby(golfHobby);
+
             em.flush();
 
             System.out.println("\nEditionSetTests.populateT2Edition::DONE");
@@ -155,8 +189,13 @@ public class CreateEditionSetTests extends BaseTestCase {
             personEditionT4.addPhone(pT4);
             personEditionT4.getPersonHobbies().get(GOLF).getEffectivity().setEnd(T4);
 
-            em.persist(personEditionT4.addHobby(example.hobbies.get(RUN), T4));
-            em.persist(personEditionT4.addHobby(example.hobbies.get(SKI), T4));
+            PersonHobby runHobby = TemporalHelper.newTemporal(em, PersonHobby.class);
+            runHobby.setHobby(example.hobbies.get(RUN));
+            personEditionT4.addHobby(runHobby);
+
+            PersonHobby skiHobby = TemporalHelper.newTemporal(em, PersonHobby.class);
+            skiHobby.setHobby(example.hobbies.get(SKI));
+            personEditionT4.addHobby(skiHobby);
 
             em.flush();
 
