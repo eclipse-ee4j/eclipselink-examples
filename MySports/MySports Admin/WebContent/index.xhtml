@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+
+<ui:composition template="template.jsf">
+	<ui:define name="title">My Sports Admin</ui:define>
+	<ui:define name="body">
+		<p />
+		<div align="center">
+			<table width="80%">
+				<tr>
+					<td width="50%" align="left">
+						<ul>
+							<li>Create new League</li>
+						</ul>
+					</td>
+
+					<td width="50%" align="left"><h:form>
+
+							<h:dataTable var="league"
+								value="#{leagueAdminRepository.leagues}" border="1"
+								styleClass="pretty" width="100%">
+								<f:facet name="header">
+				Current Leagues
+			</f:facet>
+								<h:column>
+									<f:facet name="header">League ID</f:facet>
+									<h:outputText value="#{league.id}" />
+								</h:column>
+								<h:column>
+									<f:facet name="header">Name</f:facet>
+									<h:outputText value="#{league.name}" />
+								</h:column>
+								<h:column>
+									<f:facet name="header">Multi-tenant</f:facet>
+									<h:outputText value="#{league.multitenant}" />
+								</h:column>
+							</h:dataTable>
+						</h:form></td>
+				</tr>
+			</table>
+
+		</div>
+		<p height="100">&nbsp;</p>
+	</ui:define>
+</ui:composition>
+</html>

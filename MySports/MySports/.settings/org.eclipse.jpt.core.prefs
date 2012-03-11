@@ -1,0 +1,7 @@
+eclipse.preferences.version=1
+org.eclipse.jpt.core.discoverAnnotatedClasses=true
+org.eclipse.jpt.core.metamodelSourceFolderName=model-gen
+org.eclipse.jpt.core.platform=eclipselink2_3
+problem.COLUMN_UNRESOLVED_NAME=info
+problem.COLUMN_UNRESOLVED_TABLE=info
+workspace_preferences_overriden=true

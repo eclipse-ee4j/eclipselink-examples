@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+
+<ui:composition template="template.jsf">
+	<ui:define name="title">My Sports Admin</ui:define>
+	<ui:define name="body">
+		<p />
+		<div align="center">
+			<table width="50%">
+				<tr>
+					<td width="50%" align="left"><h:form>
+
+							<h:panelGrid width="100%" columns="2" border="1"
+								styleClass="pretty">
+								<f:facet name="header">Edit League</f:facet>
+
+								<h:outputLabel value="ID:" />
+								<h:outputLabel value="#{editLeague.league.id}" />
+								<h:outputLabel value="Name:" />
+								<h:inputText value="#{editLeague.league.name}" />
+								<h:outputLabel value="Shared Server (multi-tenant):" />
+								<h:selectBooleanCheckbox value="#{editLeague.league.multitenant}"/>
+								<h:outputLabel value="Data source:" />
+								<h:inputText value="#{editLeague.league.dataSource}" />
+
+								<f:facet name="footer">
+									<div align="center">
+										<h:commandButton value="Create"
+											action="#{editLeague.create}" />
+										<h:commandButton value="Cancel"
+											action="#{editLeague.cancel}" />
+									</div>
+								</f:facet>
+							</h:panelGrid>
+
+						</h:form></td>
+				</tr>
+			</table>
+
+		</div>
+		<p height="100">&nbsp;</p>
+	</ui:define>
+</ui:composition>
+</html>
