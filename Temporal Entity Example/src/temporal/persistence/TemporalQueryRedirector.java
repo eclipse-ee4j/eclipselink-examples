@@ -12,30 +12,23 @@
 
 package temporal.persistence;
 
-import static temporal.TemporalHelper.EFF_TS_PROPERTY;
-import static temporal.TemporalHelper.ENTITY_MANAGER;
-
-import javax.persistence.EntityManager;
-
-
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.internal.jpa.EJBQueryImpl;
 import org.eclipse.persistence.internal.sessions.AbstractRecord;
 import org.eclipse.persistence.internal.sessions.AbstractSession;
 import org.eclipse.persistence.queries.DatabaseQuery;
 import org.eclipse.persistence.queries.QueryRedirector;
-import org.eclipse.persistence.queries.ReadObjectQuery;
 import org.eclipse.persistence.sessions.Record;
 import org.eclipse.persistence.sessions.Session;
 
-import temporal.TemporalEntity;
+import temporal.TemporalEntityManager;
 import temporal.TemporalHelper;
 
 /**
  * This {@link QueryRedirector} intercepts read queries on the current types and
- * if there is an effective time property ({@link TemporalHelper#EFF_TS_PROPERTY}) set
- * on the persistence context then the query is executed against the edition
- * descriptor.
+ * if there is an effective time property (
+ * {@link TemporalHelper#EFF_TS_PROPERTY}) set on the persistence context then
+ * the query is executed against the edition descriptor.
  * 
  * @author dclarke
  * @since EclipseLink 2.3.1
@@ -54,25 +47,23 @@ public class TemporalQueryRedirector implements QueryRedirector {
 
     @Override
     public Object invokeQuery(DatabaseQuery query, Record arguments, Session session) {
-        Object value = session.getProperty(EFF_TS_PROPERTY);
         DatabaseQuery queryToExecute = query;
+        TemporalEntityManager tem = (TemporalEntityManager) session.getProperty(TemporalEntityManager.TEMPORAL_EM_PROPERTY);
 
-        if (value != null && query.isObjectLevelReadQuery() && query.getReferenceClass().equals(this.currentDescriptor.getJavaClass())) {
+        if (tem != null && tem.getEffectiveTime() != null && query.isObjectLevelReadQuery() && query.getReferenceClass().equals(this.currentDescriptor.getJavaClass())) {
             if (query.isJPQLCallQuery()) {
                 queryToExecute = EJBQueryImpl.buildEJBQLDatabaseQuery(convertJPQL(query.getJPQLString()), session);
             }
+/*
             if (query.isReadObjectQuery() && ((ReadObjectQuery) query).isPrimaryKeyQuery()) {
                 queryToExecute.setDoNotRedirect(true);
                 Object current = ((AbstractSession) session).executeQuery(queryToExecute, (AbstractRecord) arguments);
-                return TemporalHelper.getEdition(getEntityManager(session), (TemporalEntity<?>) current);
+                return tem.getEdition((TemporalEntity<?>) current);
             }
+*/
         }
         queryToExecute.setDoNotRedirect(true);
         return ((AbstractSession) session).executeQuery(queryToExecute, (AbstractRecord) arguments);
-    }
-
-    private EntityManager getEntityManager(Session session) {
-        return (EntityManager) session.getProperty(ENTITY_MANAGER);
     }
 
     // TODO: Replace the JPQL approach with a proper query construction

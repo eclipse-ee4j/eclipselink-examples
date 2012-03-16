@@ -10,18 +10,18 @@
  ******************************************************************************/
 package tests;
 
-import static example.PersonModelExample.*;
+import static example.PersonModelExample.T2;
+import static example.PersonModelExample.T3;
+import static example.PersonModelExample.T4;
 
 import java.util.List;
-
-import javax.persistence.EntityManager;
 
 import junit.framework.Assert;
 import model.Person;
 
 import org.junit.Test;
 
-import temporal.TemporalHelper;
+import temporal.TemporalEntityManager;
 import temporal.persistence.TemporalQueryRedirector;
 import example.PersonModelExample;
 
@@ -39,7 +39,7 @@ public class TemporalQueryRedirectorTests extends BaseTestCase {
 
     @Test
     public void allAtPresent() {
-        EntityManager em = createEntityManager();
+        TemporalEntityManager em = getEntityManager();
 
         List<Person> results = em.createQuery("SELECT p FROM Person p", Person.class).getResultList();
 
@@ -48,8 +48,8 @@ public class TemporalQueryRedirectorTests extends BaseTestCase {
 
     @Test
     public void allAtT2() {
-        EntityManager em = createEntityManager();
-        TemporalHelper.setEffectiveTime(em, T2);
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime( T2);
 
         List<Person> results = em.createQuery("SELECT p FROM Person p", Person.class).getResultList();
 
@@ -58,8 +58,8 @@ public class TemporalQueryRedirectorTests extends BaseTestCase {
 
     @Test
     public void exampleFullAtT3UsingID() {
-        EntityManager em = createEntityManager();
-        TemporalHelper.setEffectiveTime(em, T3);
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime( T3);
 
         List<Person> results = em.createQuery("SELECT p FROM Person p WHERE p.id = " + example.fullPerson.getId(), Person.class).getResultList();
 
@@ -68,8 +68,8 @@ public class TemporalQueryRedirectorTests extends BaseTestCase {
 
     @Test
     public void exampleFullAtT4() {
-        EntityManager em = createEntityManager();
-        TemporalHelper.setEffectiveTime(em, T4);
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime( T4);
 
         List<Person> results = em.createQuery("SELECT p FROM Person p WHERE p.id = " + example.fullPerson.getId(), Person.class).getResultList();
 
@@ -77,7 +77,7 @@ public class TemporalQueryRedirectorTests extends BaseTestCase {
     }
 
     @Override
-    public void populate(EntityManager em) {
+    public void populate(TemporalEntityManager em) {
         em.persist(example.fullPerson);
     }
 }

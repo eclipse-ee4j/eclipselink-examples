@@ -10,11 +10,13 @@
  ******************************************************************************/
 package tests;
 
-import static example.PersonModelExample.*;
+import static example.PersonModelExample.GOLF;
+import static example.PersonModelExample.RUN;
+import static example.PersonModelExample.SKI;
+import static example.PersonModelExample.T2;
+import static example.PersonModelExample.T4;
 
 import java.util.List;
-
-import javax.persistence.EntityManager;
 
 import junit.framework.Assert;
 import model.Address;
@@ -23,7 +25,7 @@ import model.Phone;
 
 import org.junit.Test;
 
-import temporal.TemporalHelper;
+import temporal.TemporalEntityManager;
 import example.PersonModelExample;
 
 /**
@@ -42,7 +44,7 @@ public class MultipleEditionQueries extends BaseTestCase {
 
     @Test
     public void queryForAllPersonEditions() {
-        EntityManager em = createEntityManager();
+        TemporalEntityManager em = getEntityManager();
 
         List<Person> results = em.createQuery("SELECT p FROM PersonEditionView p ORDER BY p.effectivity.start", Person.class).getResultList();
 
@@ -51,7 +53,7 @@ public class MultipleEditionQueries extends BaseTestCase {
     }
 
     @Override
-    public void populate(EntityManager em) {
+    public void populate(TemporalEntityManager em) {
         System.out.println("\nFullPersonWithEditions.populate:START");
 
         example.populateHobbies(em);
@@ -59,31 +61,31 @@ public class MultipleEditionQueries extends BaseTestCase {
         em.flush();
 
         System.out.println("\n> Create T2 Edition");
-        TemporalHelper.setEffectiveTime(em, T2, true);
+        em.setEffectiveTime(T2, true);
 
-        Person fpEdition = TemporalHelper.find(em, Person.class, example.fullPerson.getId());
-        Person personEditionT2 = TemporalHelper.createEdition(em, fpEdition);
+        Person fpEdition = em.find(Person.class, example.fullPerson.getId());
+        Person personEditionT2 = em.newEdition(fpEdition);
         personEditionT2.setName("Jimmy");
-        Address aT2 = TemporalHelper.createEdition(em, example.fullPerson.getAddress());
+        Address aT2 = em.newEdition(example.fullPerson.getAddress());
         aT2.setCity("Toronto");
         aT2.setState("ON");
         personEditionT2.setAddress(aT2);
-        Phone pT2 = TemporalHelper.createEdition(em, example.fullPerson.getPhone("Home"));
+        Phone pT2 = em.newEdition(example.fullPerson.getPhone("Home"));
         personEditionT2.addPhone(pT2);
         pT2.setNumber("222-222-2222");
         em.persist(personEditionT2.addHobby(example.hobbies.get(GOLF), T2));
         em.flush();
 
         System.out.println("\n> Create T4 Edition");
-        TemporalHelper.setEffectiveTime(em, T4, true);
+        em.setEffectiveTime(T4, true);
 
-        Person personEditionT4 = TemporalHelper.createEdition(em, personEditionT2);
+        Person personEditionT4 = em.newEdition(personEditionT2);
         personEditionT4.setName("James");
-        Address aT4 = TemporalHelper.createEdition(em, aT2);
+        Address aT4 = em.newEdition(aT2);
         aT4.setCity("San Francisco");
         aT4.setState("CA");
         personEditionT4.setAddress(aT4);
-        Phone pT4 = TemporalHelper.createEdition(em, pT2);
+        Phone pT4 = em.newEdition(pT2);
         pT4.setNumber("444-444-4444");
         personEditionT4.addPhone(pT4);
         personEditionT4.removeHobby(example.hobbies.get(GOLF), T4, T4);

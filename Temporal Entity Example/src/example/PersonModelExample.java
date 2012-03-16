@@ -10,8 +10,6 @@
  ******************************************************************************/
 package example;
 
-import static temporal.TemporalHelper.EFF_TS_PROPERTY;
-
 import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +30,7 @@ import org.eclipse.persistence.sessions.server.Server;
 import org.eclipse.persistence.tools.schemaframework.SchemaManager;
 
 import temporal.Effectivity;
+import temporal.TemporalEntityManager;
 
 /**
  * This test case performs current and edition queries on a simple
@@ -107,7 +106,7 @@ public class PersonModelExample {
         sm.replaceDefaultTables();
         sm.replaceSequences();
 
-        EntityManager em = emf.createEntityManager();
+        EntityManager em = TemporalEntityManager.getInstance(emf.createEntityManager());
 
         em.getTransaction().begin();
         example.populateAll(em);
@@ -184,8 +183,8 @@ public class PersonModelExample {
         return person;
     }
 
-    public Person queryFutureEditionOfCurrentPersonAtBOT(EntityManager em) {
-        em.setProperty(EFF_TS_PROPERTY, Effectivity.BOT);
+    public Person queryFutureEditionOfCurrentPersonAtBOT(TemporalEntityManager em) {
+        em.setEffectiveTime(Effectivity.BOT);
 
         Person pEdition = em.createQuery("SELECT p From PersonEdition p WHERE p.cid = " + this.simplePerson.getId(), Person.class).getSingleResult();
 
@@ -194,8 +193,8 @@ public class PersonModelExample {
         return pEdition;
     }
 
-    public Person queryFutureEditionOfCurrentPersonAtT1(EntityManager em) {
-        em.setProperty(EFF_TS_PROPERTY, T1);
+    public Person queryFutureEditionOfCurrentPersonAtT1(TemporalEntityManager em) {
+        em.setEffectiveTime(T1);
 
         Person pEdition = em.createQuery("SELECT p From PersonEdition p WHERE p.cid = " + this.simplePerson.getId(), Person.class).getSingleResult();
 
@@ -204,8 +203,8 @@ public class PersonModelExample {
         return pEdition;
     }
 
-    public Person queryFutureEditionOfCurrentPersonAtT2(EntityManager em) {
-        em.setProperty(EFF_TS_PROPERTY, T2);
+    public Person queryFutureEditionOfCurrentPersonAtT2(TemporalEntityManager em) {
+        em.setEffectiveTime(T2);
 
         Person pEdition = em.createQuery("SELECT p From PersonEdition p WHERE p.cid = " + this.simplePerson.getId(), Person.class).getSingleResult();
 
@@ -214,8 +213,8 @@ public class PersonModelExample {
         return pEdition;
     }
 
-    public Person queryFutureEditionOfCurrentPersonAtT2JoinFetchAddress(EntityManager em) {
-        em.setProperty(EFF_TS_PROPERTY, T2);
+    public Person queryFutureEditionOfCurrentPersonAtT2JoinFetchAddress(TemporalEntityManager em) {
+        em.setEffectiveTime(T2);
 
         Person person = em.createQuery("SELECT p From PersonEdition p JOIN FETCH p.address WHERE p.cid = " + this.simplePerson.getId(), Person.class).getSingleResult();
         Address address = person.getAddress();
@@ -226,8 +225,8 @@ public class PersonModelExample {
         return person;
     }
 
-    public Person queryFutureEditionOfCurrentPersonAtT3(EntityManager em) {
-        em.setProperty(EFF_TS_PROPERTY, T3);
+    public Person queryFutureEditionOfCurrentPersonAtT3(TemporalEntityManager em) {
+        em.setEffectiveTime(T3);
 
         Person personEdition = em.createQuery("SELECT p From PersonEdition p WHERE p.cid = " + this.simplePerson.getId(), Person.class).getSingleResult();
 
@@ -236,8 +235,8 @@ public class PersonModelExample {
         return personEdition;
     }
 
-    public Person queryFutureEditionOfCurrentPersonAtT4(EntityManager em) {
-        em.setProperty(EFF_TS_PROPERTY, T4);
+    public Person queryFutureEditionOfCurrentPersonAtT4(TemporalEntityManager em) {
+        em.setEffectiveTime(T4);
 
         Person pEdition = em.createQuery("SELECT p From PersonEdition p WHERE p.cid = " + this.simplePerson.getId(), Person.class).getSingleResult();
 
@@ -246,8 +245,8 @@ public class PersonModelExample {
         return pEdition;
     }
 
-    public Person queryFutureEditionOfCurrentPersonAtT5(EntityManager em) {
-        em.setProperty(EFF_TS_PROPERTY, T5);
+    public Person queryFutureEditionOfCurrentPersonAtT5(TemporalEntityManager em) {
+        em.setEffectiveTime( T5);
 
         Person pEdition = em.createQuery("SELECT p From PersonEdition p WHERE p.cid = " + this.simplePerson.getId(), Person.class).getSingleResult();
 

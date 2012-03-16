@@ -19,7 +19,6 @@ import static example.PersonModelExample.T5;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
 import javax.persistence.Temporal;
 
 import junit.framework.Assert;
@@ -33,6 +32,7 @@ import org.junit.Test;
 
 import temporal.EditionSet;
 import temporal.EditionSetEntry;
+import temporal.TemporalEntityManager;
 import temporal.TemporalHelper;
 import tests.BaseTestCase;
 import example.PersonModelExample;
@@ -53,29 +53,43 @@ public class CreateEditionSetTests extends BaseTestCase {
 
     @Test
     public void verifyEditionSetAtT2() {
-        EntityManager em = createEntityManager();
+        TemporalEntityManager em = getEntityManager();
 
         em.getTransaction().begin();
         populateT2Editions(em);
 
-        EditionSet es = TemporalHelper.setEffectiveTime(em, T2, true);
+        EditionSet es = em.setEffectiveTime(T2, true);
 
         Assert.assertNotNull(es);
         Assert.assertEquals(T2, es.getEffective());
-        Assert.assertEquals(3, es.getEntries().size());
+        Assert.assertEquals(4, es.getEntries().size());
 
-        for (EditionSetEntry entry : es.getEntries()) {
-            Assert.assertNotNull(entry.getTemporal());
-            System.out.println("> " + entry.getTemporal());
-            for (String attrName : entry.getAttributes()) {
-                System.out.println("\t>> " + attrName);
-            }
-        }
+        Assert.assertTrue(es.getEntries().get(0).getTemporal() instanceof Person);
+        Person p = (Person) es.getEntries().get(0).getTemporal();
+        Assert.assertEquals(T2, p.getEffectivity().getStart());
+
+        Assert.assertTrue(es.getEntries().get(1).getTemporal() instanceof Address);
+        Address a = (Address) es.getEntries().get(1).getTemporal();
+        Assert.assertEquals(T2, a.getEffectivity().getStart());
+
+        Assert.assertTrue(es.getEntries().get(2).getTemporal() instanceof Phone);
+        Phone phone = (Phone) es.getEntries().get(2).getTemporal();
+        Assert.assertEquals(T2, phone.getEffectivity().getStart());
+
+        Assert.assertTrue(es.getEntries().get(3).getTemporal() instanceof PersonHobby);
+        PersonHobby ph = (PersonHobby) es.getEntries().get(3).getTemporal();
+        Assert.assertEquals(T2, ph.getEffectivity().getStart());
+        Assert.assertSame(p, ph.getPerson());
+        Assert.assertEquals(PersonModelExample.GOLF, ph.getName());
+        Assert.assertEquals(PersonModelExample.GOLF, ph.getHobby().getName());
+
+        Assert.assertEquals(1, p.getPersonHobbies().size());
+        
     }
 
     @Test
     public void verifyEditionSetAtT4() {
-        EntityManager em = createEntityManager();
+        TemporalEntityManager em = getEntityManager();
         em.getTransaction().begin();
 
         populateT4Editions(em);
@@ -100,24 +114,24 @@ public class CreateEditionSetTests extends BaseTestCase {
      */
     @Test
     public void addHobbyAtT5WithInitializedEditionSet() {
-        EntityManager em = createEntityManager();
-        EditionSet es = TemporalHelper.setEffectiveTime(em, T5, true);
+        TemporalEntityManager em = getEntityManager();
+        EditionSet es = em.setEffectiveTime(T5, true);
 
         Assert.assertNotNull(es);
-        
+
         Person person = em.find(Person.class, getSample().getId());
         Assert.assertNotNull(person);
         Assert.assertTrue(TemporalHelper.isTemporalEntity(person));
         Assert.assertEquals(T5, es.getEffective());
-        
-        PersonHobby runHobby = TemporalHelper.newTemporal(em, PersonHobby.class);
+
+        PersonHobby runHobby = em.newTemporal(PersonHobby.class);
         runHobby.setHobby(example.hobbies.get(RUN));
         person.addHobby(runHobby);
-        
+
         Assert.assertEquals(1, es.getEntries().size());
-        
+
         EditionSetEntry entry = es.getEntries().get(0);
-        
+
         Assert.assertTrue(entry.getTemporal() instanceof PersonHobby);
     }
 
@@ -125,7 +139,7 @@ public class CreateEditionSetTests extends BaseTestCase {
      * Populate initial sample entity
      */
     @Override
-    public void populate(EntityManager em) {
+    public void populate(TemporalEntityManager em) {
         System.out.println("\nEditionSetTests.populate:START");
         example.populateHobbies(em);
         em.persist(getSample());
@@ -135,27 +149,27 @@ public class CreateEditionSetTests extends BaseTestCase {
     /**
      * Create the edition at T2 if it has not already been created
      */
-    public Person populateT2Editions(EntityManager em) {
-        EditionSet editionSet = TemporalHelper.setEffectiveTime(em, T2, true);
+    public Person populateT2Editions(TemporalEntityManager em) {
+        EditionSet editionSet = em.setEffectiveTime(T2, true);
         Assert.assertNotNull(editionSet);
 
-        Person personEditionT2 = em.find(PersonEntity.class, getSample().getId());
+        Person personEditionT2 = em.find(Person.class, getSample().getId());
 
         if (personEditionT2.getEffectivity().getStart() != T2) {
             System.out.println("\nEditionSetTests.populateT2Edition:START");
 
             editionSet.setDescription("EditionSetTests::Person@T2");
-            personEditionT2 = TemporalHelper.createEdition(em, personEditionT2);
+            personEditionT2 = em.newEdition(personEditionT2);
             personEditionT2.setName("Jimmy");
-            Address aT2 = TemporalHelper.createEdition(em, personEditionT2.getAddress());
+            Address aT2 = em.newEdition(personEditionT2.getAddress());
             aT2.setCity("Toronto");
             aT2.setState("ON");
             personEditionT2.setAddress(aT2);
-            Phone pT2 = TemporalHelper.createEdition(em, personEditionT2.getPhone("Home"));
+            Phone pT2 = em.newEdition(personEditionT2.getPhone("Home"));
             personEditionT2.addPhone(pT2);
             pT2.setNumber("222-222-2222");
- 
-            PersonHobby golfHobby = TemporalHelper.newTemporal(em, PersonHobby.class);
+
+            PersonHobby golfHobby = em.newTemporal(PersonHobby.class);
             golfHobby.setHobby(example.hobbies.get(GOLF));
             personEditionT2.addHobby(golfHobby);
 
@@ -167,33 +181,33 @@ public class CreateEditionSetTests extends BaseTestCase {
         return personEditionT2;
     }
 
-    public Person populateT4Editions(EntityManager em) {
+    public Person populateT4Editions(TemporalEntityManager em) {
         populateT2Editions(em);
-
-        EditionSet editionSet = TemporalHelper.setEffectiveTime(em, T4, true);
+        
+        EditionSet editionSet = em.setEffectiveTime(T4, true);
         Assert.assertNotNull(editionSet);
 
-        Person personEditionT4 = em.find(PersonEntity.class, getSample().getId());
+        Person personEditionT4 = em.find(Person.class, getSample().getId());
 
-        if (personEditionT4.getEffectivity().getStart() != T4) {
+        if (personEditionT4 == null) {
             System.out.println("\nEditionSetTests.populateT4Edition:START");
-            TemporalHelper.initializeEditionSet(em).setDescription("EditionSetTests::Person@T4");
-            personEditionT4 = TemporalHelper.createEdition(em, personEditionT4);
+            em.initializeEditionSet().setDescription("EditionSetTests::Person@T4");
+            personEditionT4 = em.newEdition(personEditionT4);
             personEditionT4.setName("James");
-            Address aT4 = TemporalHelper.createEdition(em, personEditionT4.getAddress());
+            Address aT4 = em.newEdition(personEditionT4.getAddress());
             aT4.setCity("San Francisco");
             aT4.setState("CA");
             personEditionT4.setAddress(aT4);
-            Phone pT4 = TemporalHelper.createEdition(em, personEditionT4.getPhone("Home"));
+            Phone pT4 = em.newEdition(personEditionT4.getPhone("Home"));
             pT4.setNumber("444-444-4444");
             personEditionT4.addPhone(pT4);
             personEditionT4.getPersonHobbies().get(GOLF).getEffectivity().setEnd(T4);
 
-            PersonHobby runHobby = TemporalHelper.newTemporal(em, PersonHobby.class);
+            PersonHobby runHobby = em.newTemporal(PersonHobby.class);
             runHobby.setHobby(example.hobbies.get(RUN));
             personEditionT4.addHobby(runHobby);
 
-            PersonHobby skiHobby = TemporalHelper.newTemporal(em, PersonHobby.class);
+            PersonHobby skiHobby = em.newTemporal(PersonHobby.class);
             skiHobby.setHobby(example.hobbies.get(SKI));
             personEditionT4.addHobby(skiHobby);
 

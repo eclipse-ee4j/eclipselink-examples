@@ -12,6 +12,7 @@
  ******************************************************************************/
 package temporal;
 
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
@@ -43,6 +44,9 @@ public abstract class BaseTemporalEntity<T extends TemporalEntity<?>> extends Ba
 
     @Embedded
     private Effectivity effectivity = new Effectivity();
+    
+    @Column(name="CID", insertable=false, updatable=false)
+    private int continuityId;
 
     public T getContinuity() {
         return this.continuity;
@@ -50,6 +54,11 @@ public abstract class BaseTemporalEntity<T extends TemporalEntity<?>> extends Ba
 
     public void setContinuity(T continuity) {
         this.continuity = continuity;
+        this.continuityId = continuity.getId();
+    }
+
+    public int getContinuityId() {
+        return continuityId;
     }
 
     public Effectivity getEffectivity() {

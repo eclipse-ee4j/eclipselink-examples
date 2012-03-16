@@ -28,6 +28,8 @@ public interface TemporalEntity<T extends TemporalEntity<?>> extends Temporal {
     T getContinuity();
 
     void setContinuity(T continuity);
+    
+    int getContinuityId();
 
     T getPreviousEdition();
 

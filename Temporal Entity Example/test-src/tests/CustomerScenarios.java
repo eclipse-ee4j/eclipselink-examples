@@ -13,12 +13,12 @@
 
 package tests;
 
-import static example.PersonModelExample.*;
-import static temporal.TemporalHelper.newInstance;
+import static example.PersonModelExample.T1;
+import static example.PersonModelExample.T2;
+import static example.PersonModelExample.T3;
+import static example.PersonModelExample.T4;
 
 import java.util.List;
-
-import javax.persistence.EntityManager;
 
 import junit.framework.Assert;
 import model.Address;
@@ -29,7 +29,8 @@ import model.entities.PhoneEntity;
 
 import org.junit.Test;
 
-import temporal.TemporalHelper;
+import temporal.TemporalEntityManager;
+
 /**
  * TODO
  * 
@@ -40,10 +41,10 @@ public class CustomerScenarios extends BaseTestCase {
 
     @Test
     public void createPersonAndAddressNow() {
-        EntityManager em = createEntityManager();
+        TemporalEntityManager em = getEntityManager();
         em.getTransaction().begin();
 
-        Person p = newInstance(em, Person.class);
+        Person p = em.newEntity(Person.class);
         p.setName("Now");
         Address a = new AddressEntity("now", "now", "now");
         p.setAddress(a);
@@ -63,14 +64,14 @@ public class CustomerScenarios extends BaseTestCase {
 
     @Test
     public void createPersonAndAddressFuture() {
-        EntityManager em = createEntityManager();
-        TemporalHelper.setEffectiveTime(em, T2, true);
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime(T2, true);
 
         em.getTransaction().begin();
 
-        Person p = TemporalHelper.newInstance(em, Person.class);
+        Person p = em.newEntity( Person.class);
         p.setName("Future");
-        Address a = TemporalHelper.newInstance(em, Address.class);
+        Address a = em.newEntity( Address.class);
         a.setCity("t2");
         p.setAddress(a);
 
@@ -89,15 +90,15 @@ public class CustomerScenarios extends BaseTestCase {
 
     @Test
     public void createPersonInFutureWithOldAddress() {
-        EntityManager em = createEntityManager();
+        TemporalEntityManager em = getEntityManager();
         em.getTransaction().begin();
         Address a = new AddressEntity("now", "now", "now");
         em.persist(a);
         em.flush();
 
-        TemporalHelper.setEffectiveTime(em, T2, true);
+        em.setEffectiveTime(T2, true);
 
-        Person p = TemporalHelper.newInstance(em, Person.class);
+        Person p = em.newEntity( Person.class);
         p.setName("Future");
         p.setAddress(a);
 
@@ -108,12 +109,12 @@ public class CustomerScenarios extends BaseTestCase {
         em.getEntityManagerFactory().getCache().evictAll();
         System.out.println("\nREAD:\n");
 
-        TemporalHelper.setEffectiveTime(em, T1, false);
+        em.setEffectiveTime(T1, false);
 
         List<Person> results = em.createQuery("SELECT p FROM PersonEdition p WHERE p.address.city = 'now'", Person.class).getResultList();
         Assert.assertTrue(results.isEmpty());
 
-        TemporalHelper.setEffectiveTime(em, T2, false);
+        em.setEffectiveTime(T2, false);
         Person readP = em.createQuery("SELECT p FROM PersonEdition p JOIN FETCH p.address WHERE p.address.city = 'now'", Person.class).getSingleResult();
 
         Assert.assertNotNull(readP);
@@ -124,22 +125,22 @@ public class CustomerScenarios extends BaseTestCase {
 
     @Test
     public void createPersonInFutureWithOldPhone() {
-        EntityManager em = createEntityManager();
+        TemporalEntityManager em = getEntityManager();
 
         em.getTransaction().begin();
         Phone phone_BOT = new PhoneEntity("work", "000-000-0000");
         em.persist(phone_BOT);
         em.flush();
 
-        TemporalHelper.setEffectiveTime(em, T2, true);
+        em.setEffectiveTime(T2, true);
 
-        Person p = TemporalHelper.newInstance(em, Person.class);
+        Person p = em.newEntity( Person.class);
         p.setName("Future");
         em.persist(p);
 
-        TemporalHelper.setEffectiveTime(em, T3, true);
+        em.setEffectiveTime(T3, true);
 
-        Phone phone_T3 = TemporalHelper.createEdition(em, phone_BOT);
+        Phone phone_T3 = em.newEdition(phone_BOT);
         phone_T3.setNumber("333-333-3333");
         p.addPhone(phone_T3);
         em.persist(phone_T3);
@@ -149,37 +150,37 @@ public class CustomerScenarios extends BaseTestCase {
 
         System.out.println("\nREAD:\n");
 
-        TemporalHelper.setEffectiveTime(em, T1);
-        Person readP_T1 = TemporalHelper.find(em, Person.class, p.getId());
+        em.setEffectiveTime(T1);
+        Person readP_T1 = em.find(Person.class, p.getId());
         System.out.println("Read Person @ T1: " + readP_T1);
 
         em.clear();
         em.getEntityManagerFactory().getCache().evictAll();
 
-        TemporalHelper.setEffectiveTime(em, T2);
-        Person readP_T2 = TemporalHelper.find(em, Person.class, p.getId());
+        em.setEffectiveTime(T2);
+        Person readP_T2 = em.find(Person.class, p.getId());
         System.out.println("Read Person @ T2: " + readP_T2 + " Phone: " + readP_T2.getPhone("work"));
-        Phone readPhone_T2 = TemporalHelper.find(em, Phone.class, phone_BOT.getId());
+        Phone readPhone_T2 = em.find(Phone.class, phone_BOT.getId());
         System.out.println("Read Phone @ T2: " + readPhone_T2);
 
         em.clear();
         em.getEntityManagerFactory().getCache().evictAll();
 
-        TemporalHelper.setEffectiveTime(em, T3);
-        Person readP_T3 = TemporalHelper.find(em, Person.class, p.getId());
+        em.setEffectiveTime(T3);
+        Person readP_T3 = em.find(Person.class, p.getId());
         System.out.println("Read Person @ T3: " + readP_T3 + " Phone: " + readP_T3.getPhone("work"));
 
         em.clear();
         em.getEntityManagerFactory().getCache().evictAll();
 
-        TemporalHelper.setEffectiveTime(em, T4);
-        Person readP_T4 = TemporalHelper.find(em, Person.class, p.getId());
+        em.setEffectiveTime(T4);
+        Person readP_T4 = em.find(Person.class, p.getId());
         System.out.println("Read Person @ T4: " + readP_T4 + " Phone: " + readP_T4.getPhone("work"));
 
     }
 
     @Override
-    public void populate(EntityManager em) {
+    public void populate(TemporalEntityManager em) {
     }
 
 }

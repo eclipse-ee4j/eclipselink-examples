@@ -419,6 +419,10 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
         for (ClassDescriptor desc: session.getDescriptors().values()) {
             if (!desc.isDescriptorForInterface() && TemporalHelper.isTemporal(desc.getJavaClass(), false)) {
                 mapping.addClassIndicator(desc.getJavaClass(), desc.getAlias());
+                
+                if (desc.getMappingForAttributeName("oid") == null) {
+                    desc.addDirectQueryKey("oid", desc.getPrimaryKeyFieldNames().get(0));
+                }
             }
         }
 

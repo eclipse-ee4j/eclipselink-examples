@@ -10,13 +10,23 @@
  ******************************************************************************/
 package tests.internal;
 
-import static example.PersonModelExample.*;
-import static org.junit.Assert.*;
+import static example.PersonModelExample.T1;
+import static temporal.Effectivity.*;
+import static example.PersonModelExample.T3;
+import static example.PersonModelExample.T4;
+import static example.PersonModelExample.T5;
+import static example.PersonModelExample.T6;
+import static example.PersonModelExample.T7;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import junit.framework.Assert;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
+import model.PersonHobby;
 
 import org.eclipse.persistence.internal.sessions.RepeatableWriteUnitOfWork;
 import org.eclipse.persistence.sessions.DatabaseSession;
@@ -24,6 +34,7 @@ import org.eclipse.persistence.sessions.server.ClientSession;
 import org.eclipse.persistence.sessions.server.Server;
 import org.junit.Test;
 
+import temporal.TemporalEntityManager;
 import temporal.TemporalHelper;
 import tests.BaseTestCase;
 
@@ -35,77 +46,62 @@ import tests.BaseTestCase;
  */
 public class TemporalHelperTests extends BaseTestCase {
 
-    private void verifySetStartTime(EntityManager em, Long value) {
-        assertTrue(em.getProperties().containsKey(TemporalHelper.EFF_TS_PROPERTY));
-        assertTrue(TemporalHelper.hasEffectiveTime(em));
-        assertNotNull(TemporalHelper.getEffectiveTime(em));
-        assertEquals(value, TemporalHelper.getEffectiveTime(em));
+    private void verifySetStartTime(TemporalEntityManager em, Long value) {
+        assertTrue(em.hasEffectiveTime());
+        assertNotNull(em.getEffectiveTime());
+        assertEquals(value, em.getEffectiveTime());
 
         RepeatableWriteUnitOfWork uow = em.unwrap(RepeatableWriteUnitOfWork.class);
         assertNotNull(uow);
-        assertFalse(uow.getProperties().containsKey(TemporalHelper.EFF_TS_PROPERTY));
 
         ClientSession clientSession = (ClientSession) uow.getParent();
-        assertTrue(clientSession.getProperties().containsKey(TemporalHelper.EFF_TS_PROPERTY));
 
         DatabaseSession session = em.unwrap(DatabaseSession.class);
-        assertTrue(clientSession.getProperties().containsKey(TemporalHelper.EFF_TS_PROPERTY));
         assertNotSame(clientSession, session);
 
         Server serverSession = em.unwrap(Server.class);
-        assertFalse(serverSession.getProperties().containsKey(TemporalHelper.EFF_TS_PROPERTY));
         assertNotSame(clientSession, serverSession);
         assertSame(session, serverSession);
     }
 
     @Test
     public void verifySetStartTime() {
-        EntityManager em = createEntityManager();
+        TemporalEntityManager em = getEntityManager();
 
-        assertFalse(TemporalHelper.hasEffectiveTime(em));
-        assertNull(TemporalHelper.getEffectiveTime(em));
+        assertFalse(em.hasEffectiveTime());
+        assertNull(em.getEffectiveTime());
 
-        TemporalHelper.setEffectiveTime(em, T1);
+        em.setEffectiveTime(T1);
 
         verifySetStartTime(em, T1);
     }
 
     @Test
-    public void verifyCreateEMWithStartTime() {
-        Map<String, Object> properties = new HashMap<String, Object>();
-        properties.put(TemporalHelper.EFF_TS_PROPERTY, T2);
-        EntityManager em = createEntityManager(properties);
-
-        verifySetStartTime(em, T2);
-    }
-
-    @Test
     public void verifyClearStartTime() {
-        EntityManager em = createEntityManager();
-        assertFalse(TemporalHelper.hasEffectiveTime(em));
-        assertNull(TemporalHelper.getEffectiveTime(em));
+        TemporalEntityManager em = getEntityManager();
+        assertFalse(em.hasEffectiveTime());
+        assertNull(em.getEffectiveTime());
 
-        TemporalHelper.setEffectiveTime(em, T3);
+        em.setEffectiveTime(T3);
 
         verifySetStartTime(em, T3);
 
-        TemporalHelper.clearEffectiveTime(em);
+        em.clearEffectiveTime();
 
-        assertFalse(em.getProperties().containsKey(TemporalHelper.EFF_TS_PROPERTY));
-        assertFalse(TemporalHelper.hasEffectiveTime(em));
-        assertNull(TemporalHelper.getEffectiveTime(em));
+        assertFalse(em.hasEffectiveTime());
+        assertNull(em.getEffectiveTime());
     }
 
     @Test
     public void verifyConcurrentSetStartTime() {
-        EntityManager em1 = createEntityManager();
-        EntityManager em2 = getEMF().createEntityManager();
-        
+        TemporalEntityManager em1 = getEntityManager();
+        TemporalEntityManager em2 = TemporalEntityManager.getInstance(getEMF().createEntityManager());
+
         assertNotSame(em1, em2);
-        
-        TemporalHelper.setEffectiveTime(em1, T4);
-        
-        TemporalHelper.setEffectiveTime(em2, T5);
+
+        em1.setEffectiveTime(T4);
+
+        em2.setEffectiveTime(T5);
 
         verifySetStartTime(em2, T5);
         verifySetStartTime(em1, T4);
@@ -113,27 +109,51 @@ public class TemporalHelperTests extends BaseTestCase {
 
     @Test
     public void verifyConcurrentClearStartTime() {
-        EntityManager em1 = createEntityManager();
-        EntityManager em2 = getEMF().createEntityManager();
-        
+        TemporalEntityManager em1 = getEntityManager();
+        TemporalEntityManager em2 = TemporalEntityManager.getInstance(getEMF().createEntityManager());
+
         assertNotSame(em1, em2);
-        
-        TemporalHelper.setEffectiveTime(em1, T6);
-        TemporalHelper.setEffectiveTime(em2, T7);
+
+        em1.setEffectiveTime(T6);
+        em2.setEffectiveTime(T7);
 
         verifySetStartTime(em2, T7);
         verifySetStartTime(em1, T6);
 
-        TemporalHelper.clearEffectiveTime(em1);
+        em1.clearEffectiveTime();
         verifySetStartTime(em2, T7);
-        assertFalse(em1.getProperties().containsKey(TemporalHelper.EFF_TS_PROPERTY));
-        assertFalse(TemporalHelper.hasEffectiveTime(em1));
-        assertNull(TemporalHelper.getEffectiveTime(em1));
-        
-        TemporalHelper.clearEffectiveTime(em2);
-        assertFalse(em2.getProperties().containsKey(TemporalHelper.EFF_TS_PROPERTY));
-        assertFalse(TemporalHelper.hasEffectiveTime(em2));
-        assertNull(TemporalHelper.getEffectiveTime(em2));
+        assertFalse(em1.hasEffectiveTime());
+        assertNull(em1.getEffectiveTime());
+
+        em2.clearEffectiveTime();
+        assertFalse(em2.hasEffectiveTime());
+        assertNull(em2.getEffectiveTime());
     }
 
+    @Test
+    public void verifyCurrentCreateTemporal() {
+        TemporalEntityManager em = getEntityManager();
+        em.getTransaction().begin();
+
+        PersonHobby ph = em.newTemporal(PersonHobby.class);
+
+        Assert.assertNotNull(ph);
+        Assert.assertNotNull(ph.getEffectivity());
+        Assert.assertEquals(BOT, ph.getEffectivity().getStart());
+        Assert.assertEquals(EOT, ph.getEffectivity().getEnd());
+    }
+
+    @Test
+    public void verifyFutureCreateTemporal() {
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime(T3, true);
+        em.getTransaction().begin();
+
+        PersonHobby ph = em.newTemporal(PersonHobby.class);
+
+        Assert.assertNotNull(ph);
+        Assert.assertNotNull(ph.getEffectivity());
+        Assert.assertEquals(T3, ph.getEffectivity().getStart());
+        Assert.assertEquals(EOT, ph.getEffectivity().getEnd());
+    }
 }

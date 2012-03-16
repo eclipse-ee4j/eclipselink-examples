@@ -30,7 +30,7 @@ import org.eclipse.persistence.sessions.SessionEventAdapter;
 import temporal.EditionSet;
 import temporal.EditionSetEntry;
 import temporal.TemporalEntity;
-import temporal.TemporalHelper;
+import temporal.TemporalEntityManager;
 
 /**
  * During the initial phases of a commit this listener will look at all proposed
@@ -47,7 +47,8 @@ public class PropagateEditionChangesListener extends SessionEventAdapter {
     public void preCalculateUnitOfWorkChangeSet(SessionEvent event) {
         RepeatableWriteUnitOfWork uow = (RepeatableWriteUnitOfWork) event.getSession();
         UnitOfWorkChangeSet uowCS = (UnitOfWorkChangeSet) uow.getUnitOfWorkChangeSet();
-        EditionSet es = (EditionSet) uow.getProperty(TemporalHelper.EDITION_SET_PROPERTY);
+        TemporalEntityManager tem = TemporalEntityManager.getInstance(uow);
+        EditionSet es = tem.getEditionSet();
 
         if (es != null && es.hasEntries() && uowCS.hasChanges()) {
             for (EditionSetEntry entry : es.getEntries()) {

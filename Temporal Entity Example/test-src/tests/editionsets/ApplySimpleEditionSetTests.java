@@ -12,9 +12,6 @@ package tests.editionsets;
 
 import static example.PersonModelExample.GOLF;
 import static example.PersonModelExample.T2;
-
-import javax.persistence.EntityManager;
-
 import junit.framework.Assert;
 import model.Address;
 import model.Person;
@@ -26,7 +23,7 @@ import org.junit.Test;
 import temporal.EditionSet;
 import temporal.EditionSetEntry;
 import temporal.EditionSetHelper;
-import temporal.TemporalHelper;
+import temporal.TemporalEntityManager;
 import tests.BaseTestCase;
 import example.PersonModelExample;
 
@@ -46,11 +43,11 @@ public class ApplySimpleEditionSetTests extends BaseTestCase {
 
     @Test
     public void verifyEditionSetAtT2() {
-        EntityManager em = createEntityManager();
+        TemporalEntityManager em = getEntityManager();
 
         em.getTransaction().begin();
 
-        EditionSet es = TemporalHelper.setEffectiveTime(em, T2, true);
+        EditionSet es = em.setEffectiveTime(T2, true);
 
         Assert.assertNotNull(es);
         Assert.assertEquals(T2, es.getEffective());
@@ -69,10 +66,12 @@ public class ApplySimpleEditionSetTests extends BaseTestCase {
      * Populate initial sample entity
      */
     @Override
-    public void populate(EntityManager em) {
+    public void populate(TemporalEntityManager em) {
         System.out.println("\nEditionSetTests.populate:START");
         example.populateHobbies(em);
         em.persist(getSample());
+        em.flush();
+        
         populateT2Editions(em);
         System.out.println("\nEditionSetTests.populate::DONE");
     }
@@ -80,23 +79,23 @@ public class ApplySimpleEditionSetTests extends BaseTestCase {
     /**
      * Create the edition at T2 if it has not already been created
      */
-    public Person populateT2Editions(EntityManager em) {
-        EditionSet editionSet = TemporalHelper.setEffectiveTime(em, T2, true);
+    public Person populateT2Editions(TemporalEntityManager em) {
+        EditionSet editionSet = em.setEffectiveTime(T2, true);
         Assert.assertNotNull(editionSet);
 
-        Person personEditionT2 = em.find(PersonEntity.class, getSample().getId());
+        Person personEditionT2 = em.find(Person.class, getSample().getId());
 
         if (personEditionT2.getEffectivity().getStart() != T2) {
             System.out.println("\nEditionSetTests.populateT2Edition:START");
 
             editionSet.setDescription("EditionSetTests::Person@T2");
-            personEditionT2 = TemporalHelper.createEdition(em, personEditionT2);
+            personEditionT2 = em.newEdition(personEditionT2);
             personEditionT2.setName("Jimmy");
-            Address aT2 = TemporalHelper.createEdition(em, personEditionT2.getAddress());
+            Address aT2 = em.newEdition(personEditionT2.getAddress());
             aT2.setCity("Toronto");
             aT2.setState("ON");
             personEditionT2.setAddress(aT2);
-            Phone pT2 = TemporalHelper.createEdition(em, personEditionT2.getPhone("Home"));
+            Phone pT2 = em.newEdition(personEditionT2.getPhone("Home"));
             personEditionT2.addPhone(pT2);
             pT2.setNumber("222-222-2222");
             em.persist(personEditionT2.addHobby(example.hobbies.get(GOLF), T2));

@@ -14,12 +14,10 @@ import static example.PersonModelExample.T1;
 import static example.PersonModelExample.T2;
 import static example.PersonModelExample.T3;
 import static example.PersonModelExample.T4;
-import static example.PersonModelExample.T5;
+import static example.PersonModelExample.*;
 import static temporal.Effectivity.BOT;
 
 import java.util.List;
-
-import javax.persistence.EntityManager;
 
 import model.Person;
 import model.PersonHobby;
@@ -27,6 +25,7 @@ import model.PersonHobby;
 import org.junit.Assert;
 import org.junit.Test;
 
+import temporal.TemporalEntityManager;
 import example.PersonModelExample;
 
 /**
@@ -43,7 +42,7 @@ public class FuturePersonTests extends BaseTestCase {
     }
 
     @Override
-    public void populate(EntityManager em) {
+    public void populate(TemporalEntityManager em) {
         example.populateHobbies(em);
         for (PersonHobby ph: example.futurePerson.getPersonHobbies().values()) {
             em.persist(ph);
@@ -53,7 +52,7 @@ public class FuturePersonTests extends BaseTestCase {
 
     @Test
     public void queryAllCurrent() {
-        EntityManager em = createEntityManager();
+        TemporalEntityManager em = getEntityManager();
 
         List<Person> results = example.queryAllCurrent(em);
 
@@ -62,7 +61,7 @@ public class FuturePersonTests extends BaseTestCase {
 
     @Test
     public void queryPersonEditionAtBOT() {
-        EntityManager em = createEntityManager();
+        TemporalEntityManager em = getEntityManager();
         em.setProperty("EFF_TS", BOT);
 
         List<Person> results = em.createQuery("SELECT p From PersonEdition p WHERE p.cid = " + getSample().getId(), Person.class).getResultList();
@@ -72,7 +71,7 @@ public class FuturePersonTests extends BaseTestCase {
 
     @Test
     public void queryFutureEditionOfCurrentPersonAtT1() {
-        EntityManager em = createEntityManager();
+        TemporalEntityManager em = getEntityManager();
         em.setProperty("EFF_TS", T1);
 
         List<Person> results = em.createQuery("SELECT p From PersonEdition p WHERE p.cid = " + getSample().getId(), Person.class).getResultList();
@@ -82,7 +81,7 @@ public class FuturePersonTests extends BaseTestCase {
 
     @Test
     public void queryFutureEditionOfCurrentPersonAtT2() {
-        EntityManager em = createEntityManager();
+        TemporalEntityManager em = getEntityManager();
         em.setProperty("EFF_TS", T2);
 
         List<Person> results = em.createQuery("SELECT p From PersonEdition p WHERE p.cid = " + getSample().getId(), Person.class).getResultList();
@@ -110,7 +109,7 @@ public class FuturePersonTests extends BaseTestCase {
 
     @Test
     public void queryFutureEditionOfCurrentPersonAtT3() {
-        EntityManager em = createEntityManager();
+        TemporalEntityManager em = getEntityManager();
         em.setProperty("EFF_TS", T3);
 
         List<Person> results = em.createQuery("SELECT p From PersonEdition p WHERE p.cid = " + getSample().getId(), Person.class).getResultList();
@@ -138,7 +137,7 @@ public class FuturePersonTests extends BaseTestCase {
 
     @Test
     public void queryFutureEditionOfCurrentPersonAtT4() {
-        EntityManager em = createEntityManager();
+        TemporalEntityManager em = getEntityManager();
         em.setProperty("EFF_TS", T4);
 
         List<Person> results = em.createQuery("SELECT p From PersonEdition p WHERE p.cid = " + getSample().getId(), Person.class).getResultList();
@@ -168,7 +167,7 @@ public class FuturePersonTests extends BaseTestCase {
 
     @Test
     public void queryFutureEditionOfCurrentPersonAtT5() {
-        EntityManager em = createEntityManager();
+        TemporalEntityManager em = getEntityManager();
         em.setProperty("EFF_TS", T5);
 
         List<Person> results = em.createQuery("SELECT p From PersonEdition p WHERE p.cid = " + getSample().getId(), Person.class).getResultList();
@@ -192,6 +191,21 @@ public class FuturePersonTests extends BaseTestCase {
         Assert.assertEquals(getSample().getName(), person.getName());
         Assert.assertNotNull(person.getAddress());
         Assert.assertFalse(person.getPhones().isEmpty());
+    }
+    
+    @Test
+    public void verifyCreateNewEntityInFuture() {
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime(T6, true);
+        
+        em.getTransaction().begin();
+        
+        Person p = em.newEntity(Person.class);
+        
+        Assert.assertNotNull(p);
+        Assert.assertNotNull(p.getEffectivity());
+        
+        em.getTransaction().rollback();
     }
 
 }

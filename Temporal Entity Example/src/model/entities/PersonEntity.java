@@ -130,16 +130,18 @@ public class PersonEntity extends BaseTemporalEntity<Person> implements Person {
     }
 
     @Override
-    public PersonHobby addHobby(Hobby hobby, long asOf) {
-        PersonHobby personHobby = new PersonHobby(hobby, this);
-        personHobby.getEffectivity().setStart(asOf);
-        return addHobby(personHobby);
+    public PersonHobby addHobby(PersonHobby personHobby) {
+        personHobby.setPerson(this);
+        this.hobbies.put(personHobby.getName(), personHobby);
+        return personHobby;
     }
 
     @Override
-    public PersonHobby addHobby(PersonHobby personHobby) {
-        this.hobbies.put(personHobby.getName(), personHobby);
-        return personHobby;
+    public PersonHobby addHobby(Hobby hobby, long asOf) {
+       PersonHobby ph = new PersonHobby();
+       ph.setHobby(hobby);
+       ph.getEffectivity().setStart(asOf);
+       return addHobby(ph);
     }
 
     @Override
@@ -193,7 +195,11 @@ public class PersonEntity extends BaseTemporalEntity<Person> implements Person {
        Person personEdition = (Person) edition;
        
        for (PersonHobby ph: personEdition.getPersonHobbies().values()) {
-           addHobby(ph.getHobby(), getEffectivity().getStart());
+           PersonHobby newPh = new PersonHobby();
+           newPh.setHobby(ph.getHobby());
+           newPh.getEffectivity().setStart(ph.getEffectivity().getStart());
+           newPh.getEffectivity().setEnd(ph.getEffectivity().getEnd());
+           addHobby(newPh);
        }
        personEdition.getPersonHobbies().clear();
     }

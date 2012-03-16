@@ -101,4 +101,9 @@ public class EditionSetEntry {
         }
     }
 
+    @Override
+    public String toString() {
+        return "EditionSetEntry[" + getTemporal() + "]";
+    }
+
 }

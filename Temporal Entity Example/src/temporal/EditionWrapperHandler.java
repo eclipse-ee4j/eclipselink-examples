@@ -44,7 +44,7 @@ public class EditionWrapperHandler<T extends TemporalEntity<?>> implements Invoc
      */
     private T newEdition;
 
-    private EntityManager entityManager;
+    private TemporalEntityManager entityManager;
 
     /**
      * 
@@ -53,7 +53,7 @@ public class EditionWrapperHandler<T extends TemporalEntity<?>> implements Invoc
 
     public EditionWrapperHandler(T original, EntityManager em) {
         this.original = original;
-        this.entityManager = em;
+        this.entityManager = TemporalEntityManager.getInstance(em);
     }
 
     public T getOriginal() {
@@ -71,7 +71,7 @@ public class EditionWrapperHandler<T extends TemporalEntity<?>> implements Invoc
         return getOriginal();
     }
 
-    public EntityManager getEntityManager() {
+    public TemporalEntityManager getEntityManager() {
         return entityManager;
     }
 
@@ -87,7 +87,7 @@ public class EditionWrapperHandler<T extends TemporalEntity<?>> implements Invoc
 
         if (args != null && args.length > 0) {
             if (this.newEdition == null) {
-                this.newEdition = TemporalHelper.createEdition(getEntityManager(), getOriginal());
+                this.newEdition = getEntityManager().newEdition(getOriginal());
                 this.changes = new HashMap<String, Object[]>();
             }
             getChanges().put(method.getName(), args);
@@ -127,7 +127,7 @@ public class EditionWrapperHandler<T extends TemporalEntity<?>> implements Invoc
     @SuppressWarnings("unchecked")
     @Override
     public T newEdition() {
-        return (T) TemporalHelper.newInstance(getEntityManager(), this.original.getClass());
+        return (T) getEntityManager().newEntity(this.original.getClass());
     }
 
     @Override
