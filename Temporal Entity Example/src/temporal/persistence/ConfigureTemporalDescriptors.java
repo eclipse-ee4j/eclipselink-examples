@@ -316,10 +316,10 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
     private void configureQueries(ClassDescriptor currentDesc, ClassDescriptor editionDesc, ClassDescriptor editionViewDesc, Session session) {
         // Add query redirector to handle edition query redirection to edition
         // class when effectivity time is provided.
-        TemporalQueryRedirector redirector = new TemporalQueryRedirector(currentDesc, editionDesc);
-        currentDesc.setDefaultReadAllQueryRedirector(redirector);
-        currentDesc.setDefaultReadObjectQueryRedirector(redirector);
-        currentDesc.setDefaultReportQueryRedirector(redirector);
+        //TemporalQueryRedirector redirector = new TemporalQueryRedirector(currentDesc, editionDesc);
+        //currentDesc.setDefaultReadAllQueryRedirector(redirector);
+        //currentDesc.setDefaultReadObjectQueryRedirector(redirector);
+        //currentDesc.setDefaultReportQueryRedirector(redirector);
 
         // EDITION VIEW: Add query keys
         addCidQueryKey("id", editionViewDesc, session);

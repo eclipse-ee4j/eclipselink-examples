@@ -19,15 +19,20 @@ import java.lang.reflect.Member;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaQuery;
 
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.internal.descriptors.InstanceVariableAttributeAccessor;
 import org.eclipse.persistence.internal.descriptors.MethodAttributeAccessor;
 import org.eclipse.persistence.internal.sessions.AbstractSession;
 import org.eclipse.persistence.internal.sessions.RepeatableWriteUnitOfWork;
+import org.eclipse.persistence.jpa.JpaHelper;
 import org.eclipse.persistence.mappings.AggregateObjectMapping;
 import org.eclipse.persistence.mappings.CollectionMapping;
 import org.eclipse.persistence.mappings.DatabaseMapping;
+import org.eclipse.persistence.queries.DatabaseQuery;
+import org.eclipse.persistence.queries.ObjectLevelReadQuery;
 import org.eclipse.persistence.sessions.Session;
 
 import temporal.persistence.AbstractEntityManagerWrapper;
@@ -432,6 +437,47 @@ public class TemporalEntityManager extends AbstractEntityManagerWrapper {
         }
         return getEntityManager().unwrap(clazz);
     }
+
+    @Override
+    public Query createQuery(String qlString) {
+        Query query = super.createQuery(qlString);
+        updateTemporalQuery(query);
+        return query;
+    }
+
+    @Override
+    public <T> TypedQuery<T> createQuery(String qlString, Class<T> resultClass) {
+        TypedQuery<T> query = super.createQuery(qlString, resultClass);
+        updateTemporalQuery(query);
+        return query;
+    }
+
+    @Override
+    public <T> TypedQuery<T> createQuery(CriteriaQuery<T> criteriaQuery) {
+        TypedQuery<T> query = super.createQuery(criteriaQuery);
+        updateTemporalQuery(query);
+        return query;
+    }
+
+    /**
+     * Update the provided JPA query based on the effective time of use the
+     * correct target entity or edition
+     */
+    private void updateTemporalQuery(Query query) {
+        DatabaseQuery elQuery = JpaHelper.getDatabaseQuery(query);
+        
+        if (hasEffectiveTime() && TemporalHelper.isTemporalEntity(elQuery.getReferenceClass())) {
+            RepeatableWriteUnitOfWork uow = getUnitOfWork();
+            ClassDescriptor descriptor = DescriptorHelper.getEditionDescriptor(uow, elQuery.getReferenceClass());
+            ((ObjectLevelReadQuery) elQuery).setReferenceClass(descriptor.getJavaClass());
+            
+            // TODO: Should this be set every time?
+            if (elQuery.getDescriptor() != null) {
+                elQuery.setDescriptor(descriptor);
+            }
+        }
+    }
+
 
     public String toString() {
         return "TemporalEntityManager@" + getEffectiveTime() + "[" + getEntityManager() + "]";

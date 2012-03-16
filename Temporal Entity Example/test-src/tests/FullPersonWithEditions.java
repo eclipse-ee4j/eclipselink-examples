@@ -37,6 +37,7 @@ import org.eclipse.persistence.sessions.CopyGroup;
 import org.junit.Assert;
 import org.junit.Test;
 
+import temporal.BaseEntity;
 import temporal.EditionSet;
 import temporal.TemporalEntityManager;
 import temporal.TemporalHelper;
@@ -644,48 +645,154 @@ public class FullPersonWithEditions extends BaseTestCase {
     /**
      * Verify the query result and relationship to person
      */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void queryCurrentHomePhone() {
+        TemporalEntityManager em = getEntityManager();
+
+        TypedQuery<Phone> query = em.createQuery("SELECT p FROM Phone p WHERE p.type = 'Home'", Phone.class);
+        Phone phone = query.getSingleResult();
+
+        Assert.assertNotNull(phone);
+        Assert.assertFalse(TemporalHelper.isEditionClass((Class<BaseEntity>) phone.getClass()));
+        Assert.assertNotNull(phone.getContinuity());
+        Assert.assertEquals(phone, phone.getContinuity());
+        Assert.assertEquals(BOT, phone.getEffectivity().getStart());
+        Assert.assertEquals(T2, phone.getEffectivity().getEnd());
+
+        Assert.assertNotNull(phone.getPerson());
+        Assert.assertEquals(phone.getEffectivity().getStart(), phone.getPerson().getEffectivity().getStart());
+    }
+
+    /**
+     * Verify the query result and relationship to person
+     */
+    @SuppressWarnings("unchecked")
     @Test
     public void queryHomePhoneAtBOT() {
-        Assert.fail("NOT YET IMPLEMENTED");
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime(BOT);
+
+        TypedQuery<Phone> query = em.createQuery("SELECT p FROM Phone p WHERE p.type = 'Home'", Phone.class);
+        Phone phone = query.getSingleResult();
+
+        Assert.assertNotNull(phone);
+        Assert.assertTrue(TemporalHelper.isEditionClass((Class<BaseEntity>) phone.getClass()));
+        Assert.assertNotNull(phone.getContinuity());
+        Assert.assertEquals(BOT, phone.getEffectivity().getStart());
+        Assert.assertEquals(T2, phone.getEffectivity().getEnd());
+
+        Assert.assertNotNull(phone.getPerson());
+        Assert.assertEquals(phone.getEffectivity().getStart(), phone.getPerson().getEffectivity().getStart());
     }
 
     /**
      * Verify the query result and relationship to person
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void queryHomePhoneAtT1() {
-        Assert.fail("NOT YET IMPLEMENTED");
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime(T1);
+
+        TypedQuery<Phone> query = em.createQuery("SELECT p FROM Phone p WHERE p.type = 'Home'", Phone.class);
+        Phone phone = query.getSingleResult();
+
+        Assert.assertNotNull(phone);
+        Assert.assertTrue(TemporalHelper.isEditionClass((Class<BaseEntity>) phone.getClass()));
+        Assert.assertNotNull(phone.getContinuity());
+        Assert.assertEquals(BOT, phone.getEffectivity().getStart());
+        Assert.assertEquals(T2, phone.getEffectivity().getEnd());
+
+        Assert.assertNotNull(phone.getPerson());
+        Assert.assertEquals(phone.getEffectivity().getStart(), phone.getPerson().getEffectivity().getStart());
     }
 
     /**
      * Verify the query result and relationship to person
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void queryHomePhoneAtT2() {
-        Assert.fail("NOT YET IMPLEMENTED");
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime(T2);
+
+        TypedQuery<Phone> query = em.createQuery("SELECT p FROM Phone p WHERE p.type = 'Home'", Phone.class);
+        Phone phone = query.getSingleResult();
+
+        Assert.assertNotNull(phone);
+        Assert.assertTrue(TemporalHelper.isEditionClass((Class<BaseEntity>) phone.getClass()));
+        Assert.assertNotNull(phone.getContinuity());
+        Assert.assertEquals(T2, phone.getEffectivity().getStart());
+        Assert.assertEquals(T4, phone.getEffectivity().getEnd());
+
+        Assert.assertNotNull(phone.getPerson());
+        Assert.assertEquals(phone.getEffectivity().getStart(), phone.getPerson().getEffectivity().getStart());
     }
 
     /**
      * Verify the query result and relationship to person
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void queryHomePhoneAtT3() {
-        Assert.fail("NOT YET IMPLEMENTED");
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime(T3);
+
+        TypedQuery<Phone> query = em.createQuery("SELECT p FROM Phone p WHERE p.type = 'Home'", Phone.class);
+        Phone phone = query.getSingleResult();
+
+        Assert.assertNotNull(phone);
+        Assert.assertTrue(TemporalHelper.isEditionClass((Class<BaseEntity>) phone.getClass()));
+        Assert.assertNotNull(phone.getContinuity());
+        Assert.assertEquals(T2, phone.getEffectivity().getStart());
+        Assert.assertEquals(T4, phone.getEffectivity().getEnd());
+
+        Assert.assertNotNull(phone.getPerson());
+        Assert.assertEquals(phone.getEffectivity().getStart(), phone.getPerson().getEffectivity().getStart());
     }
 
     /**
      * Verify the query result and relationship to person
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void queryHomePhoneAtT4() {
-        Assert.fail("NOT YET IMPLEMENTED");
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime(T4);
+
+        TypedQuery<Phone> query = em.createQuery("SELECT p FROM Phone p WHERE p.type = 'Home'", Phone.class);
+        Phone phone = query.getSingleResult();
+
+        Assert.assertNotNull(phone);
+        Assert.assertTrue(TemporalHelper.isEditionClass((Class<BaseEntity>) phone.getClass()));
+        Assert.assertNotNull(phone.getContinuity());
+        Assert.assertEquals(T4, phone.getEffectivity().getStart());
+        Assert.assertEquals(EOT, phone.getEffectivity().getEnd());
+
+        Assert.assertNotNull(phone.getPerson());
+        Assert.assertEquals(phone.getEffectivity().getStart(), phone.getPerson().getEffectivity().getStart());
     }
 
     /**
      * Verify the query result and relationship to person
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void queryHomePhoneAtT5() {
-        Assert.fail("NOT YET IMPLEMENTED");
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime(T5);
+
+        TypedQuery<Phone> query = em.createQuery("SELECT p FROM Phone p WHERE p.type = 'Home'", Phone.class);
+        Phone phone = query.getSingleResult();
+
+        Assert.assertNotNull(phone);
+        Assert.assertTrue(TemporalHelper.isEditionClass((Class<BaseEntity>) phone.getClass()));
+        Assert.assertNotNull(phone.getContinuity());
+        Assert.assertEquals(T4, phone.getEffectivity().getStart());
+        Assert.assertEquals(EOT, phone.getEffectivity().getEnd());
+
+        Assert.assertNotNull(phone.getPerson());
+        Assert.assertEquals(phone.getEffectivity().getStart(), phone.getPerson().getEffectivity().getStart());
     }
 }
