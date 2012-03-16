@@ -19,7 +19,6 @@ import junit.framework.Assert;
 import model.Address;
 import model.Person;
 import model.Phone;
-import model.entities.PersonEntity;
 
 import org.junit.Test;
 
@@ -54,7 +53,7 @@ public class DuplicateInsertOnCreateMerge extends BaseTestCase {
     public Person createPersonEditionAtT2(TemporalEntityManager em) {
         em.setEffectiveTime( T2, true);
 
-        Person fpEdition = em.find(PersonEntity.class, getSample().getId());
+        Person fpEdition = em.find(Person.class, getSample().getId());
         Person personEditionT2 = fpEdition;
 
         if (personEditionT2.getEffectivity().getStart() != T2) {

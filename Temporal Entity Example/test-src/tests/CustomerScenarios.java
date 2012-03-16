@@ -82,7 +82,7 @@ public class CustomerScenarios extends BaseTestCase {
         em.getEntityManagerFactory().getCache().evictAll();
         System.out.println("\nREAD:\n");
 
-        Person readP = em.createQuery("SELECT p FROM PersonEdition p WHERE p.cid = " + p.getId(), Person.class).getSingleResult();
+        Person readP = em.createQuery("SELECT p FROM Person p WHERE p.cid = " + p.getId(), Person.class).getSingleResult();
 
         Assert.assertEquals(p.getName(), readP.getName());
         Assert.assertEquals("t2", readP.getAddress().getCity());
@@ -111,11 +111,11 @@ public class CustomerScenarios extends BaseTestCase {
 
         em.setEffectiveTime(T1, false);
 
-        List<Person> results = em.createQuery("SELECT p FROM PersonEdition p WHERE p.address.city = 'now'", Person.class).getResultList();
+        List<Person> results = em.createQuery("SELECT p FROM Person p WHERE p.address.city = 'now'", Person.class).getResultList();
         Assert.assertTrue(results.isEmpty());
 
         em.setEffectiveTime(T2, false);
-        Person readP = em.createQuery("SELECT p FROM PersonEdition p JOIN FETCH p.address WHERE p.address.city = 'now'", Person.class).getSingleResult();
+        Person readP = em.createQuery("SELECT p FROM Person p JOIN FETCH p.address WHERE p.address.city = 'now'", Person.class).getSingleResult();
 
         Assert.assertNotNull(readP);
         Assert.assertNotNull(readP.getAddress());

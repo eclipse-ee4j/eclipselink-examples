@@ -186,7 +186,7 @@ public class PersonModelExample {
     public Person queryFutureEditionOfCurrentPersonAtBOT(TemporalEntityManager em) {
         em.setEffectiveTime(Effectivity.BOT);
 
-        Person pEdition = em.createQuery("SELECT p From PersonEdition p WHERE p.cid = " + this.simplePerson.getId(), Person.class).getSingleResult();
+        Person pEdition = em.createQuery("SELECT p FROM Person p WHERE p.cid = " + this.simplePerson.getId(), Person.class).getSingleResult();
 
         System.out.println("QUERY EDITION @ BOT: " + pEdition);
 
@@ -196,7 +196,7 @@ public class PersonModelExample {
     public Person queryFutureEditionOfCurrentPersonAtT1(TemporalEntityManager em) {
         em.setEffectiveTime(T1);
 
-        Person pEdition = em.createQuery("SELECT p From PersonEdition p WHERE p.cid = " + this.simplePerson.getId(), Person.class).getSingleResult();
+        Person pEdition = em.createQuery("SELECT p FROM Person p WHERE p.cid = " + this.simplePerson.getId(), Person.class).getSingleResult();
 
         System.out.println("QUERY EDITION @ T1: " + pEdition);
 
@@ -206,7 +206,7 @@ public class PersonModelExample {
     public Person queryFutureEditionOfCurrentPersonAtT2(TemporalEntityManager em) {
         em.setEffectiveTime(T2);
 
-        Person pEdition = em.createQuery("SELECT p From PersonEdition p WHERE p.cid = " + this.simplePerson.getId(), Person.class).getSingleResult();
+        Person pEdition = em.createQuery("SELECT p FROM Person p WHERE p.cid = " + this.simplePerson.getId(), Person.class).getSingleResult();
 
         System.out.println("QUERY EDITION @ T2: " + pEdition);
 
@@ -216,7 +216,7 @@ public class PersonModelExample {
     public Person queryFutureEditionOfCurrentPersonAtT2JoinFetchAddress(TemporalEntityManager em) {
         em.setEffectiveTime(T2);
 
-        Person person = em.createQuery("SELECT p From PersonEdition p JOIN FETCH p.address WHERE p.cid = " + this.simplePerson.getId(), Person.class).getSingleResult();
+        Person person = em.createQuery("SELECT p FROM Person p JOIN FETCH p.address WHERE p.cid = " + this.simplePerson.getId(), Person.class).getSingleResult();
         Address address = person.getAddress();
 
         System.out.println("QUERY EDITION @ T2: " + person);
@@ -228,7 +228,7 @@ public class PersonModelExample {
     public Person queryFutureEditionOfCurrentPersonAtT3(TemporalEntityManager em) {
         em.setEffectiveTime(T3);
 
-        Person personEdition = em.createQuery("SELECT p From PersonEdition p WHERE p.cid = " + this.simplePerson.getId(), Person.class).getSingleResult();
+        Person personEdition = em.createQuery("SELECT p FROM Person p WHERE p.cid = " + this.simplePerson.getId(), Person.class).getSingleResult();
 
         System.out.println("QUERY EDITION @ T3: " + personEdition);
 
@@ -238,7 +238,7 @@ public class PersonModelExample {
     public Person queryFutureEditionOfCurrentPersonAtT4(TemporalEntityManager em) {
         em.setEffectiveTime(T4);
 
-        Person pEdition = em.createQuery("SELECT p From PersonEdition p WHERE p.cid = " + this.simplePerson.getId(), Person.class).getSingleResult();
+        Person pEdition = em.createQuery("SELECT p FROM Person p WHERE p.cid = " + this.simplePerson.getId(), Person.class).getSingleResult();
 
         System.out.println("QUERY EDITION @ T4: " + pEdition);
 
@@ -248,7 +248,7 @@ public class PersonModelExample {
     public Person queryFutureEditionOfCurrentPersonAtT5(TemporalEntityManager em) {
         em.setEffectiveTime( T5);
 
-        Person pEdition = em.createQuery("SELECT p From PersonEdition p WHERE p.cid = " + this.simplePerson.getId(), Person.class).getSingleResult();
+        Person pEdition = em.createQuery("SELECT p FROM Person p WHERE p.cid = " + this.simplePerson.getId(), Person.class).getSingleResult();
 
         System.out.println("QUERY EDITION @ T5: " + pEdition);
 

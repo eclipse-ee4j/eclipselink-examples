@@ -79,7 +79,7 @@ public class MoveSimpleEditionSetTests extends BaseTestCase {
         EditionSet editionSet = em.setEffectiveTime( T2, true);
         Assert.assertNotNull(editionSet);
 
-        Person personEditionT2 = em.find(PersonEntity.class, getSample().getId());
+        Person personEditionT2 = em.find(Person.class, getSample().getId());
 
         if (personEditionT2.getEffectivity().getStart() != T2) {
             System.out.println("\nEditionSetTests.populateT2Edition:START");

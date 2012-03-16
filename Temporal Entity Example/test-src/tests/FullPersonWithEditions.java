@@ -280,7 +280,7 @@ public class FullPersonWithEditions extends BaseTestCase {
         TemporalEntityManager em = getEntityManager();
         em.setEffectiveTime(BOT);
 
-        Person pEdition = em.createQuery("SELECT p From PersonEdition p WHERE p.cid = " + getSample().getId(), Person.class).getSingleResult();
+        Person pEdition = em.createQuery("SELECT p From Person p WHERE p.id = " + getSample().getId(), Person.class).getSingleResult();
 
         System.out.println("QUERY EDITION @ BOT: " + pEdition);
 
@@ -305,7 +305,7 @@ public class FullPersonWithEditions extends BaseTestCase {
         TemporalEntityManager em = getEntityManager();
         em.setEffectiveTime(T1);
 
-        Person pEdition = em.createQuery("SELECT p From PersonEdition p WHERE p.cid = " + getSample().getId(), Person.class).getSingleResult();
+        Person pEdition = em.createQuery("SELECT p From Person p WHERE p.id = " + getSample().getId(), Person.class).getSingleResult();
 
         System.out.println("QUERY EDITION @ T1: " + pEdition);
 
@@ -334,7 +334,7 @@ public class FullPersonWithEditions extends BaseTestCase {
         TemporalEntityManager em = getEntityManager();
         em.setEffectiveTime(T2);
 
-        Person pEdition = em.createQuery("SELECT p From PersonEdition p WHERE p.cid = " + getSample().getId(), Person.class).getSingleResult();
+        Person pEdition = em.createQuery("SELECT p From Person p WHERE p.id = " + getSample().getId(), Person.class).getSingleResult();
 
         System.out.println("QUERY EDITION @ T2: " + pEdition);
 
@@ -365,7 +365,7 @@ public class FullPersonWithEditions extends BaseTestCase {
 
         Person pEdition = null;
         try {
-            pEdition = em.createQuery("SELECT p From PersonEdition p JOIN FETCH p.address WHERE p.cid = " + getSample().getId(), Person.class).getSingleResult();
+            pEdition = em.createQuery("SELECT p From Person p JOIN FETCH p.address WHERE p.id = " + getSample().getId(), Person.class).getSingleResult();
         } catch (NoResultException e) {
             Assert.fail("Join returned no result");
         }
@@ -396,7 +396,7 @@ public class FullPersonWithEditions extends BaseTestCase {
         TemporalEntityManager em = getEntityManager();
         em.setEffectiveTime(T3);
 
-        Person pEdition = em.createQuery("SELECT p From PersonEdition p WHERE p.cid = " + getSample().getId(), Person.class).getSingleResult();
+        Person pEdition = em.createQuery("SELECT p From Person p WHERE p.id = " + getSample().getId(), Person.class).getSingleResult();
 
         System.out.println("QUERY EDITION @ T3: " + pEdition);
 
@@ -425,7 +425,7 @@ public class FullPersonWithEditions extends BaseTestCase {
         TemporalEntityManager em = getEntityManager();
         em.setEffectiveTime(T4);
 
-        Person pEdition = em.createQuery("SELECT p From PersonEdition p WHERE p.cid = " + getSample().getId(), Person.class).getSingleResult();
+        Person pEdition = em.createQuery("SELECT p From Person p WHERE p.id = " + getSample().getId(), Person.class).getSingleResult();
 
         System.out.println("QUERY EDITION @ T4: " + pEdition);
 
@@ -453,7 +453,7 @@ public class FullPersonWithEditions extends BaseTestCase {
         TemporalEntityManager em = getEntityManager();
         em.setEffectiveTime(T5);
 
-        Person pEdition = em.createQuery("SELECT p From PersonEdition p WHERE p.cid = " + getSample().getId(), Person.class).getSingleResult();
+        Person pEdition = em.createQuery("SELECT p From Person p WHERE p.id = " + getSample().getId(), Person.class).getSingleResult();
 
         System.out.println("QUERY EDITION @ T5: " + pEdition);
 
@@ -537,7 +537,7 @@ public class FullPersonWithEditions extends BaseTestCase {
         TemporalEntityManager em = getEntityManager();
         em.setEffectiveTime(T4);
 
-        Person pEdition = em.createQuery("SELECT p From PersonEdition p WHERE p.cid = " + getSample().getId(), Person.class).getSingleResult();
+        Person pEdition = em.createQuery("SELECT p From Person p WHERE p.id = " + getSample().getId(), Person.class).getSingleResult();
 
         System.out.println("QUERY EDITION @ T4: " + pEdition);
 
@@ -566,7 +566,7 @@ public class FullPersonWithEditions extends BaseTestCase {
         TemporalEntityManager em = getEntityManager();
         em.setEffectiveTime(T4);
 
-        Person pEdition = em.createQuery("SELECT p From PersonEdition p WHERE p.cid = " + getSample().getId(), Person.class).getSingleResult();
+        Person pEdition = em.createQuery("SELECT p From Person p WHERE p.id = " + getSample().getId(), Person.class).getSingleResult();
 
         System.out.println("QUERY EDITION @ T4: " + pEdition);
 

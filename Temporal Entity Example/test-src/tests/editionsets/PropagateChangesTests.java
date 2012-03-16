@@ -133,7 +133,7 @@ public class PropagateChangesTests extends BaseTestCase {
         EditionSet editionSet = em.setEffectiveTime( T2, true);
         Assert.assertNotNull(editionSet);
 
-        Person personEditionT2 = em.find(PersonEntity.class, getSample().getId());
+        Person personEditionT2 = em.find(Person.class, getSample().getId());
 
         if (personEditionT2.getEffectivity().getStart() != T2) {
             System.out.println("\nEditionSetTests.populateT2Edition:START");
@@ -164,7 +164,7 @@ public class PropagateChangesTests extends BaseTestCase {
         EditionSet editionSet = em.setEffectiveTime( T4, true);
         Assert.assertNotNull(editionSet);
 
-        Person personEditionT4 = em.find(PersonEntity.class, getSample().getId());
+        Person personEditionT4 = em.find(Person.class, getSample().getId());
 
         if (personEditionT4.getEffectivity().getStart() != T4) {
             System.out.println("\nEditionSetTests.populateT4Edition:START");
