@@ -34,15 +34,12 @@ public interface TemporalEdition<T extends TemporalEntity<?>> {
      * Verify if the new edition created by modifications conflicts with any
      * future editions which already exist.
      */
-    boolean hasConflicts();
-    
-    /**
-     * Create a new edition for the current effectivity
-     */
-    T newEdition();
-    
+    //boolean hasConflicts();
+        
     /**
      * TODO
      */
     EditionSetEntry getEditionSetEntry();
+    
+    String toString();
 }

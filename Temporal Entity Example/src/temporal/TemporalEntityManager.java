@@ -13,7 +13,7 @@
 package temporal;
 
 import static temporal.TemporalHelper.NON_TEMPORAL;
-import static temporal.persistence.DescriptorHelper.getEditionDescriptor;
+import static temporal.persistence.DescriptorHelper.*;
 
 import java.lang.reflect.Member;
 
@@ -168,19 +168,21 @@ public class TemporalEntityManager extends AbstractEntityManagerWrapper {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public <T extends TemporalEntity<?>> T newEdition(T source) {
-        if (source == null) {
-            return null;
-        }
-        AbstractSession session = getEntityManager().unwrap(RepeatableWriteUnitOfWork.class);
+    public <T extends TemporalEntity<?>> T newEdition(T sourceEntity) {
+        AbstractSession session = getUnitOfWork();
         Long start = getEffectiveTime();
 
         if (start == null || start == Effectivity.BOT) {
             throw new IllegalStateException("Cannot create an eddition without an effective time set");
         }
+        
+        ClassDescriptor descriptor = getClassDescriptor(session, sourceEntity);
+        T source = sourceEntity;
+        if (descriptor.hasWrapperPolicy() && descriptor.getWrapperPolicy().isWrapped(sourceEntity)) {
+            source = (T) descriptor.getWrapperPolicy().unwrapObject(sourceEntity, session);
+        }
 
         ClassDescriptor editionDesc = getEditionDescriptor(session, source.getClass());
-
         if (editionDesc == null) {
             throw new IllegalArgumentException("No edition descriptor for: " + source);
         }
@@ -203,6 +205,7 @@ public class TemporalEntityManager extends AbstractEntityManagerWrapper {
         edition.getEffectivity().setStart(start);
         edition.getEffectivity().setEnd(source.getEffectivity().getEnd());
         source.getEffectivity().setEnd(start);
+        
         getEntityManager().persist(edition);
 
         editionSet.add(edition);
@@ -213,6 +216,10 @@ public class TemporalEntityManager extends AbstractEntityManagerWrapper {
             getEntityManager().flush();
         }
 
+        if (editionDesc.hasWrapperPolicy() && ! editionDesc.getWrapperPolicy().isWrapped(edition)) {
+            edition = (TemporalEntity<T>) editionDesc.getWrapperPolicy().wrapObject(edition, session);
+        }
+        
         return (T) edition;
     }
 
@@ -314,6 +321,10 @@ public class TemporalEntityManager extends AbstractEntityManagerWrapper {
 
         getEntityManager().flush();
 
+        if (descriptor.hasWrapperPolicy() && ! descriptor.getWrapperPolicy().isWrapped(edition)) {
+            edition = (TemporalEntity<T>) descriptor.getWrapperPolicy().wrapObject(edition, session);
+        }
+        
         return (T) edition;
     }
 

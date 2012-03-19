@@ -152,7 +152,7 @@ public class FullPersonWithEditions extends BaseTestCase {
 
         // Verify person
         Assert.assertNotNull(current);
-        Assert.assertSame(current, current.getContinuity());
+        Assert.assertEquals(current, current.getContinuity());
         Assert.assertEquals(getSample().getId(), current.getId());
         Assert.assertEquals(getSample().getName(), current.getName());
         Assert.assertTrue(current.getEffectivity().isCurrent());
@@ -224,7 +224,7 @@ public class FullPersonWithEditions extends BaseTestCase {
         System.out.println("FIND CURRENT: " + person);
 
         Assert.assertEquals(getSample().getId(), person.getId());
-        Assert.assertSame(person, person.getContinuity());
+        Assert.assertEquals(person, person.getContinuity());
         Assert.assertNotNull(address);
         Assert.assertEquals(getSample().getAddress().getCity(), address.getCity());
     }

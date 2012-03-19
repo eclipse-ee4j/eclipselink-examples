@@ -104,7 +104,7 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
                 editionViewDesc.setProperty(EDITION, editionDesc);
                 editionViewDesc.setProperty(EDITION_VIEW, editionViewDesc);
 
-                setupInterfaceDescriptor(current, session, interfaceDescriptors);
+                setupInterfaceDescriptor(current, editionDesc, session, interfaceDescriptors);
 
                 // Since the redirector can cause queries to run against
                 // different types it is important that no expression to query
@@ -123,6 +123,10 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
                         }
                     }
                 }
+                
+                // Configure Wrapper policies
+               // current.setWrapperPolicy(new CurrentWrapperPolicy());
+               // editionDesc.setWrapperPolicy(new EditionWrapperPolicy());
             }
         }
 
@@ -387,14 +391,17 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
     /**
      * Calculate interface descriptors.
      */
-    private void setupInterfaceDescriptor(ClassDescriptor currentDesc, Session session, Map<Class<?>, ClassDescriptor> interfaceDescriptors) {
+    private void setupInterfaceDescriptor(ClassDescriptor currentDesc,ClassDescriptor editionDesc,  Session session, Map<Class<?>, ClassDescriptor> interfaceDescriptors) {
         Class<?>[] interfaces = currentDesc.getJavaClass().getInterfaces();
         if (interfaces.length == 0) {
             throw new IllegalStateException("TemporalEntity types must implement an interface");
         }
 
         Class<?> currentInterface = interfaces[0];
+        
         currentDesc.setProperty(INTERFACE, currentInterface);
+        editionDesc.setProperty(INTERFACE, currentInterface);
+
         interfaceDescriptors.put(currentInterface, currentDesc);
     }
 

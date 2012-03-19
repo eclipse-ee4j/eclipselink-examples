@@ -115,7 +115,6 @@ public class EditionWrapperHandler<T extends TemporalEntity<?>> implements Invoc
      * Verify if the new edition created by modifications conflicts with any
      * future editions which already exist.
      */
-    @Override
     public boolean hasConflicts() {
         // TODO: Check for future versions that have conflicting changes
         throw new RuntimeException("NOT YET IMPLEMENTED");
@@ -125,7 +124,6 @@ public class EditionWrapperHandler<T extends TemporalEntity<?>> implements Invoc
      * TODO
      */
     @SuppressWarnings("unchecked")
-    @Override
     public T newEdition() {
         return (T) getEntityManager().newEntity(this.original.getClass());
     }
