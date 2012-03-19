@@ -19,7 +19,6 @@ import org.junit.runners.Suite.SuiteClasses;
                 FullPersonWithEditions.class, 
                 FuturePersonTests.class,
                 DeleteTests.class,
-                TemporalQueryRedirectorTests.class,
                 ProxyWrapperUpdateTests.class,
                 //ModifyCurrentTests.class})
                 //DeleteContinuityTests.class,

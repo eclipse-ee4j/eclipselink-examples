@@ -20,10 +20,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import model.entities.PersonEntity;
 import temporal.Effectivity;
 import temporal.Temporal;
-
-import model.entities.PersonEntity;
 
 /**
  * Represents a Person's interest in a hobby. This relationship object is
@@ -44,25 +43,14 @@ public class PersonHobby implements Temporal {
     private Hobby hobby;
 
     @ManyToOne(fetch = FetchType.EAGER, targetEntity = PersonEntity.class)
-    @JoinColumn(name="PERSON_ID", referencedColumnName="OID")
+    @JoinColumn(name = "PERSON_ID", referencedColumnName = "CID")
     private Person person;
 
     @Embedded
     private Effectivity effectivity = new Effectivity();
 
-    private PersonHobby() {
-    }
-
-    public PersonHobby(Hobby hobby, Person person) {
-        this();
-        this.name = hobby.getName();
-        this.hobby = hobby;
-        this.person = person;
-    }
-
-    public PersonHobby(Hobby hobby, Person person, long effectiveTS) {
-        this(hobby, person);
-        getEffectivity().setStart(effectiveTS);
+    public PersonHobby() {
+        this.effectivity = new Effectivity();
     }
 
     public String getName() {
@@ -71,6 +59,15 @@ public class PersonHobby implements Temporal {
 
     public Hobby getHobby() {
         return hobby;
+    }
+
+    public void setPerson(Person person) {
+        this.person = person;
+    }
+
+    public void setHobby(Hobby hobby) {
+        this.name = hobby.getName();
+        this.hobby = hobby;
     }
 
     public Person getPerson() {
@@ -86,4 +83,8 @@ public class PersonHobby implements Temporal {
         return this.effectivity;
     }
 
+    @Override
+    public String toString() {
+        return "PersonHobby[" + getPerson() + "->" + getName() + "]";
+    }
 }

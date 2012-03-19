@@ -11,12 +11,8 @@
 package tests.editionsets;
 
 import static example.PersonModelExample.T6;
-
-import javax.persistence.EntityManager;
-
 import junit.framework.Assert;
 import model.Person;
-import model.entities.PersonEntity;
 
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.mappings.OneToManyMapping;
@@ -25,6 +21,7 @@ import org.eclipse.persistence.sessions.server.Server;
 import org.junit.Test;
 
 import temporal.EditionSet;
+import temporal.TemporalEntityManager;
 import temporal.TemporalHelper;
 import tests.BaseTestCase;
 import example.PersonModelExample;
@@ -45,7 +42,7 @@ public class EditionSetConfigTests extends BaseTestCase {
 
     @Test
     public void verifyEditionSetMapping() {
-        EntityManager em = createEntityManager();
+        TemporalEntityManager em = getEntityManager();
 
         ClassDescriptor desc = em.unwrap(Server.class).getClassDescriptorForAlias("EditionSet");
         Assert.assertNotNull(desc);
@@ -54,58 +51,52 @@ public class EditionSetConfigTests extends BaseTestCase {
         Assert.assertNotNull(otmMapping);
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Test
     public void verifyEditionSetEntryMapping() {
-        EntityManager em = createEntityManager();
+        TemporalEntityManager em = getEntityManager();
 
         ClassDescriptor desc = em.unwrap(Server.class).getClassDescriptorForAlias("EditionSetEntry");
         Assert.assertNotNull(desc);
 
-        VariableOneToOneMapping votoMapping = (VariableOneToOneMapping) desc.getMappingForAttributeName("edition");
+        VariableOneToOneMapping votoMapping = (VariableOneToOneMapping) desc.getMappingForAttributeName("temporal");
         Assert.assertNotNull(votoMapping);
+
+        Assert.assertEquals(8, votoMapping.getTypeIndicatorTranslation().size());
+
+        Assert.assertTrue(votoMapping.getTypeIndicatorTranslation().containsKey("Person"));
+        Assert.assertTrue(TemporalHelper.isEditionClass((Class) votoMapping.getTypeIndicatorTranslation().get("Person")));
+
+        Assert.assertTrue(votoMapping.getTypeIndicatorTranslation().containsKey("Phone"));
+        Assert.assertTrue(TemporalHelper.isEditionClass((Class) votoMapping.getTypeIndicatorTranslation().get("Phone")));
+
+        Assert.assertTrue(votoMapping.getTypeIndicatorTranslation().containsKey("Address"));
+        Assert.assertTrue(TemporalHelper.isEditionClass((Class) votoMapping.getTypeIndicatorTranslation().get("Address")));
+
+        Assert.assertTrue(votoMapping.getTypeIndicatorTranslation().containsKey("PersonHobby"));
+        Assert.assertTrue(TemporalHelper.isTemporal((Class) votoMapping.getTypeIndicatorTranslation().get("PersonHobby"), false));
     }
 
     @Test
     public void verifySetEffectiveInitialize() {
-        EntityManager em = createEntityManager();
+        TemporalEntityManager em = getEntityManager();
 
-        TemporalHelper.setEffectiveTime(em, T6, true);
+        em.setEffectiveTime(T6, true);
 
-        EditionSet es = TemporalHelper.getEditionSet(em);
+        EditionSet es = em.getEditionSet();
 
         Assert.assertNotNull(es);
         Assert.assertEquals(T6, es.getEffective());
     }
 
-    /**
-     * Verify that newInstance fails if the EditionSet has not been initialized
-     */
-    @Test
-    public void verifySetEffectiveProperty_newInstance() {
-        EntityManager em = createEntityManager();
-        em.setProperty(TemporalHelper.EFF_TS_PROPERTY, T6);
-
-        EditionSet es = TemporalHelper.getEditionSet(em);
-
-        Assert.assertNull("EditionSet initialized when it should not have been", es);
-        Assert.assertEquals(T6, (long) TemporalHelper.getEffectiveTime(em));
-
-        try {
-            TemporalHelper.newInstance(em, PersonEntity.class);
-        } catch (IllegalStateException e) {
-            return;
-        }
-        Assert.fail("IllegalStateException expected");
-    }
-
     @Test
     public void verifyInitialize() {
-        EntityManager em = createEntityManager();
+        TemporalEntityManager em = getEntityManager();
 
-        TemporalHelper.setEffectiveTime(em, T6);
-        TemporalHelper.initializeEditionSet(em);
+        em.setEffectiveTime(T6);
+        em.initializeEditionSet();
 
-        EditionSet es = TemporalHelper.getEditionSet(em);
+        EditionSet es = em.getEditionSet();
 
         Assert.assertNotNull(es);
         Assert.assertEquals(T6, es.getEffective());
@@ -113,21 +104,20 @@ public class EditionSetConfigTests extends BaseTestCase {
 
     @Test
     public void verifyNotInitialized() {
-        EntityManager em = createEntityManager();
+        TemporalEntityManager em = getEntityManager();
 
-        TemporalHelper.setEffectiveTime(em, T6);
+        em.setEffectiveTime(T6);
 
-        EditionSet es = TemporalHelper.getEditionSet(em);
+        EditionSet es = em.getEditionSet();
 
         Assert.assertNull(es);
     }
-
 
     /**
      * Populate initial sample entity
      */
     @Override
-    public void populate(EntityManager em) {
+    public void populate(TemporalEntityManager em) {
         System.out.println("\nEditionSetTests.populate:START");
         example.populateHobbies(em);
         em.persist(getSample());

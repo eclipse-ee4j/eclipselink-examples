@@ -12,14 +12,19 @@
  ******************************************************************************/
 package temporal.persistence;
 
+import java.util.Iterator;
+
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.mappings.DirectCollectionMapping;
 import org.eclipse.persistence.sessions.Project;
 import org.eclipse.persistence.sessions.server.Server;
 import org.eclipse.persistence.tools.schemaframework.DefaultTableGenerator;
+import org.eclipse.persistence.tools.schemaframework.ForeignKeyConstraint;
 import org.eclipse.persistence.tools.schemaframework.SchemaManager;
 import org.eclipse.persistence.tools.schemaframework.TableCreator;
 import org.eclipse.persistence.tools.schemaframework.TableDefinition;
+
+import temporal.TemporalHelper;
 
 /**
  * TODO
@@ -37,9 +42,43 @@ public class TemporalSchemaManager extends SchemaManager {
         if (defaultTableCreator == null) {
             defaultTableCreator = new TemporalTableGenerator(session.getProject(), generateFKConstraints).generateDefaultTableCreator();
             // defaultTableCreator.setIgnoreDatabaseException(true);
+            fixTemporalFKConstraints();
         }
         return defaultTableCreator;
     }
+    
+    public TableCreator getTableCreator() {
+        return defaultTableCreator;
+    }
+
+    public TableDefinition getTableDefinition(String tableName) {
+        for (@SuppressWarnings("unchecked")
+        Iterator<Object> i = getTableCreator().getTableDefinitions().iterator(); i.hasNext();) {
+            TableDefinition td = (TableDefinition) i.next();
+            
+            if (td.getName().equals(tableName)) {
+                return td;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Replace all FK constraints referencing CID with OID
+     */
+    private void fixTemporalFKConstraints() {
+        for (ClassDescriptor desc: getSession().getDescriptors().values()) {
+            if (desc.getTableName() != null &&  TemporalHelper.isTemporal(desc.getJavaClass(), true)) {
+                TableDefinition td = getTableDefinition(desc.getTableName());
+                for (ForeignKeyConstraint fkc: td.getForeignKeys()) {
+                    if (fkc.getTargetFields().size() == 1 && fkc.getTargetFields().get(0).equals("CID")) {
+                        fkc.getTargetFields().set(0, "OID");
+                    }
+                }
+            }
+        }
+    }
+    
 
     class TemporalTableGenerator extends DefaultTableGenerator {
 

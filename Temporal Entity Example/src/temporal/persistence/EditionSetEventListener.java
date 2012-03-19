@@ -61,7 +61,7 @@ public class EditionSetEventListener extends DescriptorEventAdapter implements D
 
         if (es.hasEntries() && uowCS.hasChanges()) {
             for (EditionSetEntry entry : es.getEntries()) {
-                ObjectChangeSet objCS = uowCS.getCloneToObjectChangeSet().get(entry.getEdition());
+                ObjectChangeSet objCS = uowCS.getCloneToObjectChangeSet().get(entry.getTemporal());
                 if (objCS != null && objCS.hasChanges()) {
                     for (String attr : objCS.getChangedAttributeNames()) {
                         entry.addAttribute(attr);

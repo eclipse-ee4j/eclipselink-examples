@@ -45,6 +45,7 @@ import org.eclipse.persistence.annotations.ChangeTracking;
 import org.eclipse.persistence.annotations.Property;
 
 import temporal.BaseTemporalEntity;
+import temporal.TemporalEntity;
 import temporal.TemporalHelper;
 
 @Entity(name = "Person")
@@ -71,7 +72,7 @@ public class PersonEntity extends BaseTemporalEntity<Person> implements Person {
     @Column(name = "NAME")
     private Set<String> nicknames = new HashSet<String>();
 
-    @OneToMany(mappedBy = "person", cascade = { CascadeType.MERGE })
+    @OneToMany(mappedBy = "person", cascade = { CascadeType.MERGE, CascadeType.REMOVE })
     @MapKey(name = "name")
     private Map<String, PersonHobby> hobbies = new HashMap<String, PersonHobby>();
 
@@ -129,11 +130,18 @@ public class PersonEntity extends BaseTemporalEntity<Person> implements Person {
     }
 
     @Override
-    public PersonHobby addHobby(Hobby hobby, long asOf) {
-        PersonHobby personHobby = new PersonHobby(hobby, this);
-        this.hobbies.put(hobby.getName(), personHobby);
-        personHobby.getEffectivity().setStart(asOf);
+    public PersonHobby addHobby(PersonHobby personHobby) {
+        personHobby.setPerson(this);
+        this.hobbies.put(personHobby.getName(), personHobby);
         return personHobby;
+    }
+
+    @Override
+    public PersonHobby addHobby(Hobby hobby, long asOf) {
+       PersonHobby ph = new PersonHobby();
+       ph.setHobby(hobby);
+       ph.getEffectivity().setStart(asOf);
+       return addHobby(ph);
     }
 
     @Override
@@ -179,6 +187,21 @@ public class PersonEntity extends BaseTemporalEntity<Person> implements Person {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Override
+    public void applyEdition(TemporalEntity edition) {
+       Person personEdition = (Person) edition;
+       
+       for (PersonHobby ph: personEdition.getPersonHobbies().values()) {
+           PersonHobby newPh = new PersonHobby();
+           newPh.setHobby(ph.getHobby());
+           newPh.getEffectivity().setStart(ph.getEffectivity().getStart());
+           newPh.getEffectivity().setEnd(ph.getEffectivity().getEnd());
+           addHobby(newPh);
+       }
+       personEdition.getPersonHobbies().clear();
     }
 
     public String toString() {

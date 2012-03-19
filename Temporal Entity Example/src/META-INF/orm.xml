@@ -2,8 +2,10 @@
 <entity-mappings version="2.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd">
+	
 	<mapped-superclass class="temporal.BaseEntity" />
 	<mapped-superclass class="temporal.BaseTemporalEntity" />
+	
 	<entity class="model.entities.PersonEntity">
 		<attributes>
 			<many-to-one name="continuity" fetch="LAZY" target-entity="model.entities.PersonEntity">
@@ -14,7 +16,6 @@
 			</many-to-one>
 			<one-to-many name="phones" mapped-by="person" target-entity="model.entities.PhoneEntity">
 				<map-key name="type" />
-				<join-column name="PERSON_ID" referenced-column-name="CID"/>
 				<cascade>
 					<cascade-all />
 				</cascade>
@@ -33,7 +34,8 @@
 	</entity>
 	<entity class="model.entities.PhoneEntity">
 		<attributes>
-			<many-to-one name="person" target-entity="model.entities.PersonEntity">
+			<many-to-one name="person" target-entity="model.entities.PersonEntity" fetch="LAZY">
+				<join-column name="PERSON_ID" referenced-column-name="CID"/>
 			</many-to-one>
 			<many-to-one name="continuity" fetch="LAZY" target-entity="model.entities.PhoneEntity">
 				<join-column name="CID" />

@@ -30,7 +30,7 @@ import org.eclipse.persistence.sessions.SessionEventAdapter;
 import temporal.EditionSet;
 import temporal.EditionSetEntry;
 import temporal.TemporalEntity;
-import temporal.TemporalHelper;
+import temporal.TemporalEntityManager;
 
 /**
  * During the initial phases of a commit this listener will look at all proposed
@@ -47,14 +47,15 @@ public class PropagateEditionChangesListener extends SessionEventAdapter {
     public void preCalculateUnitOfWorkChangeSet(SessionEvent event) {
         RepeatableWriteUnitOfWork uow = (RepeatableWriteUnitOfWork) event.getSession();
         UnitOfWorkChangeSet uowCS = (UnitOfWorkChangeSet) uow.getUnitOfWorkChangeSet();
-        EditionSet es = (EditionSet) uow.getProperty(TemporalHelper.EDITION_SET_PROPERTY);
+        TemporalEntityManager tem = TemporalEntityManager.getInstance(uow);
+        EditionSet es = tem.getEditionSet();
 
         if (es != null && es.hasEntries() && uowCS.hasChanges()) {
             for (EditionSetEntry entry : es.getEntries()) {
-                ObjectChangeSet objCS = uowCS.getCloneToObjectChangeSet().get(entry.getEdition());
+                ObjectChangeSet objCS = uowCS.getCloneToObjectChangeSet().get(entry.getTemporal());
                 List<TemporalEntity<?>> futures = findFutureEditions(uow, entry);
 
-                if (objCS != null && objCS.hasChanges()) {
+                if (objCS != null && objCS.hasChanges() && futures != null) {
                     for (String attr : objCS.getChangedAttributeNames()) {
                         ChangeRecord cr = (ChangeRecord) objCS.getAttributesToChanges().get(attr);
                         entry.getAttributes().add(attr);
@@ -73,19 +74,22 @@ public class PropagateEditionChangesListener extends SessionEventAdapter {
      */
     @SuppressWarnings("unchecked")
     private List<TemporalEntity<?>> findFutureEditions(RepeatableWriteUnitOfWork uow, EditionSetEntry entry) {
-        ClassDescriptor desc = uow.getClassDescriptor(entry.getEdition());
+        ClassDescriptor desc = uow.getClassDescriptor(entry.getTemporal());
         desc = (ClassDescriptor) desc.getProperty(DescriptorHelper.EDITION_VIEW);
 
-        ReadAllQuery raq = new ReadAllQuery(desc.getJavaClass());
-        ExpressionBuilder eb = raq.getExpressionBuilder();
-        Expression cidExp = eb.get("cid").equal(entry.getEdition().getContinuity().getId());
-        Expression startExp = eb.get("effectivity").get("start");
-        Expression futureExp = startExp.greaterThan(entry.getEditionSet().getEffective());
-        raq.setSelectionCriteria(cidExp.and(futureExp));
-        raq.addOrdering(startExp.ascending());
-        raq.getContainerPolicy().setContainerClass(ArrayList.class);
+        if (desc != null) {
+            ReadAllQuery raq = new ReadAllQuery(desc.getJavaClass());
+            ExpressionBuilder eb = raq.getExpressionBuilder();
+            Expression cidExp = eb.get("cid").equal(entry.getTemporalEntity().getContinuity().getId());
+            Expression startExp = eb.get("effectivity").get("start");
+            Expression futureExp = startExp.greaterThan(entry.getEditionSet().getEffective());
+            raq.setSelectionCriteria(cidExp.and(futureExp));
+            raq.addOrdering(startExp.ascending());
+            raq.getContainerPolicy().setContainerClass(ArrayList.class);
 
-        return (List<TemporalEntity<?>>) uow.executeQuery(raq);
+            return (List<TemporalEntity<?>>) uow.executeQuery(raq);
+        }
+        return null;
     }
 
     /**
@@ -97,7 +101,7 @@ public class PropagateEditionChangesListener extends SessionEventAdapter {
         }
 
         for (TemporalEntity<?> future : futures) {
-            Object newValue = record.getMapping().getRealAttributeValueFromObject(entry.getEdition(), uow);
+            Object newValue = record.getMapping().getRealAttributeValueFromObject(entry.getTemporal(), uow);
             Object futureValue = record.getMapping().getRealAttributeValueFromObject(future, uow);
 
             if ((futureValue == null && record.getOldValue() == null) || futureValue.equals(record.getOldValue())) {

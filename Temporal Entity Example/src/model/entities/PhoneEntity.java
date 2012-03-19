@@ -16,7 +16,6 @@ import static org.eclipse.persistence.annotations.ChangeTrackingType.ATTRIBUTE;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -38,7 +37,7 @@ public class PhoneEntity extends BaseTemporalEntity<Phone> implements Phone {
     @Column(name = "PNUM")
     private String number;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = PersonEntity.class)
+    @ManyToOne
     private Person person;
 
     public PhoneEntity() {

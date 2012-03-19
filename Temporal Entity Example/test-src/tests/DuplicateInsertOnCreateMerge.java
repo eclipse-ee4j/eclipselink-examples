@@ -15,18 +15,14 @@ import static example.PersonModelExample.RUN;
 import static example.PersonModelExample.SKI;
 import static example.PersonModelExample.T2;
 import static example.PersonModelExample.T4;
-
-import javax.persistence.EntityManager;
-
 import junit.framework.Assert;
 import model.Address;
 import model.Person;
 import model.Phone;
-import model.entities.PersonEntity;
 
 import org.junit.Test;
 
-import temporal.TemporalHelper;
+import temporal.TemporalEntityManager;
 import example.PersonModelExample;
 
 /**
@@ -44,7 +40,7 @@ public class DuplicateInsertOnCreateMerge extends BaseTestCase {
     }
 
     @Override
-    public void populate(EntityManager em) {
+    public void populate(TemporalEntityManager em) {
         System.out.println("\nFullPersonWithEditions.populate:START");
 
         example.populateHobbies(em);
@@ -54,22 +50,22 @@ public class DuplicateInsertOnCreateMerge extends BaseTestCase {
         System.out.println("\nFullPersonWithEditions.populate::DONE");
     }
 
-    public Person createPersonEditionAtT2(EntityManager em) {
-        TemporalHelper.setEffectiveTime(em, T2, true);
+    public Person createPersonEditionAtT2(TemporalEntityManager em) {
+        em.setEffectiveTime( T2, true);
 
-        Person fpEdition = em.find(PersonEntity.class, getSample().getId());
+        Person fpEdition = em.find(Person.class, getSample().getId());
         Person personEditionT2 = fpEdition;
 
         if (personEditionT2.getEffectivity().getStart() != T2) {
-            personEditionT2 = TemporalHelper.createEdition(em, fpEdition);
+            personEditionT2 = em.newEdition( fpEdition);
             personEditionT2.setName("Jimmy");
-            Address aT2 = TemporalHelper.createEdition(em, fpEdition.getAddress());
+            Address aT2 = em.newEdition( fpEdition.getAddress());
             aT2.setCity("Toronto");
             aT2.setState("ON");
             personEditionT2.setAddress(aT2);
             Phone originalPhone = fpEdition.getPhone("Home");
 
-            Phone pT2 = TemporalHelper.createEdition(em, originalPhone);
+            Phone pT2 = em.newEdition( originalPhone);
             personEditionT2.addPhone(pT2);
             pT2.setNumber("222-222-2222");
             em.persist(personEditionT2.addHobby(example.hobbies.get(GOLF), T2));
@@ -82,8 +78,8 @@ public class DuplicateInsertOnCreateMerge extends BaseTestCase {
 
     @Test
     public void createPersonAtT2AndMerge() {
-        EntityManager em = createEntityManager();
-        TemporalHelper.setEffectiveTime(em, T2, true);
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime( T2, true);
         em.getTransaction().begin();
 
         Person personEditionT2 = createPersonEditionAtT2(em);
@@ -108,22 +104,22 @@ public class DuplicateInsertOnCreateMerge extends BaseTestCase {
 
     @Test
     public void createPersonAtT4AndMerge() {
-        EntityManager em = createEntityManager();
+        TemporalEntityManager em = getEntityManager();
         em.getTransaction().begin();
         Person personEditionT2 = createPersonEditionAtT2(em);
         Assert.assertNotNull(personEditionT2);
         Assert.assertEquals(T2, personEditionT2.getEffectivity().getStart());
         Assert.assertNotNull(personEditionT2.getPhone("Home"));
 
-        TemporalHelper.setEffectiveTime(em, T4, true);
+        em.setEffectiveTime( T4, true);
 
-        Person personEditionT4 = TemporalHelper.createEdition(em, personEditionT2);
+        Person personEditionT4 = em.newEdition( personEditionT2);
         personEditionT4.setName("James");
-        Address aT4 = TemporalHelper.createEdition(em, personEditionT4.getAddress());
+        Address aT4 = em.newEdition( personEditionT4.getAddress());
         aT4.setCity("San Francisco");
         aT4.setState("CA");
         personEditionT4.setAddress(aT4);
-        Phone pT4 = TemporalHelper.createEdition(em, personEditionT4.getPhone("Home"));
+        Phone pT4 = em.newEdition( personEditionT4.getPhone("Home"));
         pT4.setNumber("444-444-4444");
         personEditionT4.addPhone(pT4);
         personEditionT4.removeHobby(example.hobbies.get(GOLF), T4, T4);

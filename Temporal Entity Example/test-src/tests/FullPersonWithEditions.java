@@ -24,7 +24,6 @@ import static temporal.Effectivity.EOT;
 import java.sql.Date;
 import java.util.List;
 
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
@@ -38,6 +37,9 @@ import org.eclipse.persistence.sessions.CopyGroup;
 import org.junit.Assert;
 import org.junit.Test;
 
+import temporal.BaseEntity;
+import temporal.EditionSet;
+import temporal.TemporalEntityManager;
 import temporal.TemporalHelper;
 import example.PersonModelExample;
 
@@ -57,7 +59,7 @@ public class FullPersonWithEditions extends BaseTestCase {
     }
 
     @Override
-    public void populate(EntityManager em) {
+    public void populate(TemporalEntityManager em) {
         System.out.println("\nFullPersonWithEditions.populate:START");
 
         example.populateHobbies(em);
@@ -65,44 +67,50 @@ public class FullPersonWithEditions extends BaseTestCase {
         em.flush();
 
         System.out.println("\n> Create T2 Edition");
-        TemporalHelper.setEffectiveTime(em, T2, true);
+        em.setEffectiveTime(T2, true);
 
-        Person fpEdition = TemporalHelper.find(em, Person.class, example.fullPerson.getId());
-        Person personEditionT2 = TemporalHelper.createEdition(em, fpEdition);
+        Person fpEdition = em.find(Person.class, example.fullPerson.getId());
+        Person personEditionT2 = em.newEdition(fpEdition);
+
         personEditionT2.setName("Jimmy");
-        Address aT2 = TemporalHelper.createEdition(em, example.fullPerson.getAddress());
+        Address aT2 = em.newEdition(example.fullPerson.getAddress());
         aT2.setCity("Toronto");
         aT2.setState("ON");
         personEditionT2.setDateOfBirth(new Date(75, 1, 5));
 
         personEditionT2.setAddress(aT2);
-        Phone pT2 = TemporalHelper.createEdition(em, example.fullPerson.getPhone("Home"));
+        Phone pT2 = em.newEdition(example.fullPerson.getPhone("Home"));
         personEditionT2.addPhone(pT2);
         pT2.setNumber("222-222-2222");
-        Phone pWT2 = TemporalHelper.newInstance(em, PhoneEntity.class);
+        Phone pWT2 = em.newEntity(PhoneEntity.class);
         pWT2.setType("Work");
         pWT2.setNumber("333-333-3333");
         personEditionT2.addPhone(pWT2);
 
         em.persist(personEditionT2.addHobby(example.hobbies.get(GOLF), T2));
 
+        // Assert.assertEquals(personEditionT2.getPhones().size() - 1,
+        // fpEdition.getPhones().size());
+        // Assert.assertEquals(personEditionT2.getPersonHobbies().size() - 1,
+        // fpEdition.getPersonHobbies().size());
+
         em.flush();
 
         System.out.println("\n> Create T4 Edition");
-        TemporalHelper.setEffectiveTime(em, T4, true);
+        em.setEffectiveTime(T4, true);
 
-        Person personEditionT4 = TemporalHelper.createEdition(em, personEditionT2);
+        Person personEditionT4 = em.newEdition(personEditionT2);
         personEditionT4.setName("James");
-        Address aT4 = TemporalHelper.createEdition(em, aT2);
+        Address aT4 = em.newEdition(aT2);
         aT4.setCity("San Francisco");
         aT4.setState("CA");
         personEditionT4.setAddress(aT4);
 
-        Phone pT4 = TemporalHelper.createEdition(em, pT2);
+        Phone pT4 = em.newEdition(pT2);
         pT4.setNumber("444-444-4444");
         personEditionT4.addPhone(pT4);
         pWT2.getEffectivity().setEnd(T4);
-        Phone pCT4 = TemporalHelper.newInstance(em, PhoneEntity.class);
+        Phone pCT4 = em.newEntity(PhoneEntity.class);
         pCT4.setType("Cell");
         pCT4.setNumber("555-555-55555");
         personEditionT4.addPhone(pCT4);
@@ -119,7 +127,7 @@ public class FullPersonWithEditions extends BaseTestCase {
 
     @Test
     public void queryAllCurrent() {
-        EntityManager em = createEntityManager();
+        TemporalEntityManager em = getEntityManager();
         List<Person> results = em.createQuery("SELECT p From Person p", Person.class).getResultList();
 
         System.out.println("QUERY CURRENT:");
@@ -135,8 +143,8 @@ public class FullPersonWithEditions extends BaseTestCase {
     }
 
     @Test
-    public void verifyCurrent() {
-        EntityManager em = createEntityManager();
+    public void findCurrent() {
+        TemporalEntityManager em = getEntityManager();
 
         Person current = em.find(Person.class, getSample().getId());
 
@@ -144,7 +152,7 @@ public class FullPersonWithEditions extends BaseTestCase {
 
         // Verify person
         Assert.assertNotNull(current);
-        Assert.assertSame(current, current.getContinuity());
+        Assert.assertEquals(current, current.getContinuity());
         Assert.assertEquals(getSample().getId(), current.getId());
         Assert.assertEquals(getSample().getName(), current.getName());
         Assert.assertTrue(current.getEffectivity().isCurrent());
@@ -172,7 +180,7 @@ public class FullPersonWithEditions extends BaseTestCase {
 
     @Test
     public void queryAllCurrentJoinAddress() {
-        EntityManager em = createEntityManager();
+        TemporalEntityManager em = getEntityManager();
         List<Person> results = em.createQuery("SELECT p From Person p JOIN FETCH p.address", Person.class).getResultList();
 
         System.out.println("QUERY CURRENT:");
@@ -189,7 +197,7 @@ public class FullPersonWithEditions extends BaseTestCase {
 
     @Test
     public void querySampleCurrentPerson() {
-        EntityManager em = createEntityManager();
+        TemporalEntityManager em = getEntityManager();
 
         Person person = em.createQuery("SELECT p From Person p WHERE p.id = " + getSample().getId(), Person.class).getSingleResult();
         Address address = person.getAddress();
@@ -206,7 +214,7 @@ public class FullPersonWithEditions extends BaseTestCase {
 
     @Test
     public void querySampleCurrentPersonJoinAddress() {
-        EntityManager em = createEntityManager();
+        TemporalEntityManager em = getEntityManager();
 
         Person person = em.createQuery("SELECT p From Person p JOIN FETCH p.address WHERE p.id = " + getSample().getId(), Person.class).getSingleResult();
         Address address = person.getAddress();
@@ -216,14 +224,14 @@ public class FullPersonWithEditions extends BaseTestCase {
         System.out.println("FIND CURRENT: " + person);
 
         Assert.assertEquals(getSample().getId(), person.getId());
-        Assert.assertSame(person, person.getContinuity());
+        Assert.assertEquals(person, person.getContinuity());
         Assert.assertNotNull(address);
         Assert.assertEquals(getSample().getAddress().getCity(), address.getCity());
     }
 
     @Test
     public void findSampleCurrentPerson() {
-        EntityManager em = createEntityManager();
+        TemporalEntityManager em = getEntityManager();
         Person person = em.find(Person.class, getSample().getId());
 
         Assert.assertNotNull(person);
@@ -232,17 +240,21 @@ public class FullPersonWithEditions extends BaseTestCase {
 
         Assert.assertEquals(getSample().getId(), person.getId());
         Assert.assertSame(person, person.getContinuity());
-        Assert.assertEquals(0, person.getPersonHobbies().size());
         Assert.assertTrue(person.getEffectivity().isCurrent());
         Assert.assertFalse(person.getEffectivity().isFutureEdition());
         Assert.assertEquals(person.getEffectivity().getStart(), BOT);
         Assert.assertEquals(person.getEffectivity().getEnd(), T2);
+
+        Assert.assertEquals(0, person.getPersonHobbies().size());
+
+        Assert.assertEquals(1, person.getPhones().size());
+
     }
 
     @Test
     public void findFuturePersonEntityEditionT2() {
-        EntityManager em = createEntityManager();
-        TemporalHelper.setEffectiveTime(em, T2);
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime(T2);
 
         Person person = em.find(Person.class, getSample().getId());
         Assert.assertNotNull(person);
@@ -265,10 +277,10 @@ public class FullPersonWithEditions extends BaseTestCase {
 
     @Test
     public void queryFutureEditionOfCurrentPersonAtBOT() {
-        EntityManager em = createEntityManager();
-        TemporalHelper.setEffectiveTime(em, BOT);
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime(BOT);
 
-        Person pEdition = em.createQuery("SELECT p From PersonEdition p WHERE p.cid = " + getSample().getId(), Person.class).getSingleResult();
+        Person pEdition = em.createQuery("SELECT p From Person p WHERE p.id = " + getSample().getId(), Person.class).getSingleResult();
 
         System.out.println("QUERY EDITION @ BOT: " + pEdition);
 
@@ -290,10 +302,10 @@ public class FullPersonWithEditions extends BaseTestCase {
 
     @Test
     public void queryFutureEditionOfCurrentPersonAtT1() {
-        EntityManager em = createEntityManager();
-        TemporalHelper.setEffectiveTime(em, T1);
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime(T1);
 
-        Person pEdition = em.createQuery("SELECT p From PersonEdition p WHERE p.cid = " + getSample().getId(), Person.class).getSingleResult();
+        Person pEdition = em.createQuery("SELECT p From Person p WHERE p.id = " + getSample().getId(), Person.class).getSingleResult();
 
         System.out.println("QUERY EDITION @ T1: " + pEdition);
 
@@ -319,10 +331,10 @@ public class FullPersonWithEditions extends BaseTestCase {
 
     @Test
     public void queryFutureEditionOfCurrentPersonAtT2() {
-        EntityManager em = createEntityManager();
-        TemporalHelper.setEffectiveTime(em, T2);
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime(T2);
 
-        Person pEdition = em.createQuery("SELECT p From PersonEdition p WHERE p.cid = " + getSample().getId(), Person.class).getSingleResult();
+        Person pEdition = em.createQuery("SELECT p From Person p WHERE p.id = " + getSample().getId(), Person.class).getSingleResult();
 
         System.out.println("QUERY EDITION @ T2: " + pEdition);
 
@@ -348,12 +360,12 @@ public class FullPersonWithEditions extends BaseTestCase {
 
     @Test
     public void queryFutureEditionOfCurrentPersonAtT2JoinFetchAddress() {
-        EntityManager em = createEntityManager();
-        TemporalHelper.setEffectiveTime(em, T2);
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime(T2);
 
         Person pEdition = null;
         try {
-            pEdition = em.createQuery("SELECT p From PersonEdition p JOIN FETCH p.address WHERE p.cid = " + getSample().getId(), Person.class).getSingleResult();
+            pEdition = em.createQuery("SELECT p From Person p JOIN FETCH p.address WHERE p.id = " + getSample().getId(), Person.class).getSingleResult();
         } catch (NoResultException e) {
             Assert.fail("Join returned no result");
         }
@@ -381,10 +393,10 @@ public class FullPersonWithEditions extends BaseTestCase {
 
     @Test
     public void queryFutureEditionOfCurrentPersonAtT3() {
-        EntityManager em = createEntityManager();
-        TemporalHelper.setEffectiveTime(em, T3);
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime(T3);
 
-        Person pEdition = em.createQuery("SELECT p From PersonEdition p WHERE p.cid = " + getSample().getId(), Person.class).getSingleResult();
+        Person pEdition = em.createQuery("SELECT p From Person p WHERE p.id = " + getSample().getId(), Person.class).getSingleResult();
 
         System.out.println("QUERY EDITION @ T3: " + pEdition);
 
@@ -410,10 +422,10 @@ public class FullPersonWithEditions extends BaseTestCase {
 
     @Test
     public void queryFutureEditionOfCurrentPersonAtT4() {
-        EntityManager em = createEntityManager();
-        TemporalHelper.setEffectiveTime(em, T4);
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime(T4);
 
-        Person pEdition = em.createQuery("SELECT p From PersonEdition p WHERE p.cid = " + getSample().getId(), Person.class).getSingleResult();
+        Person pEdition = em.createQuery("SELECT p From Person p WHERE p.id = " + getSample().getId(), Person.class).getSingleResult();
 
         System.out.println("QUERY EDITION @ T4: " + pEdition);
 
@@ -438,10 +450,10 @@ public class FullPersonWithEditions extends BaseTestCase {
 
     @Test
     public void queryFutureEditionOfCurrentPersonAtT5() {
-        EntityManager em = createEntityManager();
-        TemporalHelper.setEffectiveTime(em, T5);
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime(T5);
 
-        Person pEdition = em.createQuery("SELECT p From PersonEdition p WHERE p.cid = " + getSample().getId(), Person.class).getSingleResult();
+        Person pEdition = em.createQuery("SELECT p From Person p WHERE p.id = " + getSample().getId(), Person.class).getSingleResult();
 
         System.out.println("QUERY EDITION @ T5: " + pEdition);
 
@@ -462,7 +474,7 @@ public class FullPersonWithEditions extends BaseTestCase {
 
     @Test
     public void nativeQueryForAllEdition() {
-        EntityManager em = createEntityManager();
+        TemporalEntityManager em = getEntityManager();
 
         TypedQuery<Person> query = em.createNamedQuery("PersonEdition.all", Person.class);
         query.setParameter("CID", getSample().getId());
@@ -479,12 +491,12 @@ public class FullPersonWithEditions extends BaseTestCase {
         Assert.assertEquals(3, editions.size());
     }
 
-    @Test
+    // @Test
     public void deleteAllAtT5() {
-        EntityManager em = createEntityManager();
-        TemporalHelper.setEffectiveTime(em, T5);
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime(T5);
 
-        Person p = TemporalHelper.find(em, Person.class, getSample().getId());
+        Person p = em.find(Person.class, getSample().getId());
 
         em.getTransaction().begin();
 
@@ -494,13 +506,15 @@ public class FullPersonWithEditions extends BaseTestCase {
             phone.getEffectivity().setEnd(T5);
         }
 
-        em.getTransaction().commit();
+        em.flush();
+
+        // TODO - validation
     }
 
     @Test
     public void detachResultUsingCopyPolicy() {
-        EntityManager em = createEntityManager();
-        TemporalHelper.setEffectiveTime(em, T2);
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime(T2);
 
         TypedQuery<Person> query = em.createNamedQuery("PersonEdition.find", Person.class);
         query.setParameter("ID", getSample().getId());
@@ -520,10 +534,10 @@ public class FullPersonWithEditions extends BaseTestCase {
 
     @Test
     public void modifyFutureEditionOfCurrentPersonAtT4() {
-        EntityManager em = createEntityManager();
-        TemporalHelper.setEffectiveTime(em, T4);
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime(T4);
 
-        Person pEdition = em.createQuery("SELECT p From PersonEdition p WHERE p.cid = " + getSample().getId(), Person.class).getSingleResult();
+        Person pEdition = em.createQuery("SELECT p From Person p WHERE p.id = " + getSample().getId(), Person.class).getSingleResult();
 
         System.out.println("QUERY EDITION @ T4: " + pEdition);
 
@@ -549,10 +563,10 @@ public class FullPersonWithEditions extends BaseTestCase {
 
     @Test
     public void modifyFutureEditionOfCurrentPersonAtT4UsingMerge() {
-        EntityManager em = createEntityManager();
-        TemporalHelper.setEffectiveTime(em, T4);
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime(T4);
 
-        Person pEdition = em.createQuery("SELECT p From PersonEdition p WHERE p.cid = " + getSample().getId(), Person.class).getSingleResult();
+        Person pEdition = em.createQuery("SELECT p From Person p WHERE p.id = " + getSample().getId(), Person.class).getSingleResult();
 
         System.out.println("QUERY EDITION @ T4: " + pEdition);
 
@@ -578,9 +592,46 @@ public class FullPersonWithEditions extends BaseTestCase {
         Assert.assertEquals(currentVersion + 1, pEdition.getVersion());
     }
 
+    /**
+     * Verify that the edition creation operation correctly copies values
+     * including mutable values and collections.
+     */
+    @Test
+    public void verifyCreateEditionCopying() {
+        TemporalEntityManager em = getEntityManager();
+        EditionSet es = em.setEffectiveTime(T5, true);
+
+        Person pEdition = em.find(Person.class, getSample().getId());
+
+        Assert.assertNotNull(pEdition);
+        Assert.assertTrue(TemporalHelper.isEdition(em, pEdition));
+        Assert.assertEquals(T4, pEdition.getEffectivity().getStart());
+        Assert.assertNotNull(es);
+        Assert.assertTrue(es.getEntries().isEmpty());
+
+        Person pAtT5 = em.newEdition(pEdition);
+
+        Assert.assertNotNull(pAtT5);
+        Assert.assertTrue(TemporalHelper.isEdition(em, pEdition));
+        Assert.assertEquals(T5, pAtT5.getEffectivity().getStart());
+        Assert.assertFalse(es.getEntries().isEmpty());
+        Assert.assertEquals(1, es.getEntries().size());
+
+        // Verify collection/map cloning
+        Assert.assertNotSame(pEdition.getPhones(), pAtT5.getPhones());
+        Assert.assertNotSame(pEdition.getPersonHobbies(), pAtT5.getPersonHobbies());
+        Assert.assertNotSame(pEdition.getNicknames(), pAtT5.getNicknames());
+
+        // Mutable non-temporal values
+        Assert.assertSame(pEdition.getDateOfBirth(), pAtT5.getDateOfBirth());
+
+        // TODO: Validate mutable basic copying
+
+    }
+
     @Test
     public void testDateOfBirthNonTemporalStorage() {
-        EntityManager em = createEntityManager();
+        TemporalEntityManager em = getEntityManager();
 
         List<?> results = em.createNativeQuery("SELECT DATEOFBIRTH FROM TPERSON WHERE CID = 1 ORDER BY OID").getResultList();
 
@@ -589,5 +640,159 @@ public class FullPersonWithEditions extends BaseTestCase {
         Assert.assertEquals(new Date(75, 1, 5), results.get(0));
         Assert.assertNull(results.get(1));
         Assert.assertNull(results.get(2));
+    }
+
+    /**
+     * Verify the query result and relationship to person
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void queryCurrentHomePhone() {
+        TemporalEntityManager em = getEntityManager();
+
+        TypedQuery<Phone> query = em.createQuery("SELECT p FROM Phone p WHERE p.type = 'Home'", Phone.class);
+        Phone phone = query.getSingleResult();
+
+        Assert.assertNotNull(phone);
+        Assert.assertFalse(TemporalHelper.isEditionClass((Class<BaseEntity>) phone.getClass()));
+        Assert.assertNotNull(phone.getContinuity());
+        Assert.assertEquals(phone, phone.getContinuity());
+        Assert.assertEquals(BOT, phone.getEffectivity().getStart());
+        Assert.assertEquals(T2, phone.getEffectivity().getEnd());
+
+        Assert.assertNotNull(phone.getPerson());
+        Assert.assertEquals(phone.getEffectivity().getStart(), phone.getPerson().getEffectivity().getStart());
+    }
+
+    /**
+     * Verify the query result and relationship to person
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void queryHomePhoneAtBOT() {
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime(BOT);
+
+        TypedQuery<Phone> query = em.createQuery("SELECT p FROM Phone p WHERE p.type = 'Home'", Phone.class);
+        Phone phone = query.getSingleResult();
+
+        Assert.assertNotNull(phone);
+        Assert.assertTrue(TemporalHelper.isEditionClass((Class<BaseEntity>) phone.getClass()));
+        Assert.assertNotNull(phone.getContinuity());
+        Assert.assertEquals(BOT, phone.getEffectivity().getStart());
+        Assert.assertEquals(T2, phone.getEffectivity().getEnd());
+
+        Assert.assertNotNull(phone.getPerson());
+        Assert.assertEquals(phone.getEffectivity().getStart(), phone.getPerson().getEffectivity().getStart());
+    }
+
+    /**
+     * Verify the query result and relationship to person
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void queryHomePhoneAtT1() {
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime(T1);
+
+        TypedQuery<Phone> query = em.createQuery("SELECT p FROM Phone p WHERE p.type = 'Home'", Phone.class);
+        Phone phone = query.getSingleResult();
+
+        Assert.assertNotNull(phone);
+        Assert.assertTrue(TemporalHelper.isEditionClass((Class<BaseEntity>) phone.getClass()));
+        Assert.assertNotNull(phone.getContinuity());
+        Assert.assertEquals(BOT, phone.getEffectivity().getStart());
+        Assert.assertEquals(T2, phone.getEffectivity().getEnd());
+
+        Assert.assertNotNull(phone.getPerson());
+        Assert.assertEquals(phone.getEffectivity().getStart(), phone.getPerson().getEffectivity().getStart());
+    }
+
+    /**
+     * Verify the query result and relationship to person
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void queryHomePhoneAtT2() {
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime(T2);
+
+        TypedQuery<Phone> query = em.createQuery("SELECT p FROM Phone p WHERE p.type = 'Home'", Phone.class);
+        Phone phone = query.getSingleResult();
+
+        Assert.assertNotNull(phone);
+        Assert.assertTrue(TemporalHelper.isEditionClass((Class<BaseEntity>) phone.getClass()));
+        Assert.assertNotNull(phone.getContinuity());
+        Assert.assertEquals(T2, phone.getEffectivity().getStart());
+        Assert.assertEquals(T4, phone.getEffectivity().getEnd());
+
+        Assert.assertNotNull(phone.getPerson());
+        Assert.assertEquals(phone.getEffectivity().getStart(), phone.getPerson().getEffectivity().getStart());
+    }
+
+    /**
+     * Verify the query result and relationship to person
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void queryHomePhoneAtT3() {
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime(T3);
+
+        TypedQuery<Phone> query = em.createQuery("SELECT p FROM Phone p WHERE p.type = 'Home'", Phone.class);
+        Phone phone = query.getSingleResult();
+
+        Assert.assertNotNull(phone);
+        Assert.assertTrue(TemporalHelper.isEditionClass((Class<BaseEntity>) phone.getClass()));
+        Assert.assertNotNull(phone.getContinuity());
+        Assert.assertEquals(T2, phone.getEffectivity().getStart());
+        Assert.assertEquals(T4, phone.getEffectivity().getEnd());
+
+        Assert.assertNotNull(phone.getPerson());
+        Assert.assertEquals(phone.getEffectivity().getStart(), phone.getPerson().getEffectivity().getStart());
+    }
+
+    /**
+     * Verify the query result and relationship to person
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void queryHomePhoneAtT4() {
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime(T4);
+
+        TypedQuery<Phone> query = em.createQuery("SELECT p FROM Phone p WHERE p.type = 'Home'", Phone.class);
+        Phone phone = query.getSingleResult();
+
+        Assert.assertNotNull(phone);
+        Assert.assertTrue(TemporalHelper.isEditionClass((Class<BaseEntity>) phone.getClass()));
+        Assert.assertNotNull(phone.getContinuity());
+        Assert.assertEquals(T4, phone.getEffectivity().getStart());
+        Assert.assertEquals(EOT, phone.getEffectivity().getEnd());
+
+        Assert.assertNotNull(phone.getPerson());
+        Assert.assertEquals(phone.getEffectivity().getStart(), phone.getPerson().getEffectivity().getStart());
+    }
+
+    /**
+     * Verify the query result and relationship to person
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void queryHomePhoneAtT5() {
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime(T5);
+
+        TypedQuery<Phone> query = em.createQuery("SELECT p FROM Phone p WHERE p.type = 'Home'", Phone.class);
+        Phone phone = query.getSingleResult();
+
+        Assert.assertNotNull(phone);
+        Assert.assertTrue(TemporalHelper.isEditionClass((Class<BaseEntity>) phone.getClass()));
+        Assert.assertNotNull(phone.getContinuity());
+        Assert.assertEquals(T4, phone.getEffectivity().getStart());
+        Assert.assertEquals(EOT, phone.getEffectivity().getEnd());
+
+        Assert.assertNotNull(phone.getPerson());
+        Assert.assertEquals(phone.getEffectivity().getStart(), phone.getPerson().getEffectivity().getStart());
     }
 }

@@ -47,14 +47,14 @@ public class EditionSetHelper {
         for (EditionSetEntry ese : editionSet.getEntries()) {
             copyValues(em, ese);
 
-            em.remove(ese.getEdition());
+            em.remove(ese.getTemporal());
 
         }
     }
 
     public static void copyValues(EntityManager em, EditionSetEntry entry) {
-        TemporalEntity<?> edition = entry.getEdition();
-        TemporalEntity<?> continuity = entry.getEdition().getContinuity();
+        TemporalEntity<?> edition = entry.getTemporalEntity();
+        TemporalEntity<?> continuity = entry.getTemporalEntity().getContinuity();
 
         AbstractSession session = em.unwrap(RepeatableWriteUnitOfWork.class);
         ClassDescriptor descriptor = DescriptorHelper.getCurrentDescriptor(session, edition.getClass());
@@ -72,6 +72,8 @@ public class EditionSetHelper {
                 }
             }
         }
+        
+       continuity.applyEdition(edition);
 
         continuity.getEffectivity().setEnd(edition.getEffectivity().getEnd());
     }

@@ -41,6 +41,8 @@ public interface Person extends TemporalEntity<Person> {
     Map<String, PersonHobby> getPersonHobbies();
 
     PersonHobby addHobby(Hobby hobby, long asOf);
+    
+    PersonHobby addHobby(PersonHobby personHobby);
 
     PersonHobby removeHobby(Hobby hobby, long asOf, long current);
 

@@ -15,8 +15,6 @@ import static example.PersonModelExample.T4;
 
 import java.lang.reflect.Proxy;
 
-import javax.persistence.EntityManager;
-
 import junit.framework.Assert;
 import model.Address;
 import model.Person;
@@ -30,7 +28,7 @@ import org.junit.Test;
 import temporal.EditionWrapperHelper;
 import temporal.TemporalEdition;
 import temporal.TemporalEntity;
-import temporal.TemporalHelper;
+import temporal.TemporalEntityManager;
 import example.PersonModelExample;
 
 /**
@@ -45,8 +43,8 @@ public class ProxyWrapperUpdateTests extends BaseTestCase {
 
     @Test
     public void createWrapperForCurrent() {
-        EntityManager em =createEntityManager();
-        TemporalHelper.setEffectiveTime(em, null, false);
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime( null, false);
         
         try {
             EditionWrapperHelper.wrap(em, new PersonEntity());
@@ -58,11 +56,11 @@ public class ProxyWrapperUpdateTests extends BaseTestCase {
 
     @Test
     public void createWrapperForPersonEditionWithoutEffectiveTS() {
-        EntityManager em = createEntityManager();
+        TemporalEntityManager em = getEntityManager();
         
         try {
             em.getTransaction().begin();
-            Person tempPerson = TemporalHelper.newInstance(em, Person.class);
+            Person tempPerson = em.newEntity( Person.class);
             em.persist(tempPerson);
             em.flush();
             
@@ -77,11 +75,11 @@ public class ProxyWrapperUpdateTests extends BaseTestCase {
 
     @Test
     public void createWrapperForPersonEdition() {
-        EntityManager em = createEntityManager();
-        TemporalHelper.setEffectiveTime(em, T4, true);
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime( T4, true);
 
         em.getTransaction().begin();
-        Person tempPerson = TemporalHelper.newInstance(em, Person.class);
+        Person tempPerson = em.newEntity( Person.class);
         em.persist(tempPerson);
         em.flush();
 
@@ -94,11 +92,11 @@ public class ProxyWrapperUpdateTests extends BaseTestCase {
 
     @Test
     public void createWrapperForAddressEdition() {
-        EntityManager em = createEntityManager();
-        TemporalHelper.setEffectiveTime(em, T4, true);
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime( T4, true);
 
         em.getTransaction().begin();
-        TemporalEntity<Address> wrapper = EditionWrapperHelper.wrap(em, TemporalHelper.newInstance(em, AddressEntity.class));
+        TemporalEntity<Address> wrapper = EditionWrapperHelper.wrap(em, em.newEntity( AddressEntity.class));
 
         Assert.assertNotNull(wrapper);
         Assert.assertTrue(wrapper instanceof Address);
@@ -109,11 +107,11 @@ public class ProxyWrapperUpdateTests extends BaseTestCase {
 
     @Test
     public void createWrapperForPhoneEdition() {
-        EntityManager em = createEntityManager();
-        TemporalHelper.setEffectiveTime(em, T4, true);
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime( T4, true);
 
         em.getTransaction().begin();
-        TemporalEntity<Phone> wrapper = EditionWrapperHelper.wrap(em,TemporalHelper.newInstance(em, PhoneEntity.class));
+        TemporalEntity<Phone> wrapper = EditionWrapperHelper.wrap(em,em.newEntity( PhoneEntity.class));
 
         Assert.assertNotNull(wrapper);
         Assert.assertTrue(wrapper instanceof Phone);
@@ -124,11 +122,11 @@ public class ProxyWrapperUpdateTests extends BaseTestCase {
     @SuppressWarnings("unchecked")
     @Test
     public void create2editionsUsingWrappers() {
-        EntityManager em = createEntityManager();
-        TemporalHelper.setEffectiveTime(em, T2, true);
+        TemporalEntityManager em = getEntityManager();
+        em.setEffectiveTime( T2, true);
 
 
-        Person editionAtT2 = TemporalHelper.find(em, Person.class, example.fullPerson.getId());
+        Person editionAtT2 = em.find(Person.class, example.fullPerson.getId());
 
         em.getTransaction().begin();
         Person wrappedPerson = (Person) EditionWrapperHelper.wrap(em, editionAtT2);
@@ -144,10 +142,10 @@ public class ProxyWrapperUpdateTests extends BaseTestCase {
         em.getTransaction().commit();
         em.close();
 
-        em = createEntityManager();
-        TemporalHelper.setEffectiveTime(em, T4, true);
+        em = getEntityManager();
+        em.setEffectiveTime( T4, true);
 
-        Person editionAtT4 = TemporalHelper.find(em, PersonEntity.class, example.fullPerson.getId());
+        Person editionAtT4 = em.find(Person.class, example.fullPerson.getId());
 
         em.getTransaction().begin();
         wrappedPerson = (Person) EditionWrapperHelper.wrap(em, editionAtT4);
@@ -162,7 +160,7 @@ public class ProxyWrapperUpdateTests extends BaseTestCase {
     }
 
     @Override
-    public void populate(EntityManager em) {
+    public void populate(TemporalEntityManager em) {
         em.persist(example.fullPerson);
     }
 }

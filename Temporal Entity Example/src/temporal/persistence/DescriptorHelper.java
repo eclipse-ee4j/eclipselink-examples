@@ -12,7 +12,9 @@
  ******************************************************************************/
 package temporal.persistence;
 
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Member;
+import java.lang.reflect.Proxy;
 
 import javax.persistence.EntityManager;
 
@@ -95,6 +97,25 @@ public class DescriptorHelper {
 
     public static ClassDescriptor getEditionDescriptor(Session session, Class<?> entityClass) {
         return getDescriptor(session, entityClass, EDITION);
+    }
+    
+    /**
+     * TODO
+     */
+    public static ClassDescriptor getClassDescriptor(Session session, Object entity) {
+        Object domainObject = entity;
+        
+        if (Proxy.isProxyClass(entity.getClass())) {
+            InvocationHandler handler = Proxy.getInvocationHandler(entity);
+            
+            if (handler instanceof EditionWrapperPolicy.Handler<?>) {
+                domainObject = ((EditionWrapperPolicy.Handler<?>) handler).getEntity();
+            }
+            else            if (handler instanceof CurrentWrapperPolicy.CurrentWrapperHandler) {
+                domainObject = ((CurrentWrapperPolicy.CurrentWrapperHandler<?>) handler).getEntity();
+            }
+        }
+        return session.getClassDescriptor(domainObject);
     }
 
 }

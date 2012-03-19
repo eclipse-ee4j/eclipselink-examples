@@ -20,9 +20,8 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 
-
 import temporal.EditionWrapperHelper;
-import temporal.TemporalHelper;
+import temporal.TemporalEntityManager;
 import example.PersonModelExample;
 
 /**
@@ -39,13 +38,13 @@ public class DeleteTests extends BaseTestCase {
 
     @Test
     public void deleteCurrentSimple() {
-        EntityManager em = createEntityManager();
+        TemporalEntityManager em = getEntityManager();
         em.getTransaction().begin();
         em.persist(examples.simplePerson);
         em.getTransaction().commit();
         closeEntityManager();
         
-        em = createEntityManager();
+        em = getEntityManager();
             
         Assert.assertEquals(1,  em.createQuery("SELECT COUNT(p) FROM Person p", Number.class).getSingleResult().intValue());
         Assert.assertEquals(0,  em.createQuery("SELECT COUNT(a) FROM Address a", Number.class).getSingleResult().intValue());
@@ -65,13 +64,13 @@ public class DeleteTests extends BaseTestCase {
 
     @Test
     public void deleteCurrentSimpleAtT1() {
-        EntityManager em = createEntityManager();
+        TemporalEntityManager em = getEntityManager();
         em.getTransaction().begin();
         em.persist(examples.simplePerson);
         em.getTransaction().commit();
         closeEntityManager();
         
-        em = createEntityManager();
+        em = getEntityManager();
             
         Assert.assertEquals(1,  em.createQuery("SELECT COUNT(p) FROM Person p", Number.class).getSingleResult().intValue());
         Assert.assertEquals(0,  em.createQuery("SELECT COUNT(a) FROM Address a", Number.class).getSingleResult().intValue());
@@ -91,7 +90,7 @@ public class DeleteTests extends BaseTestCase {
         Assert.assertEquals(0,  em.createQuery("SELECT COUNT(a) FROM Address a", Number.class).getSingleResult().intValue());
         Assert.assertEquals(0,  em.createQuery("SELECT COUNT(p) FROM Phone p", Number.class).getSingleResult().intValue());
 
-        TemporalHelper.setEffectiveTime(em, T1);
+        em.setEffectiveTime( T1);
         
         Assert.assertEquals(0,  em.createQuery("SELECT COUNT(p) FROM Person p", Number.class).getSingleResult().intValue());
         Assert.assertEquals(0,  em.createQuery("SELECT COUNT(a) FROM Address a", Number.class).getSingleResult().intValue());
@@ -100,7 +99,7 @@ public class DeleteTests extends BaseTestCase {
 
     @After
     public void deleteAll() {
-        EntityManager em = getEMF().createEntityManager();
+        EntityManager em = TemporalEntityManager.getInstance(getEMF().createEntityManager());
         em.getTransaction().begin();
         em.createQuery("DELETE FROM PersonHobby ph").executeUpdate();
         em.createQuery("DELETE FROM Hobby h").executeUpdate();

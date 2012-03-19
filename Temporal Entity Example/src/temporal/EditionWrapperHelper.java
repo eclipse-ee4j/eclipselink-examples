@@ -36,6 +36,7 @@ public class EditionWrapperHelper {
 
     @SuppressWarnings("unchecked")
     public static <T> T wrap(EntityManager em, T entities) {
+        TemporalEntityManager tem = TemporalEntityManager.getInstance(em);
 
         if (entities instanceof Collection) {
             Collection<TemporalEntity<?>> source = (Collection<TemporalEntity<?>>) entities;
@@ -56,7 +57,7 @@ public class EditionWrapperHelper {
             throw new IllegalArgumentException("Cannot wrap new entity or edition (persist first)");
         }
 
-        entity = TemporalHelper.getEdition(em, entity);
+        entity = tem.getEdition(entity);
 
         if (entity == null) {
             throw new IllegalArgumentException("Edition does not exist for entity: " + entity);

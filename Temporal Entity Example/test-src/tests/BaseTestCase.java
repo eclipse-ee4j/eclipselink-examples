@@ -10,8 +10,6 @@
  ******************************************************************************/
 package tests;
 
-import java.util.Map;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -25,7 +23,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 
-import temporal.TemporalHelper;
+import temporal.TemporalEntityManager;
 import temporal.persistence.TemporalSchemaManager;
 
 /**
@@ -37,7 +35,7 @@ public abstract class BaseTestCase {
 
     private static EntityManagerFactory emf;
 
-    private EntityManager entityManager;
+    private TemporalEntityManager entityManager;
 
     @Rule
     public TestName testName = new TestName();
@@ -49,14 +47,17 @@ public abstract class BaseTestCase {
             Server session = JpaHelper.getServerSession(emf);
 
             SchemaManager sm = new TemporalSchemaManager(session);
-            sm.replaceDefaultTables(false, false);
+            // Cache SchemaManager so it can be verified in test cases
+            session.setProperty(SchemaManager.class.getName(), sm);
+            sm.replaceDefaultTables(false, true);
             sm.replaceSequences();
 
             // Populate test case example instances
-            EntityManager em = createEntityManager();
+            TemporalEntityManager em = TemporalEntityManager.getInstance(emf.createEntityManager());
             em.getTransaction().begin();
             populate(em);
             em.getTransaction().commit();
+            em.close();
             System.out.println("\n--- CREATE EMF & POPULATE DONE ---\n");
 
             closeEntityManager();
@@ -64,27 +65,20 @@ public abstract class BaseTestCase {
         return emf;
     }
 
-    public EntityManager createEntityManager() {
-        return createEntityManager(null);
+    public TemporalEntityManager getEntityManager() {
+        return getEntityManager(null);
     }
 
-    public EntityManager createEntityManager(long effectiveTime) {
-        EntityManager em = createEntityManager();
-        TemporalHelper.setEffectiveTime(em, effectiveTime, false);
-        return em;
-    }
-
-    public EntityManager createEntityManager(Map<?, ?> properties) {
+    public TemporalEntityManager getEntityManager(Long effectiveTime) {
         if (this.entityManager == null || !this.entityManager.isOpen()) {
-            EntityManager em = getEMF().createEntityManager(properties);
-            em.setProperty(TemporalHelper.ENTITY_MANAGER, em);
+            TemporalEntityManager em = TemporalEntityManager.getInstance(getEMF().createEntityManager());
+            em.setEffectiveTime(effectiveTime, false);
             this.entityManager = em;
         }
         return this.entityManager;
     }
 
-    public void populate(EntityManager em) {
-
+    public void populate(TemporalEntityManager em) {
     }
 
     @AfterClass

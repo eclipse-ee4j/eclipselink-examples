@@ -34,7 +34,9 @@ import org.eclipse.persistence.descriptors.InheritancePolicy;
 import org.eclipse.persistence.descriptors.changetracking.AttributeChangeTrackingPolicy;
 import org.eclipse.persistence.dynamic.DynamicClassLoader;
 import org.eclipse.persistence.dynamic.DynamicClassWriter;
+import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.expressions.ExpressionBuilder;
+import org.eclipse.persistence.internal.expressions.ParameterExpression;
 import org.eclipse.persistence.internal.helper.DatabaseField;
 import org.eclipse.persistence.internal.jpa.CMP3Policy;
 import org.eclipse.persistence.internal.sessions.AbstractRecord;
@@ -82,7 +84,7 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
         Map<Class<?>, ClassDescriptor> interfaceDescriptors = new HashMap<Class<?>, ClassDescriptor>();
 
         for (ClassDescriptor current : session.getProject().getDescriptors().values()) {
-            if (!current.isDescriptorForInterface() && TemporalEntity.class.isAssignableFrom(current.getJavaClass())) {
+            if (!current.isDescriptorForInterface() && TemporalHelper.isTemporalEntity(current.getJavaClass())) {
                 ClassDescriptor editionDesc = createEditionType(session, dcl, current, EDITION);
                 editionDescriptors.add(editionDesc);
 
@@ -102,12 +104,29 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
                 editionViewDesc.setProperty(EDITION, editionDesc);
                 editionViewDesc.setProperty(EDITION_VIEW, editionViewDesc);
 
-                setupInterfaceDescriptor(current, session, interfaceDescriptors);
+                setupInterfaceDescriptor(current, editionDesc, session, interfaceDescriptors);
 
                 // Since the redirector can cause queries to run against
                 // different types it is important that no expression to query
                 // caching be used.
                 current.getQueryManager().setExpressionQueryCacheMaxSize(0);
+
+                // FIX relationships from entity to temporal (non-entity)
+                for (DatabaseMapping mapping: current.getMappings()) {
+                    if (mapping.isForeignReferenceMapping()) {
+                        ForeignReferenceMapping frMapping = (ForeignReferenceMapping) mapping;
+                        if (frMapping.isOneToManyMapping() && TemporalHelper.isTemporal(frMapping.getReferenceClass(), false)) {
+                            OneToManyMapping otmm = (OneToManyMapping) frMapping;
+                            Expression original = otmm.buildSelectionCriteria();
+                            ExpressionBuilder eb = original.getBuilder();
+                            otmm.setSelectionCriteria(original.and(eb.get("effectivity").get("start").equal(0)));
+                        }
+                    }
+                }
+                
+                // Configure Wrapper policies
+               // current.setWrapperPolicy(new CurrentWrapperPolicy());
+               // editionDesc.setWrapperPolicy(new EditionWrapperPolicy());
             }
         }
 
@@ -130,6 +149,7 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
         configureEditionSetEntryVariableMapping(session, editionDescriptors);
 
         session.getEventManager().addListener(new PropagateEditionChangesListener());
+        
     }
 
     /**
@@ -216,44 +236,65 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
 
         // Point all reference mappings to TemporalEntity to edition classes
         for (DatabaseMapping mapping : descriptor.getMappings()) {
-            if (mapping.isForeignReferenceMapping() && TemporalHelper.isTemporalEntity(((ForeignReferenceMapping) mapping).getReferenceClass())) {
-                ForeignReferenceMapping frMapping = (ForeignReferenceMapping) mapping;
-                frMapping.setReferenceClassName(frMapping.getReferenceClassName() + suffix);
-                frMapping.setReferenceClass(dcl.loadClass(frMapping.getReferenceClassName()));
+            if (mapping.isForeignReferenceMapping()) {
+                if (TemporalHelper.isTemporalEntity(((ForeignReferenceMapping) mapping).getReferenceClass())) {
+                    ForeignReferenceMapping frMapping = (ForeignReferenceMapping) mapping;
+                    frMapping.setReferenceClassName(frMapping.getReferenceClassName() + suffix);
+                    frMapping.setReferenceClass(dcl.loadClass(frMapping.getReferenceClassName()));
 
-                // Relationship or edition descriptor must not be cached so that
-                // the EntityManager/ClientSession/UOW properties are available
-                // to the relationship query
-                frMapping.setIsCacheable(false);
+                    // Relationship or edition descriptor must not be cached so
+                    // that
+                    // the EntityManager/ClientSession/UOW properties are
+                    // available
+                    // to the relationship query
+                    frMapping.setIsCacheable(false);
 
-                if (mapping.getAttributeName().equals("continuity")) {
-                    ManyToOneMapping contMapping = (ManyToOneMapping) mapping;
-                    // Use a native query to avoid additional criteria
-                    // Causes additional SQL calls
-                    contMapping.setSelectionSQLString("SELECT * FROM " + descriptor.getTableName() + " WHERE OID = #CID");
-                    contMapping.getSelectionQuery().setRedirector(new ContinuityMappingQueryRedirector());
-                    ((ReadObjectQuery) contMapping.getSelectionQuery()).setReferenceClass(frMapping.getReferenceClass());
-                } else if (frMapping.isOneToOneMapping()) {
-                    fixFKNames(((OneToOneMapping) frMapping).getSourceToTargetKeyFields());
-                } else if (frMapping.isOneToManyMapping()) {
-                    OneToManyMapping otMMapping = (OneToManyMapping) frMapping;
-                    fixFKNames(otMMapping.getTargetForeignKeysToSourceKeys());
+                    if (mapping.getAttributeName().equals("continuity")) {
+                        ManyToOneMapping contMapping = (ManyToOneMapping) mapping;
+                        // Use a native query to avoid additional criteria
+                        // Causes additional SQL calls
+                        contMapping.setSelectionSQLString("SELECT * FROM " + descriptor.getTableName() + " WHERE OID = #CID");
+                        contMapping.getSelectionQuery().setRedirector(new ContinuityMappingQueryRedirector());
+                        ((ReadObjectQuery) contMapping.getSelectionQuery()).setReferenceClass(frMapping.getReferenceClass());
+                    } else if (frMapping.isOneToOneMapping()) {
+                        fixFKNames(((OneToOneMapping) frMapping).getSourceToTargetKeyFields());
+                    } else if (frMapping.isOneToManyMapping()) {
+                        OneToManyMapping otMMapping = (OneToManyMapping) frMapping;
+                        fixFKNames(otMMapping.getTargetForeignKeysToSourceKeys());
 
-                    List<DatabaseField> sourceFields = (List<DatabaseField>) otMMapping.getSourceKeyFields().clone();
-                    otMMapping.getSourceKeyFields().clear();
-                    List<DatabaseField> targetFields = (List<DatabaseField>) otMMapping.getTargetForeignKeyFields().clone();
-                    otMMapping.getTargetForeignKeyFields().clear();
+                        List<DatabaseField> sourceFields = (List<DatabaseField>) otMMapping.getSourceKeyFields().clone();
+                        otMMapping.getSourceKeyFields().clear();
+                        List<DatabaseField> targetFields = (List<DatabaseField>) otMMapping.getTargetForeignKeyFields().clone();
+                        otMMapping.getTargetForeignKeyFields().clear();
 
-                    for (int i = 0; i < sourceFields.size(); i++) {
-                        DatabaseField sourceField = sourceFields.get(0).clone();
-                        DatabaseField targetField = targetFields.get(0).clone();
-                        if (sourceField.getName().equals("OID")) {
-                            sourceField.setName("CID");
+                        for (int i = 0; i < sourceFields.size(); i++) {
+                            DatabaseField sourceField = sourceFields.get(0).clone();
+                            DatabaseField targetField = targetFields.get(0).clone();
+                            if (sourceField.getName().equals("OID")) {
+                                sourceField.setName("CID");
+                            }
+                            otMMapping.addTargetForeignKeyFieldName(sourceField.getQualifiedName(), targetField.getQualifiedName());
                         }
-                        otMMapping.addTargetForeignKeyFieldName(sourceField.getQualifiedName(), targetField.getQualifiedName());
+
+                    } else {
+                        throw new RuntimeException("Unsupported temporal entity mapping: " + frMapping);
                     }
-                } else {
-                    throw new RuntimeException("Unsupported mapping: " + frMapping);
+                } else if (TemporalHelper.isTemporal(((ForeignReferenceMapping) mapping).getReferenceClass(), false)) {
+                    ForeignReferenceMapping frMapping = (ForeignReferenceMapping) mapping;
+                    
+                    if (mapping.isOneToManyMapping()) {
+                        OneToManyMapping otmm = (OneToManyMapping) frMapping;
+                        Expression original = otmm.buildSelectionCriteria();
+                        ExpressionBuilder eb = original.getBuilder();
+                        // :EFF_TS >= this.effectivity.start AND :EFF_TS < this.effectivity.end
+                        ParameterExpression effTsExp = (ParameterExpression) eb.getParameter("EFF_TS");
+                        effTsExp.setIsProperty(true);
+                        Expression startExp = effTsExp.greaterThanEqual(eb.get("effectivity").get("start")); 
+                        Expression endExp = effTsExp.lessThan(eb.get("effectivity").get("end"));
+                        otmm.setSelectionCriteria(original.and(startExp.and(endExp)));
+                    } else {
+                        throw new RuntimeException("Unsupported temporal mapping: " + frMapping);
+                    }
                 }
             }
         }
@@ -279,10 +320,10 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
     private void configureQueries(ClassDescriptor currentDesc, ClassDescriptor editionDesc, ClassDescriptor editionViewDesc, Session session) {
         // Add query redirector to handle edition query redirection to edition
         // class when effectivity time is provided.
-        TemporalQueryRedirector redirector = new TemporalQueryRedirector(currentDesc, editionDesc);
-        currentDesc.setDefaultReadAllQueryRedirector(redirector);
-        currentDesc.setDefaultReadObjectQueryRedirector(redirector);
-        currentDesc.setDefaultReportQueryRedirector(redirector);
+        //TemporalQueryRedirector redirector = new TemporalQueryRedirector(currentDesc, editionDesc);
+        //currentDesc.setDefaultReadAllQueryRedirector(redirector);
+        //currentDesc.setDefaultReadObjectQueryRedirector(redirector);
+        //currentDesc.setDefaultReportQueryRedirector(redirector);
 
         // EDITION VIEW: Add query keys
         addCidQueryKey("id", editionViewDesc, session);
@@ -350,14 +391,17 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
     /**
      * Calculate interface descriptors.
      */
-    private void setupInterfaceDescriptor(ClassDescriptor currentDesc, Session session, Map<Class<?>, ClassDescriptor> interfaceDescriptors) {
+    private void setupInterfaceDescriptor(ClassDescriptor currentDesc,ClassDescriptor editionDesc,  Session session, Map<Class<?>, ClassDescriptor> interfaceDescriptors) {
         Class<?>[] interfaces = currentDesc.getJavaClass().getInterfaces();
         if (interfaces.length == 0) {
             throw new IllegalStateException("TemporalEntity types must implement an interface");
         }
 
         Class<?> currentInterface = interfaces[0];
+        
         currentDesc.setProperty(INTERFACE, currentInterface);
+        editionDesc.setProperty(INTERFACE, currentInterface);
+
         interfaceDescriptors.put(currentInterface, currentDesc);
     }
 
@@ -369,7 +413,7 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
     @SuppressWarnings("unchecked")
     private void configureEditionSetEntryVariableMapping(Session session, List<ClassDescriptor> editionDescriptors) {
         ClassDescriptor editionSetEntryDesc = session.getClassDescriptor(EditionSetEntry.class);
-        VariableOneToOneMapping originalMapping = (VariableOneToOneMapping) editionSetEntryDesc.removeMappingForAttributeName("edition");
+        VariableOneToOneMapping originalMapping = (VariableOneToOneMapping) editionSetEntryDesc.removeMappingForAttributeName("temporal");
         CustomVariableOneToOneMaping mapping = new CustomVariableOneToOneMaping(originalMapping);
         editionSetEntryDesc.addMapping(mapping);
         mapping.setIsCacheable(false);
@@ -377,6 +421,16 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
         for (ClassDescriptor editionDesc : editionDescriptors) {
             String shortAlias = editionDesc.getAlias().substring(0, editionDesc.getAlias().indexOf(EDITION));
             mapping.addClassIndicator(editionDesc.getJavaClass(), shortAlias);
+        }
+        
+        for (ClassDescriptor desc: session.getDescriptors().values()) {
+            if (!desc.isDescriptorForInterface() && TemporalHelper.isTemporal(desc.getJavaClass(), false)) {
+                mapping.addClassIndicator(desc.getJavaClass(), desc.getAlias());
+                
+                if (desc.getMappingForAttributeName("oid") == null) {
+                    desc.addDirectQueryKey("oid", desc.getPrimaryKeyFieldNames().get(0));
+                }
+            }
         }
 
         for (Entry<?, String> entry : ((Map<?, String>) mapping.getSourceToTargetQueryKeyNames()).entrySet()) {
