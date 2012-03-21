@@ -12,8 +12,6 @@
  ******************************************************************************/
 package model.entities;
 
-import static org.eclipse.persistence.annotations.ChangeTrackingType.ATTRIBUTE;
-
 import java.sql.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,7 +39,6 @@ import model.Person;
 import model.PersonHobby;
 import model.Phone;
 
-import org.eclipse.persistence.annotations.ChangeTracking;
 import org.eclipse.persistence.annotations.Property;
 
 import temporal.BaseTemporalEntity;
@@ -51,7 +48,6 @@ import temporal.TemporalHelper;
 @Entity(name = "Person")
 @Table(name = "TPERSON")
 @NamedQueries({ @NamedQuery(name = "Person.currentById", query = "SELECT p FROM Person p WHERE p.cid = :ID") })
-@ChangeTracking(ATTRIBUTE)
 public class PersonEntity extends BaseTemporalEntity<Person> implements Person {
 
     @Column(name = "P_NAMES")

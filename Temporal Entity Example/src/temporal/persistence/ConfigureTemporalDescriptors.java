@@ -32,6 +32,7 @@ import org.eclipse.persistence.descriptors.DescriptorEventAdapter;
 import org.eclipse.persistence.descriptors.DescriptorEventListener;
 import org.eclipse.persistence.descriptors.InheritancePolicy;
 import org.eclipse.persistence.descriptors.changetracking.AttributeChangeTrackingPolicy;
+import org.eclipse.persistence.descriptors.changetracking.ChangeTracker;
 import org.eclipse.persistence.dynamic.DynamicClassLoader;
 import org.eclipse.persistence.dynamic.DynamicClassWriter;
 import org.eclipse.persistence.expressions.Expression;
@@ -112,7 +113,7 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
                 current.getQueryManager().setExpressionQueryCacheMaxSize(0);
 
                 // FIX relationships from entity to temporal (non-entity)
-                for (DatabaseMapping mapping: current.getMappings()) {
+                for (DatabaseMapping mapping : current.getMappings()) {
                     if (mapping.isForeignReferenceMapping()) {
                         ForeignReferenceMapping frMapping = (ForeignReferenceMapping) mapping;
                         if (frMapping.isOneToManyMapping() && TemporalHelper.isTemporal(frMapping.getReferenceClass(), false)) {
@@ -123,10 +124,10 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
                         }
                     }
                 }
-                
-                // Configure Wrapper policies
-               // current.setWrapperPolicy(new CurrentWrapperPolicy());
-               // editionDesc.setWrapperPolicy(new EditionWrapperPolicy());
+
+                // TODO: Configure Wrapper policies
+                //current.setWrapperPolicy(new EditionWrapperPolicy());
+                //editionDesc.setWrapperPolicy(new EditionWrapperPolicy());
             }
         }
 
@@ -149,7 +150,7 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
         configureEditionSetEntryVariableMapping(session, editionDescriptors);
 
         session.getEventManager().addListener(new PropagateEditionChangesListener());
-        
+
     }
 
     /**
@@ -159,8 +160,11 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
      * @return edition {@link ClassDescriptor}
      */
     private ClassDescriptor createEditionType(Session session, DynamicClassLoader dcl, ClassDescriptor source, String suffix) {
+        String interfaceName = source.getJavaClassName() + suffix + "I";
+        Class<?> infc = dcl.createDynamicClass(interfaceName, new EditionInterfaceClassWriter(source.getJavaClass().getInterfaces()[0]));
+
         String className = source.getJavaClassName() + suffix;
-        Class<?> cls = dcl.createDynamicClass(className, new DynamicClassWriter(source.getJavaClass()));
+        Class<?> cls = dcl.createDynamicClass(className, new EditionClassWriter(source.getJavaClass(), infc));
 
         ClassDescriptor desc = (ClassDescriptor) source.clone();
         desc.setJavaClassName(className);
@@ -173,7 +177,9 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
 
         // Configure attribute change tracking as initialization requires
         // weaving interfaces directly on each class
-        desc.setObjectChangePolicy(new AttributeChangeTrackingPolicy());
+        if (ChangeTracker.class.isAssignableFrom(desc.getJavaClass())) {
+            desc.setObjectChangePolicy(new AttributeChangeTrackingPolicy());
+        }
 
         if (desc.hasInheritance()) {
             Map<?, ?> classIndicatorMapping = fixEditionMap(source.getInheritancePolicy().getClassIndicatorMapping(), dcl, suffix);
@@ -281,15 +287,16 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
                     }
                 } else if (TemporalHelper.isTemporal(((ForeignReferenceMapping) mapping).getReferenceClass(), false)) {
                     ForeignReferenceMapping frMapping = (ForeignReferenceMapping) mapping;
-                    
+
                     if (mapping.isOneToManyMapping()) {
                         OneToManyMapping otmm = (OneToManyMapping) frMapping;
                         Expression original = otmm.buildSelectionCriteria();
                         ExpressionBuilder eb = original.getBuilder();
-                        // :EFF_TS >= this.effectivity.start AND :EFF_TS < this.effectivity.end
+                        // :EFF_TS >= this.effectivity.start AND :EFF_TS <
+                        // this.effectivity.end
                         ParameterExpression effTsExp = (ParameterExpression) eb.getParameter("EFF_TS");
                         effTsExp.setIsProperty(true);
-                        Expression startExp = effTsExp.greaterThanEqual(eb.get("effectivity").get("start")); 
+                        Expression startExp = effTsExp.greaterThanEqual(eb.get("effectivity").get("start"));
                         Expression endExp = effTsExp.lessThan(eb.get("effectivity").get("end"));
                         otmm.setSelectionCriteria(original.and(startExp.and(endExp)));
                     } else {
@@ -318,12 +325,6 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
      * Configure queries for current and edition descriptors.
      */
     private void configureQueries(ClassDescriptor currentDesc, ClassDescriptor editionDesc, ClassDescriptor editionViewDesc, Session session) {
-        // Add query redirector to handle edition query redirection to edition
-        // class when effectivity time is provided.
-        //TemporalQueryRedirector redirector = new TemporalQueryRedirector(currentDesc, editionDesc);
-        //currentDesc.setDefaultReadAllQueryRedirector(redirector);
-        //currentDesc.setDefaultReadObjectQueryRedirector(redirector);
-        //currentDesc.setDefaultReportQueryRedirector(redirector);
 
         // EDITION VIEW: Add query keys
         addCidQueryKey("id", editionViewDesc, session);
@@ -391,18 +392,20 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
     /**
      * Calculate interface descriptors.
      */
-    private void setupInterfaceDescriptor(ClassDescriptor currentDesc,ClassDescriptor editionDesc,  Session session, Map<Class<?>, ClassDescriptor> interfaceDescriptors) {
+    private void setupInterfaceDescriptor(ClassDescriptor currentDesc, ClassDescriptor editionDesc, Session session, Map<Class<?>, ClassDescriptor> interfaceDescriptors) {
         Class<?>[] interfaces = currentDesc.getJavaClass().getInterfaces();
         if (interfaces.length == 0) {
             throw new IllegalStateException("TemporalEntity types must implement an interface");
         }
 
         Class<?> currentInterface = interfaces[0];
-        
+        Class<?> editionInterface = editionDesc.getJavaClass().getInterfaces()[0];
+
         currentDesc.setProperty(INTERFACE, currentInterface);
-        editionDesc.setProperty(INTERFACE, currentInterface);
+        editionDesc.setProperty(INTERFACE, editionInterface);
 
         interfaceDescriptors.put(currentInterface, currentDesc);
+        interfaceDescriptors.put(editionInterface, editionDesc);
     }
 
     /**
@@ -422,11 +425,11 @@ public class ConfigureTemporalDescriptors implements SessionCustomizer {
             String shortAlias = editionDesc.getAlias().substring(0, editionDesc.getAlias().indexOf(EDITION));
             mapping.addClassIndicator(editionDesc.getJavaClass(), shortAlias);
         }
-        
-        for (ClassDescriptor desc: session.getDescriptors().values()) {
+
+        for (ClassDescriptor desc : session.getDescriptors().values()) {
             if (!desc.isDescriptorForInterface() && TemporalHelper.isTemporal(desc.getJavaClass(), false)) {
                 mapping.addClassIndicator(desc.getJavaClass(), desc.getAlias());
-                
+
                 if (desc.getMappingForAttributeName("oid") == null) {
                     desc.addDirectQueryKey("oid", desc.getPrimaryKeyFieldNames().get(0));
                 }

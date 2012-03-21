@@ -12,8 +12,6 @@
  ******************************************************************************/
 package model.entities;
 
-import static org.eclipse.persistence.annotations.ChangeTrackingType.ATTRIBUTE;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -21,14 +19,10 @@ import javax.persistence.Table;
 
 import model.Person;
 import model.Phone;
-
-import org.eclipse.persistence.annotations.ChangeTracking;
-
 import temporal.BaseTemporalEntity;
 
 @Entity(name = "Phone")
 @Table(name = "TPHONE")
-@ChangeTracking(ATTRIBUTE)
 public class PhoneEntity extends BaseTemporalEntity<Phone> implements Phone {
 
     @Column(name = "PTYPE")

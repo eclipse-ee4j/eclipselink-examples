@@ -25,6 +25,9 @@ import org.junit.runners.Suite.SuiteClasses;
                 VerifySchemaManager.class,
                 ConfigureTemporalDescriptorsTests.class, 
                 TemporalHelperTests.class, 
-                TemporalEntityTests.class})
+                TemporalEntityManagerTests.class, 
+                TemporalEntityTests.class,
+                //WrapperPolicyTests.class,
+                })
 public class AllTests {
 }

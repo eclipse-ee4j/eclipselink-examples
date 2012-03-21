@@ -341,6 +341,11 @@ public class TemporalEntityManager extends AbstractEntityManagerWrapper {
         if (nonTemporal != null && Boolean.valueOf(nonTemporal)) {
             return;
         }
+        
+        TemporalEntity<?> unwrappedSource = source;
+        if (mapping.getDescriptor().hasWrapperPolicy() && mapping.getDescriptor().getWrapperPolicy().isWrapped(unwrappedSource)) {
+            unwrappedSource = (TemporalEntity<?>) mapping.getDescriptor().getWrapperPolicy().unwrapObject(unwrappedSource, session); 
+        }
 
         Member member = null;
 
@@ -353,13 +358,18 @@ public class TemporalEntityManager extends AbstractEntityManagerWrapper {
             return;
         }
 
-        Object value = mapping.getRealAttributeValueFromObject(source, session);
+        Object value = mapping.getRealAttributeValueFromObject(unwrappedSource, session);
 
         if (mapping.isCollectionMapping()) {
             value = ((CollectionMapping) mapping).getContainerPolicy().cloneFor(value);
         }
+        
+        Object unwrappedTarget = target;
+        if (mapping.getDescriptor().hasWrapperPolicy() && mapping.getDescriptor().getWrapperPolicy().isWrapped(unwrappedTarget)) {
+            unwrappedTarget = (TemporalEntity<?>) mapping.getDescriptor().getWrapperPolicy().unwrapObject(unwrappedTarget, session); 
+        }
 
-        mapping.setRealAttributeValueInObject(target, value);
+        mapping.setRealAttributeValueInObject(unwrappedTarget, value);
     }
 
     /**

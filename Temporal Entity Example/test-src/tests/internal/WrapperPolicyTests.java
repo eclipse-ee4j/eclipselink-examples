@@ -22,7 +22,6 @@ import org.eclipse.persistence.sessions.server.Server;
 import org.junit.Test;
 
 import temporal.TemporalHelper;
-import temporal.persistence.CurrentWrapperPolicy;
 import temporal.persistence.DescriptorHelper;
 import temporal.persistence.EditionWrapperPolicy;
 import tests.BaseTestCase;
@@ -45,7 +44,7 @@ public class WrapperPolicyTests extends BaseTestCase {
             ClassDescriptor cd = session.getClassDescriptorForAlias(alias);
             Assert.assertNotNull(cd);
             Assert.assertTrue(cd.hasWrapperPolicy());
-            Assert.assertTrue(cd.getWrapperPolicy() instanceof CurrentWrapperPolicy);
+            Assert.assertTrue(cd.getWrapperPolicy() instanceof EditionWrapperPolicy);
 
             cd = session.getClassDescriptorForAlias(alias + DescriptorHelper.EDITION);
             Assert.assertNotNull(cd);
@@ -73,7 +72,7 @@ public class WrapperPolicyTests extends BaseTestCase {
             Assert.assertTrue(cd.getWrapperPolicy().isWrapped(wrappedEnObject));
             Assert.assertTrue(Proxy.isProxyClass(wrappedEnObject.getClass()));
             InvocationHandler handler = Proxy.getInvocationHandler(wrappedEnObject);
-            Assert.assertTrue(handler instanceof CurrentWrapperPolicy.CurrentWrapperHandler<?>);
+            Assert.assertTrue(handler instanceof EditionWrapperPolicy.Handler<?>);
             
             ClassDescriptor lookupCD = session.getClassDescriptor(wrappedEnObject);
             Assert.assertNotNull(lookupCD);

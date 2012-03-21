@@ -55,7 +55,7 @@ public class VerifyConfigTests extends BaseTestCase {
 
         Assert.assertNotNull(session);
         Assert.assertTrue(session.isConnected());
-        Assert.assertEquals(18, session.getDescriptors().size());
+        Assert.assertEquals(21, session.getDescriptors().size());
 
         Assert.assertNotNull(session.getClassDescriptorForAlias("Person"));
         Assert.assertNotNull(session.getClassDescriptor(PersonEntity.class));

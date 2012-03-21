@@ -15,7 +15,6 @@ import org.eclipse.persistence.queries.FetchGroupTracker;
 import org.eclipse.persistence.sessions.Session;
 
 import temporal.EditionSetEntry;
-import temporal.EditionWrapperHandler;
 import temporal.TemporalEdition;
 import temporal.TemporalEntity;
 import temporal.TemporalEntityManager;
