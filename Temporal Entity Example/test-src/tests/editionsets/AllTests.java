@@ -18,7 +18,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({ EditionSetConfigTests.class, 
                 CreateEditionSetTests.class, 
                 ApplySimpleEditionSetTests.class, 
-                MoveSimpleEditionSetTests.class,
+                MoveSingleEditionSetTests.class,
+                DeleteEditionSetTests.class,
                 PropagateChangesTests.class})
 public class AllTests {
 }
