@@ -1,13 +1,21 @@
 package example;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.persistence.*;
+
+import example.util.ExamplePropertiesLoader;
 
 import model.Employee;
 
 public class JavaSEExample {
 
     public static void main(String[] args) {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("employee-annotations");
+        Map<String, Object> props = new HashMap<String, Object>();
+        ExamplePropertiesLoader.loadProperties(props);
+        
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("employee", props);
 
         EntityManager em = emf.createEntityManager();
 

@@ -12,22 +12,12 @@
 		<class>model.Address</class>
 		<properties> 
 			<!-- Default Login using Oracle for EclipseLink's internal connection pool -->
-			<property name="eclipselink.jdbc.driver" value="oracle.jdbc.OracleDriver" />
-			<property name="eclipselink.jdbc.url" value="jdbc:oracle:thin:@localhost:1521:ORCL" />
-			<property name="eclipselink.jdbc.user" value="scott" />
-			<property name="eclipselink.jdbc.password" value="tiger" />
- 			
-			<!-- Minimal connections in internal pool -->
-			<property name="eclipselink.jdbc.read-connections.min" value="1" />
-			<property name="eclipselink.jdbc.write-connections.min" value="1" />
-			<property name="eclipselink.jdbc.batch-writing" value="JDBC" />
-			
-			<!-- Default Login using Oracle -->
-			<property name="eclipselink.logging.level" value="FINE" />
-			<property name="eclipselink.logging.thread" value="false" />
-			<property name="eclipselink.logging.session" value="false" />
-			<property name="eclipselink.logging.exceptions" value="false" />
-			<property name="eclipselink.logging.timestamp" value="false"/>
+			<property name="javax.peristence.jdbc.driver" value="oracle.jdbc.OracleDriver" />
+			<property name="javax.peristence.jdbc.url" value="jdbc:oracle:thin:@localhost:1521:ORCL" />
+			<property name="javax.peristence.jdbc.user" value="scott" />
+			<property name="javax.peristence.jdbc.password" value="tiger" />
+			<property name="eclipselink.ddl-generation" value="drop-and-create-tables"/>
+			<property name="eclipselink.ddl-generation.output-mode" value="database"/> 			
 		</properties>
 	</persistence-unit>
 </persistence>
