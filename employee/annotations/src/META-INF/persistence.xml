@@ -3,6 +3,7 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
 	version="1.0" xmlns="http://java.sun.com/xml/ns/persistence">
 	<persistence-unit name="employee" transaction-type="RESOURCE_LOCAL">
+		<jta-data-source>jdbc/EmployeeDS</jta-data-source>
 		<class>model.SmallProject</class>
 		<class>model.Project</class> 
 		<class>model.PhoneNumber</class>
@@ -10,14 +11,5 @@
 		<class>model.EmploymentPeriod</class>
 		<class>model.Employee</class>
 		<class>model.Address</class>
-		<properties> 
-			<!-- Default Login using Oracle for EclipseLink's internal connection pool -->
-			<property name="javax.peristence.jdbc.driver" value="oracle.jdbc.OracleDriver" />
-			<property name="javax.peristence.jdbc.url" value="jdbc:oracle:thin:@localhost:1521:ORCL" />
-			<property name="javax.peristence.jdbc.user" value="scott" />
-			<property name="javax.peristence.jdbc.password" value="tiger" />
-			<property name="eclipselink.ddl-generation" value="drop-and-create-tables"/>
-			<property name="eclipselink.ddl-generation.output-mode" value="database"/> 			
-		</properties>
 	</persistence-unit>
 </persistence>

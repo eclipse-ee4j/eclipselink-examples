@@ -14,7 +14,6 @@
 package model;
 
 import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.FetchType.LAZY;
 
 import java.util.ArrayList;
@@ -23,7 +22,9 @@ import java.util.List;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Basic;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -38,8 +39,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.SecondaryTable;
 import javax.persistence.Version;
 
-import org.eclipse.persistence.annotations.BasicCollection;
-import org.eclipse.persistence.annotations.CollectionTable;
 import org.eclipse.persistence.annotations.ConversionValue;
 import org.eclipse.persistence.annotations.Convert;
 import org.eclipse.persistence.annotations.ObjectTypeConverter;
@@ -104,7 +103,7 @@ public class Employee {
     @AttributeOverrides( { @AttributeOverride(name = "startDate", column = @Column(name = "START_DATE")), @AttributeOverride(name = "endDate", column = @Column(name = "END_DATE")) })
     private EmploymentPeriod period;
 
-    @BasicCollection(fetch = EAGER, valueColumn = @Column(name = "RESPON_DESC"))
+    @ElementCollection
     @CollectionTable(name = "RESPONS")
     private List<String> responsibilities = new ArrayList<String>();
 

@@ -5,6 +5,8 @@ import java.util.Map;
 
 import javax.persistence.*;
 
+import org.eclipse.persistence.config.PersistenceUnitProperties;
+
 import example.util.ExamplePropertiesLoader;
 
 import model.Employee;
@@ -13,7 +15,12 @@ public class JavaSEExample {
 
     public static void main(String[] args) {
         Map<String, Object> props = new HashMap<String, Object>();
+        
         ExamplePropertiesLoader.loadProperties(props);
+        
+        // Enable Schema Gen
+        props.put(PersistenceUnitProperties.DDL_GENERATION  , PersistenceUnitProperties.DROP_AND_CREATE);
+        props.put(PersistenceUnitProperties.DDL_GENERATION_MODE, PersistenceUnitProperties.DDL_DATABASE_GENERATION);
         
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("employee", props);
 
