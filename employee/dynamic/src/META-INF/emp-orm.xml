@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="2.4"
+	xmlns="http://www.eclipse.org/eclipselink/xsds/persistence/orm"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.eclipse.org/eclipselink/xsds/persistence/orm http://www.eclipse.org/eclipselink/xsds/eclipselink_orm_2_4.xsd">
+	
+	<package>example.jpa.dynamic.model.employee</package>
+	
+	<entity class="Address" access="VIRTUAL">
+		<table name="d_address" />
+		<attributes>
+			<id name="addrId" attribute-type="int">
+				<column name="ADDR_ID" />
+				<generated-value strategy="SEQUENCE"
+					generator="D_ADDRESS_ADDRID_GENERATOR" />
+				<sequence-generator name="D_ADDRESS_ADDRID_GENERATOR" />
+			</id>
+			<basic name="city" attribute-type="String">
+			</basic>
+			<basic name="country" attribute-type="String">
+			</basic>
+			<basic name="pCode" attribute-type="String">
+				<column name="P_CODE" />
+			</basic>
+			<basic name="prov" attribute-type="String">
+			</basic>
+			<basic name="street" attribute-type="String">
+			</basic>
+			<one-to-many name="DEmployees" mapped-by="DAddress"
+				target-entity="model.Employee" attribute-type="java.util.List">
+			</one-to-many>
+		</attributes>
+	</entity>
+	<entity class="Employee" access="VIRTUAL">
+		<table name="d_employee" />
+		<attributes>
+			<id name="empId" attribute-type="int">
+				<column name="EMP_ID" />
+				<generated-value strategy="SEQUENCE"
+					generator="D_EMPLOYEE_EMPID_GENERATOR" />
+				<sequence-generator name="D_EMPLOYEE_EMPID_GENERATOR" />
+			</id>
+			<basic name="endDate" attribute-type="String">
+				<column name="END_DATE" />
+			</basic>
+			<basic name="fName" attribute-type="String">
+				<column name="F_NAME" />
+			</basic>
+			<basic name="gender" attribute-type="String">
+			</basic>
+			<basic name="lName" attribute-type="String">
+				<column name="L_NAME" />
+			</basic>
+			<basic name="startDate" attribute-type="String">
+				<column name="START_DATE" />
+			</basic>
+			<many-to-one name="DEmployee" target-entity="model.Employee"
+				fetch="LAZY">
+				<join-column name="MANAGER_ID" />
+			</many-to-one>
+			<many-to-one name="DAddress" target-entity="model.Address"
+				fetch="LAZY">
+				<join-column name="ADDR_ID" />
+			</many-to-one>
+			<one-to-many name="DEmployees" mapped-by="DEmployee"
+				target-entity="model.Employee" attribute-type="java.util.List">
+			</one-to-many>
+			<one-to-many name="DPhones1" mapped-by="DEmployee1"
+				target-entity="model.Phone" attribute-type="java.util.List">
+			</one-to-many>
+			<one-to-many name="DPhones2" mapped-by="DEmployee2"
+				target-entity="model.Phone" attribute-type="java.util.List">
+			</one-to-many>
+		</attributes>
+	</entity>
+	
+	<entity class="LargeProject" parent-class="Project" access="VIRTUAL">
+		<table name="d_lproject" />
+		<discriminator-value>L</discriminator-value>
+		<attributes>
+			<id name="projId" attribute-type="int">
+				<column name="PROJ_ID" />
+				<generated-value strategy="SEQUENCE"
+					generator="D_LPROJECT_PROJID_GENERATOR" />
+				<sequence-generator name="D_LPROJECT_PROJID_GENERATOR" />
+			</id>
+			<basic name="budget" attribute-type="double">
+			</basic>
+			<basic name="milestone" attribute-type="String">
+			</basic>
+		</attributes>
+	</entity>
+	
+	<entity class="SmallProject" parent-class="Project" access="VIRTUAL">
+		<discriminator-value>S</discriminator-value>
+	</entity>
+
+	<entity class="Phone" access="VIRTUAL">
+		<table name="d_phone" />
+		<attributes>
+			<embedded-id name="id" attribute-type="model.PhonePK"></embedded-id>
+			<basic name="areaCode" attribute-type="String">
+				<column name="AREA_CODE" />
+			</basic>
+			<basic name="pnumber" attribute-type="String">
+			</basic>
+			<many-to-one name="DEmployee1" target-entity="model.Employee"
+				fetch="LAZY">
+				<join-column name="OWNER_ID" />
+			</many-to-one>
+			<many-to-one name="DEmployee2" target-entity="model.Employee"
+				fetch="LAZY">
+				<join-column name="EMP_ID" />
+			</many-to-one>
+		</attributes>
+	</entity>
+	
+	<entity class="Project" access="VIRTUAL">
+		<table name="d_project" />
+		<inheritance strategy="JOINED"/>
+		<discriminator-column name="PROJ_TYPE"/>
+		<attributes>
+			<id name="projId" attribute-type="int">
+				<column name="PROJ_ID" />
+				<generated-value strategy="SEQUENCE"
+					generator="D_PROJECT_PROJID_GENERATOR" />
+				<sequence-generator name="D_PROJECT_PROJID_GENERATOR" />
+			</id>
+			<basic name="descrip" attribute-type="String">
+			</basic>
+			<basic name="empId" attribute-type="int">
+				<column name="EMP_ID" />
+			</basic>
+			<basic name="name" attribute-type="String">
+			</basic>
+			<basic name="projType" attribute-type="String">
+				<column name="PROJ_TYPE" />
+			</basic>
+		</attributes>
+	</entity>
+	
+	<embeddable class="PhonePK" access="VIRTUAL">
+		<attributes>
+			<basic name="phoneType" attribute-type="String">
+				<column name="PHONE_TYPE" />
+			</basic>
+			<basic name="empId" attribute-type="int">
+				<column name="EMP_ID" />
+			</basic>
+		</attributes>
+	</embeddable>
+</entity-mappings>

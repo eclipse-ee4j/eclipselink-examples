@@ -8,9 +8,9 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  *
  * Contributors:
- *  dclarke - Employee Demo 2.3
+ *  dclarke - EclipseLink 2.3 - MySports Demo Bug 344608
  ******************************************************************************/
-package example.util;
+package example.utils;
 
 import java.io.File;
 import java.io.FileInputStream;

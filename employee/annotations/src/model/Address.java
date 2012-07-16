@@ -27,18 +27,31 @@ public class Address {
 
     @Basic
     private String city;
+    
     @Lob
     @Basic(fetch = FetchType.LAZY)
     private String country;
+    
     @Basic
     private String province;
+    
     @Basic
     @Column(name = "P_CODE")
     private String postalCode;
+    
     @Basic
     private String street;
 
     public Address() {
+    }
+
+    public Address(String city, String country, String province, String postalCode, String street) {
+        super();
+        this.city = city;
+        this.country = country;
+        this.province = province;
+        this.postalCode = postalCode;
+        this.street = street;
     }
 
     public int getId() {

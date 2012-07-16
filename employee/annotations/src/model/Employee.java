@@ -53,6 +53,7 @@ import org.eclipse.persistence.annotations.PrivateOwned;
 @SecondaryTable(name = "SALARY")
 @ObjectTypeConverter(name = "gender", objectType = Gender.class, dataType = String.class, conversionValues = { @ConversionValue(dataValue = "M", objectValue = "Male"), @ConversionValue(dataValue = "F", objectValue = "Female") })
 public class Employee {
+    
     @Id
     @Column(name = "EMP_ID")
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -76,7 +77,7 @@ public class Employee {
 
     @Column(table = "SALARY")
     private double salary;
-
+    
     @Version
     private Long version;
     @ManyToMany
