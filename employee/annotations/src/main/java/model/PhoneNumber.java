@@ -11,7 +11,7 @@
  *              dclarke - initial JPA Employee example using XML (bug 217884)
  *              mbraeuer - annotated version
  ******************************************************************************/
-package org.eclipse.persistence.example.jpa.employee;
+package model;
 
 import java.io.Serializable;
 

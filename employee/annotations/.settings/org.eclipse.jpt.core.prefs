@@ -1,4 +1,5 @@
 eclipse.preferences.version=1
-org.eclipse.jpt.core.discoverAnnotatedClasses=false
-org.eclipse.jpt.core.metamodelSourceFolderName=modelgen
-org.eclipse.jpt.core.platform=eclipselink2_3
+org.eclipse.jpt.core.platform=eclipselink2_4
+org.eclipse.jpt.jpa.core.discoverAnnotatedClasses=false
+problem.PROJECT_INACTIVE_CONNECTION=info
+workspace_preferences_overriden=true

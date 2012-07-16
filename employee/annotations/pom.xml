@@ -8,7 +8,20 @@
 	<packaging>jar</packaging>
 
 	<name>Employee Example</name>
-	<url>http://download.eclipse.org/rt/eclipselink/maven.repo</url>
+	<url>http://wiki.eclipse.org/EclipseLink/Examples/JPA/Employee</url>
+	<description>Simple JPA example using annotations.</description>
+	<organization>
+		<name>EclipseLink</name>
+		<url>www.eclipse.org/eclipselink</url>
+	</organization>
+	<issueManagement>
+		<system>Eclipse Bugzilla</system>
+		<url>https://bugs.eclipse.org/bugs/enter_bug.cgi?product=EclipseLink</url>
+	</issueManagement>
+	<scm>
+		<url>http://git.eclipse.org/c/eclipselink/examples.git/</url>
+		<developerConnection>dclarke</developerConnection>
+	</scm>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -17,7 +30,7 @@
 
 	<repositories>
 		<repository>
-			<id>EclipseLink Repo</id>
+			<id>EclipseLink</id>
 			<url>http://download.eclipse.org/rt/eclipselink/maven.repo</url>
 		</repository>
 	</repositories>
