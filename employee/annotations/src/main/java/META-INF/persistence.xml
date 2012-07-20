@@ -9,5 +9,8 @@
 		<class>model.EmploymentPeriod</class>
 		<class>model.LargeProject</class>
 		<class>model.SmallProject</class>
+		<properties>
+			<property name="eclipselink.weaving" value="true"/>
+		</properties>
 	</persistence-unit>
 </persistence>
