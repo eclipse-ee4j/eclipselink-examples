@@ -23,6 +23,8 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 
 import org.eclipse.persistence.config.QueryHints;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
@@ -30,6 +32,7 @@ import org.eclipse.persistence.dynamic.DynamicEntity;
 import org.eclipse.persistence.dynamic.DynamicType;
 import org.eclipse.persistence.expressions.ExpressionBuilder;
 import org.eclipse.persistence.jpa.JpaHelper;
+import org.eclipse.persistence.oxm.MediaType;
 import org.eclipse.persistence.queries.ReadAllQuery;
 
 /**
@@ -103,5 +106,16 @@ public class Queries {
 
     public DynamicEntity minEmployeeWithAddressAndPhones(EntityManager em) {
         return (DynamicEntity) em.createQuery("SELECT e FROM Employee e JOIN FETCH e.address WHERE e.id IN (SELECT MIN(p.id) FROM PhoneNumber p)").getSingleResult();
+    }
+    
+    public List<?> findEmployeeSummaries(EntityManager em) throws JAXBException {
+        List<?> results = em.createNamedQuery("Employee.findSummary").getResultList();
+        Marshaller marshaller = MOXyHelper.createMarshaller(em, MediaType.APPLICATION_JSON);
+        
+        for (Object result: results) {
+            marshaller.marshal(result, System.out);
+        }
+        
+        return results;
     }
 }

@@ -21,6 +21,10 @@
 			Employee ee)</query>
 	</named-query>
 
+	<named-query name="Employee.findSummary">
+		<query>SELECT new example.jpa.dynamic.model.employee.EmpSummary(e.id, e.firstName, e.lastName, a.city) FROM Employee e JOIN e.address a</query>
+	</named-query>
+
 	<entity class="Address" access="VIRTUAL">
 		<attributes>
 			<id name="id" attribute-type="Integer">

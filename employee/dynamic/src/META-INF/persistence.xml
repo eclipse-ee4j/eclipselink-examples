@@ -9,6 +9,7 @@
             <property name="eclipselink.create-ddl-jdbc-file-name" value="dynamicExampleCreateDDL_ddlGeneration.jdbc"/>
             <property name="eclipselink.drop-ddl-jdbc-file-name" value="dynamicExampleDropDDL_ddlGeneration.jdbc"/>
             <property name="eclipselink.ddl-generation.output-mode" value="both"/>
+            <property name="eclipselink.session.customizer" value="example.utils.DynamicCustomizer"/>
         </properties>
 	</persistence-unit>
 	

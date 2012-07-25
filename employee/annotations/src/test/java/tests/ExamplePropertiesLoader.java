@@ -10,7 +10,7 @@
  * Contributors:
  *  dclarke - Employee Demo 2.3
  ******************************************************************************/
-package example.util;
+package tests;
 
 import java.io.File;
 import java.io.FileInputStream;

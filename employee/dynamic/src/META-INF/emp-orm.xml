@@ -96,6 +96,7 @@
 	</entity>
 
 	<entity class="Phone" access="VIRTUAL">
+		<customizer class="example.utils.DynamicEmbeddableCustomizer"/>
 		<table name="d_phone" />
 		<attributes>
 			<embedded-id name="id" attribute-type="model.PhonePK"></embedded-id>
@@ -140,6 +141,7 @@
 	</entity>
 	
 	<embeddable class="PhonePK" access="VIRTUAL">
+		<customizer class="example.utils.DynamicEmbeddableCustomizer"/>
 		<attributes>
 			<basic name="phoneType" attribute-type="String">
 				<column name="PHONE_TYPE" />

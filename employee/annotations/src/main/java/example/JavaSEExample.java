@@ -12,92 +12,82 @@
  ******************************************************************************/
 package example;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 
 import model.Employee;
 
-import org.eclipse.persistence.config.PersistenceUnitProperties;
-
-import example.util.ExamplePropertiesLoader;
-
+/**
+ * Examples illustrating the use of JPA with the employee domain model.
+ * 
+ * @see tests.TestJavaSEExample
+ * 
+ * @author dclarke
+ * @since EclipseLink 2.4
+ */
 public class JavaSEExample {
 
-    public static void main(String[] args) {
-        Map<String, Object> props = new HashMap<String, Object>();
+    public void queryAllEmployees(EntityManager em) {
+        List<Employee> results = em.createQuery("SELECT e FROM Employee e", Employee.class).getResultList();
         
-        ExamplePropertiesLoader.loadProperties(props);
-        
-        // Enable Schema Gen
-        props.put(PersistenceUnitProperties.DDL_GENERATION  , PersistenceUnitProperties.DROP_AND_CREATE);
-        props.put(PersistenceUnitProperties.DDL_GENERATION_MODE, PersistenceUnitProperties.DDL_DATABASE_GENERATION);
-        
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("employee", props);
+        System.out.println("Query All Results: " + results.size());
+        for (Employee emp: results) {
+            System.out.println("\t> " + emp);
+        }
+    }
 
-        EntityManager em = emf.createEntityManager();
-
-        System.out.println("\n\n --- Query for all Employee ---");
-        em.createQuery("SELECT e FROM Employee e").getResultList();
-
+    public Employee createNewEmployees(EntityManager em) {
         System.out.println("\n\n --- Create New Employee ---");
         em.getTransaction().begin();
-        
+
         Employee newEmp = new Employee();
         newEmp.setFirstName("Doug");
         newEmp.setLastName("Clarke");
         newEmp.addPhoneNumber("Work", "555", "5555555");
         newEmp.addPhoneNumber("Home", "555", "1111111");
-        
-        em.persist(newEmp);
-        
-        em.getTransaction().commit();
-        
-        em.clear();
-        em.getEntityManagerFactory().getCache().evictAll();
 
-        System.out.println("\n\n --- Query Employee ---");
-        
+        em.persist(newEmp);
+
+        em.getTransaction().commit();
+
+        return newEmp;
+    }
+
+    public void queryEmployeeLikeAreaCode55(EntityManager em) {
+        System.out.println("\n\n --- Query Employee.phoneNumbers.areaCode LIKE '55%' ---");
+
         TypedQuery<Employee> query = em.createQuery("SELECT e FROM Employee e JOIN e.phoneNumbers phones WHERE phones.areaCode LIKE '55%'", Employee.class);
         List<Employee> emps = query.getResultList();
-        
-        for (Employee e: emps) {
+
+        for (Employee e : emps) {
             System.out.println("> " + e);
         }
-        
-        em.clear();
-        em.getEntityManagerFactory().getCache().evictAll();
+    }
 
+    public void modifyEmployee(EntityManager em, int id) {
         System.out.println("\n\n --- Modify Employee ---");
         em.getTransaction().begin();
-        
-        Employee emp = em.find(Employee.class, newEmp.getId());
+
+        Employee emp = em.find(Employee.class, id);
         emp.setSalary(1);
 
-        query = em.createQuery("SELECT e FROM Employee e WHERE e.id = :ID AND e.firstName = :FNAME", Employee.class);
-        query.setParameter("ID", newEmp.getId());
-        query.setParameter("FNAME", newEmp.getFirstName());
+        TypedQuery<Employee> query = em.createQuery("SELECT e FROM Employee e WHERE e.id = :ID AND e.firstName = :FNAME", Employee.class);
+        query.setParameter("ID", id);
+        query.setParameter("FNAME", emp.getFirstName());
         emp = query.getSingleResult();
-        
+
         em.getTransaction().commit();
-        
-        
-        
-        System.out.println("\n\n --- Delete Employee ---");
+
+    }
+
+    public void deleteEmployee(EntityManager em, int id) {
         em.getTransaction().begin();
-        
-        em.remove(em.find(Employee.class, newEmp.getId()));
-        
+
+        em.remove(em.find(Employee.class, id));
+
         em.getTransaction().commit();
-        
-        
-        
-        em.close();
-        emf.close();
+
     }
 }

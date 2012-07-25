@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.xml.bind.JAXBException;
 
 import org.eclipse.persistence.config.PersistenceUnitProperties;
 import org.eclipse.persistence.dynamic.DynamicClassLoader;
@@ -37,7 +38,7 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         // Test 1 - using dynamic API directly.
-        runDynamicAPITest();
+        //runDynamicAPITest();
 
         // Test 2 - using only JPA.
         runDynamicJPATest();
@@ -84,7 +85,7 @@ public class Main {
         emf.close();
     }
 
-    public static void runDynamicJPATest() {
+    public static void runDynamicJPATest() throws JAXBException {
         // Create an entity manager factory with a dynamic class loader.
         EntityManagerFactory emf = createEntityManagerFactory(new DynamicClassLoader(Thread.currentThread().getContextClassLoader()), "employee");
 
@@ -104,6 +105,8 @@ public class Main {
         int minEmpId = queries.minimumEmployeeId(em);
         queries.findEmployee(em, empType, minEmpId);
         queries.findEmployeesUsingGenderIn(em);
+        
+        queries.findEmployeeSummaries(em);
 
         // Example transactions
         Transactions txn = new Transactions();
