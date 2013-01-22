@@ -10,19 +10,17 @@
  * Contributors:
  *  dclarke - Employee Demo 2.4
  ******************************************************************************/
-package tests;
-
-import javax.persistence.EntityManager;
+package test;
 
 import org.junit.Test;
 
-public class TestConfig extends AbstractBaseTest{
+import example.JavaSEExample;
+
+public class JavaSEExampleTest {
 
   @Test
-  public void bootstrap() {
-      EntityManager em = getEmf().createEntityManager();
-      
-      em.close();
+  public void testMain() throws Exception {
+      JavaSEExample.main(null);
   }
 
 }

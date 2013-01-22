@@ -10,10 +10,12 @@
  * Contributors:
  *  dclarke - Employee Demo 2.3
  ******************************************************************************/
-package tests;
+package example;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
@@ -22,7 +24,7 @@ import java.util.Properties;
  * Helper class that will load persistence unit overrides from a properties file
  * in both the current running folder and the current user's home folder. The
  * goal is to enable developers and users of the example to customize its
- * behaviour without having to modify the source of the example.
+ * behavior without having to modify the source of the example.
  * 
  * @author dclarke
  * @since EclipseLink 2.0.0
@@ -44,6 +46,7 @@ public class ExamplePropertiesLoader {
      * @param properties
      */
     public static void loadProperties(Map<String, Object> properties, String filename) {
+        loadProperties(properties, Thread.currentThread().getContextClassLoader(), filename);
         loadProperties(properties, new File(filename));
 
         String home = System.getProperty("user.home");
@@ -59,25 +62,45 @@ public class ExamplePropertiesLoader {
         }
     }
 
-    /**
-     * 
-     * @param properties
-     * @param filePath
-     */
     public static void loadProperties(Map<String, Object> properties, File file) {
+        if (file.exists()) {
+            InputStream in;
+            try {
+                in = new FileInputStream(file);
+            } catch (FileNotFoundException e) {
+                return;
+            }
+            loadProperties(properties, in);
+        }
+    }
+
+    public static void loadProperties(Map<String, Object> properties, ClassLoader cl, String resource) {
+        InputStream in = cl.getResourceAsStream(resource);
+        loadProperties(properties, in);
+    }
+
+    public static void loadProperties(Map<String, Object> properties, InputStream in) {
         try {
-            if (file.exists()) {
+            if (in != null) {
                 Properties exampleProps = new Properties();
-                InputStream in = new FileInputStream(file);
                 exampleProps.load(in);
                 in.close();
-                
-                for (Map.Entry<Object, Object> entry: exampleProps.entrySet()) {
+
+                for (Map.Entry<Object, Object> entry : exampleProps.entrySet()) {
                     properties.put((String) entry.getKey(), entry.getValue());
                 }
             }
         } catch (Exception e) {
             // ignore
+        } finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
 }

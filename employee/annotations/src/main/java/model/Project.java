@@ -27,18 +27,23 @@ import javax.persistence.*;
 @Inheritance(strategy = JOINED)
 @DiscriminatorColumn(name = "PROJ_TYPE")
 public abstract class Project {
+    
     @Id
     @Column(name = "PROJ_ID")
     @GeneratedValue
     private int id;
+    
     @Basic
     @Column(name = "PROJ_NAME")
     private String name;
+    
     @Basic
     @Column(name = "DESCRIP")
     private String description;
+    
     @Version
     private Long version;
+    
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "LEADER_ID")
     private Employee teamLeader;

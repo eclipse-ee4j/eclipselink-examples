@@ -12,28 +12,78 @@
  ******************************************************************************/
 package example;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
+
+import org.eclipse.persistence.config.PersistenceUnitProperties;
+
 
 import model.Employee;
 
 /**
  * Examples illustrating the use of JPA with the employee domain model.
  * 
- * @see tests.TestJavaSEExample
+ * @see test.JavaSEExampleTest
  * 
  * @author dclarke
  * @since EclipseLink 2.4
  */
 public class JavaSEExample {
 
+    public static void main(String[] args) throws Exception {
+        EntityManagerFactory emf = createEMF(true);
+        JavaSEExample example = new JavaSEExample();
+
+        try {
+            EntityManager em = emf.createEntityManager();
+
+            example.createNewEmployees(em);
+            em.clear();
+
+            example.queryAllEmployees(em);
+            em.clear();
+
+            example.queryEmployeeLikeAreaCode55(em);
+            em.clear();
+
+            example.modifyEmployee(em, 1);
+            em.clear();
+
+            example.deleteEmployee(em, 1);
+            em.close();
+
+        } finally {
+            emf.close();
+        }
+    }
+
+    /**
+     * 
+     */
+    public static EntityManagerFactory createEMF(boolean replaceTables) {
+        Map<String, Object> props = new HashMap<String, Object>();
+
+        ExamplePropertiesLoader.loadProperties(props);
+
+        if (replaceTables) {
+            props.put(PersistenceUnitProperties.DDL_GENERATION, PersistenceUnitProperties.DROP_AND_CREATE);
+            props.put(PersistenceUnitProperties.DDL_GENERATION_MODE, PersistenceUnitProperties.DDL_DATABASE_GENERATION);
+        }
+
+        return Persistence.createEntityManagerFactory("employee", props);
+    }
+
     public void queryAllEmployees(EntityManager em) {
         List<Employee> results = em.createQuery("SELECT e FROM Employee e", Employee.class).getResultList();
-        
+
         System.out.println("Query All Results: " + results.size());
-        for (Employee emp: results) {
+        for (Employee emp : results) {
             System.out.println("\t> " + emp);
         }
     }
@@ -43,8 +93,8 @@ public class JavaSEExample {
         em.getTransaction().begin();
 
         Employee newEmp = new Employee();
-        newEmp.setFirstName("Doug");
-        newEmp.setLastName("Clarke");
+        newEmp.setFirstName("John");
+        newEmp.setLastName("Doe");
         newEmp.addPhoneNumber("Work", "555", "5555555");
         newEmp.addPhoneNumber("Home", "555", "1111111");
 

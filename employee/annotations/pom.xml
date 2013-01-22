@@ -2,33 +2,46 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.eclipse.persistence.example</groupId>
-	<artifactId>Employee</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<groupId>eclipselink.example.jpa</groupId>
+	<artifactId>employee.model</artifactId>
+	<version>2.4.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
-
-	<name>Employee Example</name>
-	<url>http://wiki.eclipse.org/EclipseLink/Examples/JPA/Employee</url>
-	<description>Simple JPA example using annotations.</description>
-	<organization>
-		<name>EclipseLink</name>
-		<url>www.eclipse.org/eclipselink</url>
-	</organization>
-	<issueManagement>
-		<system>Eclipse Bugzilla</system>
-		<url>https://bugs.eclipse.org/bugs/enter_bug.cgi?product=EclipseLink</url>
-	</issueManagement>
+	<name>Employee Model</name>
+	<url>http://wiki.eclipse.org/EclipseLink/Examples/Employee</url>
 	<scm>
+		<connection>git://git.eclipse.org/gitroot/eclipselink/examples.git</connection>
 		<url>http://git.eclipse.org/c/eclipselink/examples.git/</url>
-		<developerConnection>dclarke</developerConnection>
 	</scm>
+	<licenses>
+		<license>
+			<name>EPL: Eclipse Public License</name>
+			<url>http://www.eclipse.org/legal/epl-v10.html</url>
+		</license>
+		<license>
+			<name>EDL: Eclipse Distribution License</name>
+			<url>http://www.eclipse.org/org/documents/edl-v10.php</url>
+		</license>
+	</licenses>
+	<developers>
+		<developer>
+			<name>Doug Clarke</name>
+			<organization>Oracle</organization>
+			<email>douglas.clarke@oracle.com</email>
+			<url>java-persistence.blogspot.com</url>
+		</developer>
+	</developers>
 
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<eclipselink.version>2.4.0</eclipselink.version>
+		<eclipselink.groupid>org.eclipse.persistence</eclipselink.groupid>
+		<eclipselink.artifactid>eclipselink</eclipselink.artifactid>
+		<eclipselink.version>2.4.2-SNAPSHOT</eclipselink.version>
 	</properties>
 
 	<repositories>
+		<repository>
+			<id>Java.Net</id>
+			<url>http://download.java.net/maven/2/</url>
+		</repository>
 		<repository>
 			<id>EclipseLink</id>
 			<url>http://download.eclipse.org/rt/eclipselink/maven.repo</url>
@@ -37,13 +50,8 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.21</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.persistence</groupId>
-			<artifactId>eclipselink</artifactId>
+			<groupId>${eclipselink.groupid}</groupId>
+			<artifactId>${eclipselink.artifactid}</artifactId>
 			<version>${eclipselink.version}</version>
 			<exclusions>
 				<exclusion>
@@ -51,15 +59,27 @@
 					<groupId>commonj.sdo</groupId>
 				</exclusion>
 			</exclusions>
+			<scope>runtime</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.8.2</version>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derby</artifactId>
+			<version>10.9.1.0</version>
+			<scope>runtime</scope>
 		</dependency>
 	</dependencies>
 
 	<build>
+		<defaultGoal>exec:exec</defaultGoal>
+		
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -74,12 +94,40 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.10</version>
+				<version>2.12.4</version>
 				<configuration>
-					<test>tests.AllTests</test>
-					<argLine>-javaagent:${user.home}\.m2\repository\org\eclipse\persistence\eclipselink\2.4.0\eclipselink-2.4.0.jar</argLine>
+					<systemProperties>
+						<property>
+							<name>derby.stream.error.file</name>
+							<value>target/derby.log</value>
+						</property>
+					</systemProperties>
+					<argLine>-javaagent:${user.home}/.m2/repository/org/eclipse/persistence/eclipselink/${eclipselink.version}/eclipselink-${eclipselink.version}.jar</argLine>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<executable>java</executable>
+					<arguments>
+						<argument>-classpath</argument>
+						<classpath />
+						<argument>-javaagent:${user.home}/.m2/repository/org/eclipse/persistence/eclipselink/${eclipselink.version}/eclipselink-${eclipselink.version}.jar</argument>
+						<argument>example.JavaSEExample</argument>
+					</arguments>
+				</configuration>
+			</plugin>
+
 		</plugins>
 	</build>
 

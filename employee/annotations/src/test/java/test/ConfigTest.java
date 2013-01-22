@@ -10,25 +10,43 @@
  * Contributors:
  *  dclarke - Employee Demo 2.4
  ******************************************************************************/
-package tests;
+package test;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import example.JavaSEExample;
 
-public class TestJavaSEExample extends AbstractBaseTest{
+public class ConfigTest {
 
-  private JavaSEExample example = new JavaSEExample();
-  
   @Test
-  public void queryAllEmployees() {
+  public void bootstrap() {
       EntityManager em = getEmf().createEntityManager();
       
-      example.queryAllEmployees(em);
-      
       em.close();
+  }
+
+  private static EntityManagerFactory emf;
+
+  public static EntityManagerFactory getEmf() {
+      return emf;
+  }
+
+  @BeforeClass
+  public static void createEMF() {
+      emf = JavaSEExample.createEMF(true);
+  }
+
+  @AfterClass
+  public static void closeEMF() {
+      if (emf != null && emf.isOpen()) {
+          emf.close();
+      }
+      emf = null;
   }
 
 }

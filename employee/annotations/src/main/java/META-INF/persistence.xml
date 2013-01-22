@@ -9,5 +9,14 @@
 		<class>model.EmploymentPeriod</class>
 		<class>model.LargeProject</class>
 		<class>model.SmallProject</class>
+		<properties>
+			<property name="eclipselink.logging.level" value="FINE"/>
+			<property name="eclipselink.logging.timestamp" value="false"/>
+			<property name="eclipselink.logging.thread" value="false"/>
+			<property name="eclipselink.logging.session" value="false"/>
+			<property name="eclipselink.logging.exceptions" value="false"/>
+			<property name="eclipselink.logging.connection" value="false"/>
+			<property name="eclipselink.logging.level.metadata" value="WARNING"/>
+		</properties>
 	</persistence-unit>
 </persistence>
