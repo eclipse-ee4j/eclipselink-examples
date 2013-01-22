@@ -1,0 +1,11 @@
+----------------------------------------------------------------
+Tue Jan 22 15:04:49 EST 2013:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.9.1.0 - (1344872): instance a816c00e-013c-63dc-f0df-00000479fa90 
+on database directory /Users/djclarke/GIT/eclipselink/examples/employee/annotations/target/derby/mysports  with class loader sun.misc.Launcher$AppClassLoader@82f60ce 
+Loaded from file:/Users/djclarke/.m2/repository/org/apache/derby/derby/10.9.1.0/derby-10.9.1.0.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.7.0_10-b18
+user.dir=/Users/djclarke/GIT/eclipselink/examples/employee/annotations
+derby.system.home=null
+derby.stream.error.file=target/derby.log
+Database Class Loader started - derby.database.classpath=''
