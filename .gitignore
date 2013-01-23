@@ -1,6 +1,2 @@
-
-/Temporal Entity Example/classes
-/employee/annotations/classes
-/employee/annotations/classes
-/employee/maven/Employee/target
-/employee/annotations/target
+target
+derby.log
