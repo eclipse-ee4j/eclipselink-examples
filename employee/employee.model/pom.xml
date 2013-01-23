@@ -2,47 +2,16 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>eclipselink.example.jpa</groupId>
+	<parent>
+		<relativePath>..</relativePath>
+		<groupId>eclipselink.example.jpa</groupId>
+		<artifactId>employee</artifactId>
+		<version>2.4.2-SNAPSHOT</version>
+	</parent>
+
 	<artifactId>employee.model</artifactId>
-	<version>2.4.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>Employee Model</name>
-	<url>http://wiki.eclipse.org/EclipseLink/Examples/Employee</url>
-	<scm>
-		<connection>git://git.eclipse.org/gitroot/eclipselink/examples.git</connection>
-		<url>http://git.eclipse.org/c/eclipselink/examples.git/</url>
-	</scm>
-	<licenses>
-		<license>
-			<name>EPL: Eclipse Public License</name>
-			<url>http://www.eclipse.org/legal/epl-v10.html</url>
-		</license>
-		<license>
-			<name>EDL: Eclipse Distribution License</name>
-			<url>http://www.eclipse.org/org/documents/edl-v10.php</url>
-		</license>
-	</licenses>
-	<developers>
-		<developer>
-			<name>Doug Clarke</name>
-			<organization>Oracle</organization>
-			<email>douglas.clarke@oracle.com</email>
-			<url>java-persistence.blogspot.com</url>
-		</developer>
-	</developers>
-
-	<properties>
-		<eclipselink.groupid>org.eclipse.persistence</eclipselink.groupid>
-		<eclipselink.artifactid>eclipselink</eclipselink.artifactid>
-		<eclipselink.version>2.4.2-SNAPSHOT</eclipselink.version>
-	</properties>
-
-	<repositories>
-		<repository>
-			<id>EclipseLink</id>
-			<url>http://download.eclipse.org/rt/eclipselink/maven.repo</url>
-		</repository>
-	</repositories>
 
 	<dependencies>
 		<dependency>
