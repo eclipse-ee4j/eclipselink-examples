@@ -6,7 +6,7 @@
 	<version>2.4.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<name>Employee Web App</name>
+	<name>Employee Example</name>
 	<url>http://wiki.eclipse.org/EclipseLink/Examples/Employee</url>
 
 	<scm>
