@@ -110,6 +110,12 @@ public class Employee {
     public Employee() {
     }
 
+    public Employee(int id, String firstName, String lastName) {
+        setId(id);
+        setFirstName(firstName);
+        setLastName(lastName);
+    }
+
     public int getId() {
         return id;
     }

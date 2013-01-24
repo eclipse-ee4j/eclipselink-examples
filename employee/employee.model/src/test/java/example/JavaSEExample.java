@@ -44,7 +44,12 @@ public class JavaSEExample {
             EntityManager em = emf.createEntityManager();
 
             example.createNewEmployees(em);
-            em.clear();
+            example.createNewEmployees(em);
+            example.createNewEmployees(em);
+            example.createNewEmployees(em);
+            example.createNewEmployees(em);
+            example.createNewEmployees(em);
+                       em.clear();
 
             example.queryAllEmployees(em);
             em.clear();
