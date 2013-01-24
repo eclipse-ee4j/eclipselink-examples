@@ -40,17 +40,11 @@
 			<version>10.9.1.0</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.22</version>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 
 	<build>
 		<defaultGoal>test</defaultGoal>
-		
+
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -76,30 +70,60 @@
 					<argLine>-javaagent:${user.home}/.m2/repository/org/eclipse/persistence/eclipselink/${eclipselink.version}/eclipselink-${eclipselink.version}.jar</argLine>
 				</configuration>
 			</plugin>
-<!-- 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.2.1</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<executable>java</executable>
-					<arguments>
-						<argument>-classpath</argument>
-						<classpath />
-						<argument>-javaagent:${user.home}/.m2/repository/org/eclipse/persistence/eclipselink/${eclipselink.version}/eclipselink-${eclipselink.version}.jar</argument>
-						<argument>example.JavaSEExample</argument>
-					</arguments>
-				</configuration>
-			</plugin>
--->
+
 		</plugins>
 	</build>
+
+	<!-- Profile to demonstrate how an additional database can be configured 
+		for use in testing. Also useful in populating the target database your container's 
+		data source will be using. USAGE: mvn -P mysql -->
+	<profiles>
+		<profile>
+			<id>mysql</id>
+			<activation>
+				<property>
+					<name>mysql</name>
+				</property>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>mysql</groupId>
+					<artifactId>mysql-connector-java</artifactId>
+					<version>5.1.22</version>
+					<scope>test</scope>
+				</dependency>
+			</dependencies>
+
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<version>2.12.4</version>
+						<configuration>
+							<systemProperties>
+								<property>
+									<name>javax.persistence.jdbc.url</name>
+									<value>jdbc:mysql://localhost:3306/employee</value>
+								</property>
+								<property>
+									<name>javax.persistence.jdbc.driver</name>
+									<value>com.mysql.jdbc.Driver</value>
+								</property>
+								<property>
+									<name>javax.persistence.jdbc.user</name>
+									<value>root</value>
+								</property>
+								<property>
+									<name>javax.persistence.jdbc.password</name>
+									<value>password</value>
+								</property>
+							</systemProperties>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 </project>

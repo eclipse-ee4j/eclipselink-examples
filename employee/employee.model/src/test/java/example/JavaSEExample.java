@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010-2012 Oracle. All rights reserved.
+ * Copyright (c) 2010-2013 Oracle. All rights reserved.
  * This program and the accompanying materials are made available under the 
  * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0 
  * which accompanies this distribution. 
@@ -12,17 +12,12 @@
  ******************************************************************************/
 package example;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
-
-import org.eclipse.persistence.config.PersistenceUnitProperties;
 
 import model.Employee;
 import model.Gender;
@@ -38,7 +33,7 @@ import model.Gender;
 public class JavaSEExample {
 
     public static void main(String[] args) throws Exception {
-        EntityManagerFactory emf = createEMF(true);
+        EntityManagerFactory emf = PersistenceTesting.createEMF(true);
         JavaSEExample example = new JavaSEExample();
 
         try {
@@ -64,21 +59,6 @@ public class JavaSEExample {
         }
     }
 
-    /**
-     * 
-     */
-    public static EntityManagerFactory createEMF(boolean replaceTables) {
-        Map<String, Object> props = new HashMap<String, Object>();
-
-        ExamplePropertiesLoader.loadProperties(props);
-
-        if (replaceTables) {
-            props.put(PersistenceUnitProperties.DDL_GENERATION, PersistenceUnitProperties.DROP_AND_CREATE);
-            props.put(PersistenceUnitProperties.DDL_GENERATION_MODE, PersistenceUnitProperties.DDL_DATABASE_GENERATION);
-        }
-
-        return Persistence.createEntityManagerFactory("employee", props);
-    }
 
     public void queryAllEmployees(EntityManager em) {
         List<Employee> results = em.createQuery("SELECT e FROM Employee e", Employee.class).getResultList();
