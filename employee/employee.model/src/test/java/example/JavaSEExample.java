@@ -15,6 +15,7 @@ package example;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -23,8 +24,8 @@ import javax.persistence.TypedQuery;
 
 import org.eclipse.persistence.config.PersistenceUnitProperties;
 
-
 import model.Employee;
+import model.Gender;
 
 /**
  * Examples illustrating the use of JPA with the employee domain model.
@@ -43,13 +44,8 @@ public class JavaSEExample {
         try {
             EntityManager em = emf.createEntityManager();
 
-            example.createNewEmployees(em);
-            example.createNewEmployees(em);
-            example.createNewEmployees(em);
-            example.createNewEmployees(em);
-            example.createNewEmployees(em);
-            example.createNewEmployees(em);
-                       em.clear();
+            example.createNewEmployees(em, 10);
+            em.clear();
 
             example.queryAllEmployees(em);
             em.clear();
@@ -93,21 +89,14 @@ public class JavaSEExample {
         }
     }
 
-    public Employee createNewEmployees(EntityManager em) {
-        System.out.println("\n\n --- Create New Employee ---");
+    public void createNewEmployees(EntityManager em, int quantity) {
+        System.out.println("\n\n --- Create New Employees + " + quantity + " ---");
         em.getTransaction().begin();
 
-        Employee newEmp = new Employee();
-        newEmp.setFirstName("John");
-        newEmp.setLastName("Doe");
-        newEmp.addPhoneNumber("Work", "555", "5555555");
-        newEmp.addPhoneNumber("Home", "555", "1111111");
-
-        em.persist(newEmp);
-
+        for (int index = 0; index < quantity; index++) {
+             em.persist(createRandomEmployee());
+        }
         em.getTransaction().commit();
-
-        return newEmp;
     }
 
     public void queryEmployeeLikeAreaCode55(EntityManager em) {
@@ -142,8 +131,28 @@ public class JavaSEExample {
 
         em.remove(em.find(Employee.class, id));
         em.flush();
-        
+
         em.getTransaction().rollback();
 
+    }
+
+    private static final String[] MALE_FIRST_NAMES = { "Jacob", "Et", "Michael", "Alexander", "William", "Joshua", "Daniel", "Jayden", "Noah", "Anthony" };
+    private static final String[] FEMALE_FIRST_NAMES = { "Isabella", "Emma", "Olivia", "Sophia", "Ava", "Emily", "Madison", "Abigail", "Chloe", "Mia" };
+    private static final String[] LAST_NAMES = { "Smith", "Johnson", "Williams", "Brown", "Jones", "Miller", "Davis", "Garcia", "Rodriguez", "Wilson" };
+
+    public Employee createRandomEmployee() {
+        Random r = new Random();
+
+        Employee emp = new Employee();
+        emp.setGender(Gender.values()[r.nextInt(2)]);
+        if (Gender.Male.equals(emp.getGender())) {
+            emp.setFirstName(MALE_FIRST_NAMES[r.nextInt(MALE_FIRST_NAMES.length)]);
+        } else {
+            emp.setFirstName(FEMALE_FIRST_NAMES[r.nextInt(FEMALE_FIRST_NAMES.length)]);
+        }
+        emp.setLastName(LAST_NAMES[r.nextInt(LAST_NAMES.length)]);
+        emp.addPhoneNumber("555", "111", "5552222");
+        
+        return emp;
     }
 }
