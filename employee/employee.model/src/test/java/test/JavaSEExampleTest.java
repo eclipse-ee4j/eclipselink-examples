@@ -18,9 +18,9 @@ import example.JavaSEExample;
 
 public class JavaSEExampleTest {
 
-  @Test
-  public void testMain() throws Exception {
-      JavaSEExample.main(null);
-  }
+    @Test
+    public void testMain() throws Exception {
+        JavaSEExample.main(null);
+    }
 
 }

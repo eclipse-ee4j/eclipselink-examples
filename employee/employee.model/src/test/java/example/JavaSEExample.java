@@ -136,8 +136,9 @@ public class JavaSEExample {
         em.getTransaction().begin();
 
         em.remove(em.find(Employee.class, id));
-
-        em.getTransaction().commit();
+        em.flush();
+        
+        em.getTransaction().rollback();
 
     }
 }

@@ -45,8 +45,9 @@
 			<groupId>org.apache.derby</groupId>
 			<artifactId>derby</artifactId>
 			<version>10.9.1.0</version>
-			<scope>test</scope>
+			<scope>runtime</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>eclipselink.example.jpa</groupId>
 			<artifactId>employee.model</artifactId>

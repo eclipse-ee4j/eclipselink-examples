@@ -20,6 +20,8 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
 
+import org.eclipse.persistence.config.PersistenceUnitProperties;
+
 /**
  * Helper class that will load persistence unit overrides from a properties file
  * in both the current running folder and the current user's home folder. The
@@ -60,6 +62,8 @@ public class ExamplePropertiesLoader {
                 properties.put(keyName, value);
             }
         }
+        
+        properties.put(PersistenceUnitProperties.NON_JTA_DATASOURCE, "");
     }
 
     public static void loadProperties(Map<String, Object> properties, File file) {
