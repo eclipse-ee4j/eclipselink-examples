@@ -18,11 +18,9 @@
 					<td width="100%">
 						<table width="100%">
 							<tr>
-								<td width="100%" valign="bottom">
-									<h1>
-										<img src="images/employee.png" alt="Employee Demo" />
-									</h1>
-								</td>
+								<td width="100%" valign="middle"><img
+									src="images/eclipselink-logo.png" alt="EclipseLink" height="80" />
+									<h1>Employee Example</h1></td>
 								<td width="50" align="center"></td>
 
 							</tr>
@@ -48,11 +46,6 @@
 				<td height="10"></td>
 			</tr>
 		</table>
-		<p />
-		<div align="center">
-			<a href="http://www.eclipse.org/eclipselink"><h:graphicImage
-					url="/images/eclipselink.png" alt="EclipseLink" /> </a>
-		</div>
 	</f:view>
 </body>
 </html>

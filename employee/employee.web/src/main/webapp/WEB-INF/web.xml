@@ -8,8 +8,7 @@
   <display-name>EclipseLink Employee Example</display-name>
 
   <welcome-file-list>
-    <welcome-file>faces/index.html</welcome-file>
-    <welcome-file>index.xhtml</welcome-file>
+    <welcome-file>/faces/index.xhtml</welcome-file>
   </welcome-file-list>
 
   <servlet>

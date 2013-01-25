@@ -20,6 +20,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 
 import model.Employee;
+import model.Gender;
 
 /**
  * Return list of available Leagues from JAX-RS call to MySports Admin app.
@@ -28,11 +29,41 @@ import model.Employee;
  * @since EclipseLink 2.3.0
  */
 @ManagedBean
-public class EmployeeList {
+public class CreateEmployee {
+    
+    private String firstName;
+    
+    private String lastName;
+    
+    private String gender;
     
     private EntityManagerFactory emf;
 
-    protected static final String PAGE = "index";
+    protected static final String PAGE = "employee-create";
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
 
     public EntityManagerFactory getEmf() {
         return emf;
@@ -43,12 +74,23 @@ public class EmployeeList {
         this.emf = emf;
     }
 
-    public List<Employee> getEmployees() {
+    public String create() {
+        Employee emp = new Employee();
+        emp.setFirstName(getFirstName());
+        emp.setLastName(getLastName());
+        emp.setGender(Gender.valueOf(getGender()));
+        
         EntityManager em = getEmf().createEntityManager();
         try {
-            return em.createQuery("SELECT e FROM Employee e ORDER BY e.id", Employee.class).getResultList();
+        em.getTransaction().begin();
+        em.persist(emp);
+        em.getTransaction().commit();
         } finally {
             em.close();
         }
+        
+        
+        System.out.println("CERATE: " + emp);
+        return EmployeeList.PAGE;
     }
 }

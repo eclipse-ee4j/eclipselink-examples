@@ -10,11 +10,12 @@
 <ui:composition template="template.jsf">
 	<ui:define name="title">EclipseLink Employee Example</ui:define>
 	<ui:define name="body">
+		<h2>Employees</h2>
 		<h:form>
 			<div align="center">
 				<h:dataTable var="emp" value="#{employeeList.employees}" border="1"
 					styleClass="pretty" width="500">
-					<f:facet name="header">All Employees</f:facet>
+					<f:facet name="header">Employees</f:facet>
 					<h:column>
 						<f:facet name="header">ID</f:facet>
 						<h:outputText value="#{emp.id}" />
@@ -26,10 +27,6 @@
 					<h:column>
 						<f:facet name="header">First Name</f:facet>
 						<h:outputText value="#{emp.firstName}" />
-					</h:column>
-					<h:column>
-						<f:facet name="header">Gender</f:facet>
-						<h:outputText value="#{emp.gender}" />
 					</h:column>
 				</h:dataTable>
 
