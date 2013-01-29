@@ -8,13 +8,14 @@
 
 
 <ui:composition template="/WEB-INF/template.xhtml">
-	<ui:define name="title">Employee Example</ui:define>
-	<ui:define name="subtitle">Home</ui:define>
+	<ui:define name="title">EclipseLink Employee Example</ui:define>
+	<ui:define name="subtitle">Administration</ui:define>
 	<ui:define name="body">
 		<h:form>
-			<h:commandLink action="#{employeeList.create}">Create</h:commandLink><p/>
-			<h:commandLink action="employee/search-results?faces-redirect=true">Search All Employees</h:commandLink><p/>
-			<h:commandLink action="admin/index?faces-redirect=true">Admin</h:commandLink>
+			<div align="center">
+				<h:panelGrid width="400" columns="1" border="1">
+				</h:panelGrid>
+			</div>
 		</h:form>
 	</ui:define>
 </ui:composition>

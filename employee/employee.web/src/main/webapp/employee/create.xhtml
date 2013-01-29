@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+
+<ui:composition template="/WEB-INF/template.xhtml">
+	<ui:define name="title">Employee Example</ui:define>
+	<ui:define name="subtitle">Create Employee</ui:define>
+	<ui:define name="body">
+		<h:form>
+			<div align="center">
+				<h:panelGrid width="400" columns="2" border="1" styleClass="pretty">
+					<h:outputLabel value="First Name:" />
+					<h:inputText value="#{createEmployee.firstName}" />
+					<h:outputLabel value="Last Name:" />
+					<h:inputText value="#{createEmployee.lastName}" />
+					<h:outputLabel value="Gender:" />
+					<h:selectOneMenu value="#{createEmployee.gender}">
+						<f:selectItem id="male" itemLabel="Male" itemValue="Male" />
+						<f:selectItem id="female" itemLabel="Female" itemValue="Female" />
+					</h:selectOneMenu>
+					<f:facet name="footer">
+						<div align="center">
+							<h:commandButton value="Create" action="#{createEmployee.create}" />
+							<h:commandButton value="Cancel" action="#{createEmployee.cancel}" />
+						</div>
+					</f:facet>
+				</h:panelGrid>
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

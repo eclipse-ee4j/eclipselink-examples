@@ -7,26 +7,26 @@
 	xmlns:f="http://java.sun.com/jsf/core">
 
 
-<ui:composition template="template.jsf">
-	<ui:define name="title">Create Employee</ui:define>
+<ui:composition template="/WEB-INF/template.xhtml">
+	<ui:define name="title">EclipseLink Employee Example</ui:define>
+	<ui:define name="subtitle">Edit Employee</ui:define>
 	<ui:define name="body">
 		<h:form>
 			<div align="center">
-				<h2>Create New Employee</h2>
 				<h:panelGrid width="400" columns="2" border="1" styleClass="pretty">
 					<h:outputLabel value="First Name:" />
-					<h:inputText value="#{createEmployee.firstName}" />
+					<h:inputText value="#{editEmployee.employee.firstName}" />
 					<h:outputLabel value="Last Name:" />
-					<h:inputText value="#{createEmployee.lastName}" />
+					<h:inputText value="#{editEmployee.employee.lastName}" />
 					<h:outputLabel value="Gender:" />
-					<h:selectOneMenu value="#{createEmployee.gender}">
+					<h:selectOneMenu value="#{editEmployee.employee.gender}">
 						<f:selectItem id="male" itemLabel="Male" itemValue="Male" />
 						<f:selectItem id="female" itemLabel="Female" itemValue="Female" />
 					</h:selectOneMenu>
 					<f:facet name="footer">
 						<div align="center">
-							<h:commandButton value="Create" action="#{createEmployee.create}" />
-							<h:commandButton value="Cancel" action="#{createDivision.cancel}" />
+							<h:commandButton value="Save" action="#{editEmployee.save}" />
+							<h:commandButton value="Cancel" action="#{editEmployee.cancel}" />
 						</div>
 					</f:facet>
 				</h:panelGrid>

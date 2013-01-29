@@ -12,8 +12,6 @@
  ******************************************************************************/
 package eclipselink.example.jpa.employee.web;
 
-import java.util.List;
-
 import javax.faces.bean.ManagedBean;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -30,16 +28,16 @@ import model.Gender;
  */
 @ManagedBean
 public class CreateEmployee {
-    
+
     private String firstName;
-    
+
     private String lastName;
-    
+
     private String gender;
-    
+
     private EntityManagerFactory emf;
 
-    protected static final String PAGE = "employee-create";
+    protected static final String PAGE = "employee/create?faces-redirect=true";
 
     public String getFirstName() {
         return firstName;
@@ -69,7 +67,7 @@ public class CreateEmployee {
         return emf;
     }
 
-    @PersistenceUnit(unitName="employee")
+    @PersistenceUnit(unitName = "employee")
     public void setEmf(EntityManagerFactory emf) {
         this.emf = emf;
     }
@@ -79,18 +77,20 @@ public class CreateEmployee {
         emp.setFirstName(getFirstName());
         emp.setLastName(getLastName());
         emp.setGender(Gender.valueOf(getGender()));
-        
+
         EntityManager em = getEmf().createEntityManager();
         try {
-        em.getTransaction().begin();
-        em.persist(emp);
-        em.getTransaction().commit();
+            em.getTransaction().begin();
+            em.persist(emp);
+            em.getTransaction().commit();
         } finally {
             em.close();
         }
-        
-        
-        System.out.println("CERATE: " + emp);
+
+        return EmployeeList.PAGE;
+    }
+    
+    public String cancel() {
         return EmployeeList.PAGE;
     }
 }

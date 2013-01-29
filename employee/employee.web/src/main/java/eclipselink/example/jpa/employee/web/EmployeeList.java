@@ -32,7 +32,7 @@ public class EmployeeList {
     
     private EntityManagerFactory emf;
 
-    protected static final String PAGE = "index";
+    protected static final String PAGE = "employee/search-results?faces-redirect=true";
 
     public EntityManagerFactory getEmf() {
         return emf;
@@ -50,5 +50,9 @@ public class EmployeeList {
         } finally {
             em.close();
         }
+    }
+    
+    public String create() {
+        return CreateEmployee.PAGE;
     }
 }

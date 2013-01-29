@@ -12,10 +12,7 @@
  ******************************************************************************/
 package eclipselink.example.jpa.employee.web;
 
-import java.util.List;
-
 import javax.faces.bean.ManagedBean;
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 
@@ -28,27 +25,42 @@ import model.Employee;
  * @since EclipseLink 2.3.0
  */
 @ManagedBean
-public class EmployeeList {
-    
+public class EditEmployee {
+
+    private Employee employee;
+
     private EntityManagerFactory emf;
 
-    protected static final String PAGE = "index";
+    protected static final String PAGE = "employee/edit?faces-redirect=true";
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
 
     public EntityManagerFactory getEmf() {
         return emf;
     }
 
-    @PersistenceUnit(unitName="employee")
+    @PersistenceUnit(unitName = "employee")
     public void setEmf(EntityManagerFactory emf) {
         this.emf = emf;
     }
 
-    public List<Employee> getEmployees() {
-        EntityManager em = getEmf().createEntityManager();
-        try {
-            return em.createQuery("SELECT e FROM Employee e ORDER BY e.id", Employee.class).getResultList();
-        } finally {
-            em.close();
-        }
+    public String edit() {
+        this.employee = new Employee();
+        
+        return PAGE;
+    }
+    
+    public String save() {
+        return EmployeeList.PAGE;
+    }
+    
+    public String cancel() {
+        return PAGE;
     }
 }
