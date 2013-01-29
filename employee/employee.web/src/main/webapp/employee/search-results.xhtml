@@ -15,7 +15,6 @@
 			<div align="center">
 				<h:dataTable var="emp" value="#{employeeList.employees}" border="1"
 					styleClass="pretty" width="500">
-					<f:facet name="header">Employees</f:facet>
 					<h:column>
 						<f:facet name="header">ID</f:facet>
 						<h:outputText value="#{emp.id}" />
@@ -38,6 +37,14 @@
 							<f:param name="id" value="#{emp.id}"/>
 						</h:commandLink>
 					</h:column>
+					
+					<f:facet name="footer">
+					<table width="100%"><tr>
+					<td><h:commandButton value="Previous"/></td>
+					<td width="100%" align="center">Page 1 of N</td>
+					<td><h:commandButton value="Previous"/></td>
+					</tr></table>
+					</f:facet>
 				</h:dataTable>
 
 			</div>

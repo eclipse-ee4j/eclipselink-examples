@@ -37,7 +37,7 @@ public class CreateEmployee {
 
     private EntityManagerFactory emf;
 
-    protected static final String PAGE = "employee/create?faces-redirect=true";
+    protected static final String PAGE = "/employee/create?faces-redirect=true";
 
     public String getFirstName() {
         return firstName;

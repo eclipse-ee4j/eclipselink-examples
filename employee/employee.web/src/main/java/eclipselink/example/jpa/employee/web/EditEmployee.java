@@ -13,6 +13,9 @@
 package eclipselink.example.jpa.employee.web;
 
 import javax.faces.bean.ManagedBean;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 
@@ -31,9 +34,12 @@ public class EditEmployee {
 
     private EntityManagerFactory emf;
 
-    protected static final String PAGE = "employee/edit?faces-redirect=true";
+    protected static final String PAGE = "/employee/edit?faces-redirect=true";
 
     public Employee getEmployee() {
+        if (this.employee == null) {
+            this.employee = new Employee();
+        }
         return employee;
     }
 
@@ -51,16 +57,25 @@ public class EditEmployee {
     }
 
     public String edit() {
-        this.employee = new Employee();
-        
+        ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+        String idString = context.getRequestParameterMap().get("id");
+        int id = Integer.valueOf(idString);
+
+        EntityManager em = getEmf().createEntityManager();
+        try {
+            this.employee = em.find(Employee.class, id);
+            // TODO: Handle failure
+        } finally {
+            em.close();
+        }
         return PAGE;
     }
-    
+
     public String save() {
-        return EmployeeList.PAGE;
+        return null;
     }
-    
+
     public String cancel() {
-        return PAGE;
+        return EmployeeList.PAGE;
     }
 }

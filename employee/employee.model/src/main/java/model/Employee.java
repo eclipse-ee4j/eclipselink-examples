@@ -83,7 +83,7 @@ public class Employee {
     @JoinTable(joinColumns = @JoinColumn(name = "EMP_ID"), inverseJoinColumns = @JoinColumn(name = "PROJ_ID"), name = "PROJ_EMP")
     private List<Project> projects = new ArrayList<Project>();
 
-    @ManyToOne
+    @ManyToOne(fetch=LAZY)
     @JoinColumn(name = "MANAGER_ID")
     private Employee manager;
 
