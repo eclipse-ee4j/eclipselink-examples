@@ -1,0 +1,206 @@
+#blockBuster {
+	position:relative;
+	z-index:5;
+	background:transparent url('/home/images/blockBuster.png') no-repeat;
+	height:194px;
+}
+
+#bbContent {
+	width:630px;
+	height:194px;
+	float:left;
+}
+
+#bbContent ul {
+	clear:both;	
+	margin-left:5px;
+	padding-top:110px;
+}
+
+#bbContent ul li {
+	float:left;
+	text-align:center;
+	width:120px;
+	padding:0 0.5% 0 0;
+	height:65px;
+	margin:0px;
+}
+
+#bbContent ul li a {
+	color:#000;
+	font-size:11px;	
+	font-weight:normal;
+}
+
+#bbNav {
+	float:left;
+	height:194px;
+	width:347px;	
+}
+
+#bbNav ul {
+	margin:10px 0 0 15px;
+	width:350px;
+	text-align:left;	
+	float:left;
+}
+
+#bbNav ul li {
+	float:left;
+	margin-right:10px;
+	padding:5px 1px;
+	width:142px;
+	height:20%;	
+	border-top:1px white dotted;
+}
+
+#bbNav ul li.bottom { 
+	border-bottom:1px white dotted;
+}
+
+#bbNav ul li a {
+	font-size:15px;
+	color:#000;	
+}
+
+#bbNav ul li a img {
+	padding-right:5px;
+}
+
+
+#bbNav ul li.downloads a {
+	font-size:22px;
+}
+
+#bbNav ul li.downloads a img {
+	position:relative;
+	top:-10px;
+	
+}
+
+#bbNav #buttonHolder {
+	margin:30px 0 -30px 15px;
+	padding-left:15px;
+	text-align:center;	
+}
+
+#bbNav #downloadButton {
+	width:295px;
+	height:60px;
+	display:block;
+}
+
+.clearer {
+	clear:both;	
+}
+
+.posted {
+	color:#888;	
+	font-size:8px;
+}
+
+
+#promos {
+	text-align:center;
+	padding:20px;	
+}
+.epicLegend
+{
+	float: left;
+	font-size: 10px;
+}
+.epicLegend img
+{
+	position: relative;
+	top: 4px;
+}
+
+#sitesHolder.visible {
+	display:block;
+}
+
+#sitesHolder.invisible {
+	display:none;
+}
+
+.rss {
+	float:right;	
+}
+
+.none {
+	background:transparent !important;
+	border:0px !important;
+}
+
+.new {
+	list-style: outside url('/home/images/new.png') !important;
+	margin-left:20px !important;
+}
+
+.updated {
+	list-style: outside url('/home/images/update.png') !important;
+	margin-left:20px !important;
+}
+
+.new * , .updated *{
+	position:relative;
+	top:-4px;
+}
+
+.epicFeed a{
+	color:#4B4D47;
+}
+
+.epicFeed li {
+	padding:0px !important;	
+}
+
+.liveFeed li {
+	padding:0px !important;		
+}
+
+.liveFeed a {
+	color:#4B4D47;	
+}
+
+.feedMore {
+	border:0px !important;
+	text-align:right;	
+}
+
+.newcomer {
+	position:absolute;
+	top:35px;
+	right:359px;	
+	text-align:center;
+}
+.newcomer a {
+	color:#000;
+	font-size:11px;	
+	font-weight:bold;
+}
+
+.labsActive {
+	font-size:10px;
+	font-weight:normal;	
+}
+#working_groups{
+	text-align: center;
+
+}
+#working_groups img{
+	padding:8px 45px;
+}
+div.feedMore{
+
+    border-top: 1px dotted #E9E9EE !important;
+    margin-bottom: 10px;
+padding: 5px 0 0 0;
+    margin:0 14px;
+}
+div.feedMore a{
+	    padding: 0px 5px 25px 0;;
+	    display: block;
+	    text-align:right;
+	    clear:both;
+}
