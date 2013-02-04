@@ -10,10 +10,10 @@
 <ui:composition template="/WEB-INF/template.xhtml">
 	<ui:define name="title">EclipseLink Employee Example</ui:define>
 	<ui:define name="subtitle">Edit Employee</ui:define>
-	<ui:define name="body">
+	<ui:define name="body-content">
 		<h:form>
 			<div align="center">
-				<h:panelGrid width="400" columns="2" border="1" styleClass="pretty">
+				<h:panelGrid width="400" columns="2" border="1" >
 					<h:outputLabel value="First Name:" />
 					<h:inputText value="#{editEmployee.employee.firstName}" />
 					<h:outputLabel value="Last Name:" />

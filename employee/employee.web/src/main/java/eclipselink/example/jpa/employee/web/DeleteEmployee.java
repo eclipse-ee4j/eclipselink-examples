@@ -13,9 +13,6 @@
 package eclipselink.example.jpa.employee.web;
 
 import javax.faces.bean.ManagedBean;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 
@@ -28,18 +25,15 @@ import model.Employee;
  * @since EclipseLink 2.3.0
  */
 @ManagedBean
-public class EditEmployee {
+public class DeleteEmployee {
 
     private Employee employee;
 
     private EntityManagerFactory emf;
 
-    protected static final String PAGE = "/employee/edit?faces-redirect=true";
+    protected static final String PAGE = "/employee/delete?faces-redirect=true";
 
     public Employee getEmployee() {
-        if (this.employee == null) {
-            this.employee = new Employee();
-        }
         return employee;
     }
 
@@ -56,25 +50,16 @@ public class EditEmployee {
         this.emf = emf;
     }
 
-    public String edit() {
-        ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
-        String idString = context.getRequestParameterMap().get("id");
-        int id = Integer.valueOf(idString);
-
-        EntityManager em = getEmf().createEntityManager();
-        try {
-            this.employee = em.find(Employee.class, id);
-            // TODO: Handle failure
-        } finally {
-            em.close();
-        }
+    public String confirm() {
+        this.employee = new Employee();
+        
         return PAGE;
     }
-
-    public String save() {
-        return null;
-    }
-
+    
+    public String delete() {
+        return EmployeeList.PAGE;
+   }
+    
     public String cancel() {
         return EmployeeList.PAGE;
     }

@@ -8,14 +8,11 @@
 
 
 <ui:composition template="/WEB-INF/template.xhtml">
-	<ui:define name="title">EclipseLink Employee Example</ui:define>
-	<ui:define name="subtitle">Employee Search</ui:define>
-	<ui:define name="body">
+	<ui:define name="body-content">
 		<h:form>
 			<div align="center">
 				<h:dataTable var="emp" value="#{employeeList.employees}" border="1"
-					styleClass="pretty" width="500">
-					<f:facet name="header">Employees</f:facet>
+					width="500">
 					<h:column>
 						<f:facet name="header">ID</f:facet>
 						<h:outputText value="#{emp.id}" />
@@ -29,15 +26,25 @@
 						<h:outputText value="#{emp.firstName}" />
 					</h:column>
 					<h:column>
-						<h:commandLink action="#{editEmployee.edit}" value="Edit"> 
-							<f:param name="id" value="#{emp.id}"/>
+						<h:commandLink action="#{editEmployee.edit}" value="Edit">
+							<f:param name="id" value="#{emp.id}" />
 						</h:commandLink>
 					</h:column>
 					<h:column>
-						<h:commandLink action="#{deleteEmployee.confirm}" value="Delete"> 
-							<f:param name="id" value="#{emp.id}"/>
+						<h:commandLink action="#{deleteEmployee.confirm}" value="Delete">
+							<f:param name="id" value="#{emp.id}" />
 						</h:commandLink>
 					</h:column>
+
+					<f:facet name="footer">
+						<table width="100%">
+							<tr>
+								<td><h:commandButton value="Previous Page" /></td>
+								<td width="100%" align="center">Page 1 of N</td>
+								<td><h:commandButton value="Next Page" /></td>
+							</tr>
+						</table>
+					</f:facet>
 				</h:dataTable>
 
 			</div>
