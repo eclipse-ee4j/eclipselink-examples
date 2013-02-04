@@ -8,19 +8,9 @@
 
 
 <ui:composition template="/WEB-INF/template.xhtml">
-	<ui:define name="body-header">Employee</ui:define>
+	<ui:define name="body-header">About this Example</ui:define>
 	<ui:define name="body-content">
-		<h:form>
-			<lu>
-			<li><h:commandLink action="#{employeeList.create}">Create</h:commandLink>
-			</li>
-			<li><h:commandLink
-					action="employee/search-results?faces-redirect=true">Search All</h:commandLink>
-			</li>
-			<li><h:commandLink action="admin/index?faces-redirect=true">Admin</h:commandLink>
-			</li>
-			</lu>
-		</h:form>
+		<a href="http://wiki.eclipse.org/EclipseLink/Examples/JPA/Employee">Wiki page</a>
 	</ui:define>
 </ui:composition>
 </html>
