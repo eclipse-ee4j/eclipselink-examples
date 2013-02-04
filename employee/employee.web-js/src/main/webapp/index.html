@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en" ng-app="employee">
+<head>
+<meta charset="utf-8">
+<title>EclipseLink Employee Example</title>
+<script
+	src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular.js"></script>
+<script
+	src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular-resource.js"></script>
+<script src="js/app.js"></script>
+<script src="js/controllers.js"></script>
+<script src="js/directives.js"></script>
+<script src="js/filters.js"></script>
+<script src="js/services.js"></script>
+</head>
+<body>
+<body>
+	<table width="100%">
+		<tr>
+			<td width="100%">
+				<table width="100%">
+					<tr>
+						<td width="25%" height="100" valign="middle"><img
+							name="/images/eclipselink-logo.png" alt="EclipseLink" height="80" />
+						</td>
+						<td width="50%" align="center" valign="middle">
+							<h1 class="sansserif">Employee Example</h1>
+						</td>
+						<td width="25%" valign="middle"><div align="center">
+								<!-- 
+								<h:commandButton action="/index" value="Home" />
+								 -->
+							</div></td>
+					</tr>
+					<tr>
+						<td colspan="3" bgcolor="#0033CC" height="40">&nbsp;
+							<h2 class="sansserif">
+								<font color="white" face="verdana"> 
+								<!-- <ui:insert
+										name="subtitle" />
+										 -->
+								</font>
+							</h2>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="3"><!-- <h:messages /> --> </td>
+		</tr>
+	</table>
+
+	<p />
+	<div ng-view></div>
+	<p />
+	<table width="100%" class="accent">
+		<tr>
+			<td height="20" bgcolor="#0033CC"></td>
+		</tr>
+	</table>
+</body>
+</body>
+</html>

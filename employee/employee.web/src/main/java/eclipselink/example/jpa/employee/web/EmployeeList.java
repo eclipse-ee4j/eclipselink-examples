@@ -32,7 +32,7 @@ public class EmployeeList {
     
     private EntityManagerFactory emf;
 
-    protected static final String PAGE = "employee/search-results?faces-redirect=true";
+    protected static final String PAGE = "/employee/search-results?faces-redirect=true";
 
     public EntityManagerFactory getEmf() {
         return emf;
@@ -46,7 +46,7 @@ public class EmployeeList {
     public List<Employee> getEmployees() {
         EntityManager em = getEmf().createEntityManager();
         try {
-            return em.createQuery("SELECT e FROM Employee e ORDER BY e.id", Employee.class).getResultList();
+            return em.createNamedQuery("Employee.findAll", Employee.class).getResultList();
         } finally {
             em.close();
         }

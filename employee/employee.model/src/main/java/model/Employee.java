@@ -42,6 +42,7 @@ import org.eclipse.persistence.annotations.ConversionValue;
 import org.eclipse.persistence.annotations.Convert;
 import org.eclipse.persistence.annotations.ObjectTypeConverter;
 import org.eclipse.persistence.annotations.PrivateOwned;
+import javax.persistence.NamedQuery;
 
 /**
  * 
@@ -51,6 +52,7 @@ import org.eclipse.persistence.annotations.PrivateOwned;
 @Entity
 @SecondaryTable(name = "SALARY")
 @ObjectTypeConverter(name = "gender", objectType = Gender.class, dataType = String.class, conversionValues = { @ConversionValue(dataValue = "M", objectValue = "Male"), @ConversionValue(dataValue = "F", objectValue = "Female") })
+@NamedQuery(name = "Employee.findAll", query = "SELECT e FROM Employee e ORDER BY e.id")
 public class Employee {
     
     @Id
@@ -83,7 +85,7 @@ public class Employee {
     @JoinTable(joinColumns = @JoinColumn(name = "EMP_ID"), inverseJoinColumns = @JoinColumn(name = "PROJ_ID"), name = "PROJ_EMP")
     private List<Project> projects = new ArrayList<Project>();
 
-    @ManyToOne
+    @ManyToOne(fetch=LAZY)
     @JoinColumn(name = "MANAGER_ID")
     private Employee manager;
 
