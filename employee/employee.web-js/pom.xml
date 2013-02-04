@@ -9,11 +9,8 @@
 		<version>2.4.2-SNAPSHOT</version>
 	</parent>
 
-	<groupId>org.eclipse.persistence.example</groupId>
 	<artifactId>employee.web-js</artifactId>
 	<packaging>war</packaging>
-
-	<name>employee-js</name>
-	<url>http://maven.apache.org</url>
+	<name>Employee Web JavaScript App</name>
 
 </project>

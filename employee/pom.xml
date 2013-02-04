@@ -32,6 +32,12 @@
 			<email>douglas.clarke@oracle.com</email>
 			<url>java-persistence.blogspot.com</url>
 		</developer>
+		<developer>
+			<name>Shaun Smith</name>
+			<organization>Oracle</organization>
+			<email>shaun.smith@oracle.com</email>
+			<url>onpersistence.blogspot.com</url>
+		</developer>
 	</developers>
 
 	<properties>
@@ -54,6 +60,8 @@
 	<modules>
         <module>employee.model</module>
         <module>employee.web</module>
+        <module>employee.web-js</module>
+        <module>employee.ear</module>
 	</modules>
 
 	<build>
