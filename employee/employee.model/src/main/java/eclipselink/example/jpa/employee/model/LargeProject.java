@@ -11,7 +11,7 @@
  *              dclarke - initial JPA Employee example using XML (bug 217884)
  *              mbraeuer - annotated version
  ******************************************************************************/
-package model;
+package eclipselink.example.jpa.employee.model;
 
 import static javax.persistence.TemporalType.TIMESTAMP;
 

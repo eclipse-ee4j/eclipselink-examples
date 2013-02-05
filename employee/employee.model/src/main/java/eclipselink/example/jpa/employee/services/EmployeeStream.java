@@ -10,7 +10,7 @@
  * Contributors:
  *      dclarke - initial 
  ******************************************************************************/
-package services;
+package eclipselink.example.jpa.employee.services;
 
 import java.util.List;
 
@@ -25,11 +25,12 @@ import javax.persistence.PersistenceUnit;
 import javax.persistence.PrePersist;
 import javax.persistence.Query;
 
-import model.Employee;
 
 import org.eclipse.persistence.config.HintValues;
 import org.eclipse.persistence.config.QueryHints;
 import org.eclipse.persistence.queries.CursoredStream;
+
+import eclipselink.example.jpa.employee.model.Employee;
 
 /**
  * Example of using an EclipseLink {@link CursoredStream} with a

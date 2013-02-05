@@ -19,11 +19,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
 
-import model.Employee;
-import model.Gender;
+import eclipselink.example.jpa.employee.model.Employee;
+import eclipselink.example.jpa.employee.model.Gender;
+
 
 /**
- * Examples illustrating the use of JPA with the employee domain model.
+ * Examples illustrating the use of JPA with the employee domain eclipselink.example.jpa.employee.model.
  * 
  * @see test.JavaSEExampleTest
  * 

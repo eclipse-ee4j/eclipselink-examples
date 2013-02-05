@@ -11,7 +11,7 @@
  *              dclarke - initial JPA Employee example using XML (bug 217884)
  *              mbraeuer - annotated version, transformation
  ******************************************************************************/
-package model;
+package eclipselink.example.jpa.employee.model;
 
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.LAZY;

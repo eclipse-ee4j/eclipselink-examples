@@ -19,7 +19,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 
-import model.Employee;
+import eclipselink.example.jpa.employee.model.Employee;
+
 
 /**
  * Return list of available Leagues from JAX-RS call to MySports Admin app.
