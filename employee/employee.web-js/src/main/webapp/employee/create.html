@@ -1,0 +1,29 @@
+<!-- 
+/*******************************************************************************
+ * Copyright (c) 2010-2013 Oracle. All rights reserved.
+ * This program and the accompanying materials are made available under the 
+ * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0 
+ * which accompanies this distribution. 
+ * The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
+ * and the Eclipse Distribution License is available at 
+ * http://www.eclipse.org/org/documents/edl-v10.php.
+ *
+ * Contributors:
+ *  shsmith - EclipseLink 2.4
+ ******************************************************************************/
+ -->
+
+<div ng-controller=EmployeeCreateCtrl>
+	<form novalidate>
+		<div>
+		First Name: <input type="text" ng-model="employee.firstName" /><br />
+		Last Name: <input type="text" ng-model="employee.lastName" /><br />
+		Gender: <select ng-model="employee.gender">
+			<option value="Male">Male</option>
+			<option value="Female">Female</option>
+		</select>
+		</div>
+		<button ng-click="save()">Save</button>
+		<button ng-click="cancel()">Cancel</button>
+	</form>
+</div>
