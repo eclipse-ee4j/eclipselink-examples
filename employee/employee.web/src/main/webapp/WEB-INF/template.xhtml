@@ -3,8 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:fmt="http://java.sun.com/jstl/fmt">
+	xmlns:ui="http://java.sun.com/jsf/facelets">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <title>EclipseLink Employee Example</title>
@@ -17,7 +16,7 @@
 <body>
 	<div class="header-container">
 		<header class="wrapper clearfix">
-		<h1 class="title">EclipseLink Employee Example</h1>
+		<h1 class="title">Employee Example</h1>
 		<nav> <h:form>
 			<ul>
 				<li><h:commandLink action="/index" value="Home" /></li>
@@ -31,14 +30,10 @@
 	<div class="main-container">
 		<div class="main wrapper clearfix">
 
-			<article> <header>
-			<h1>
-				<ui:insert name="body-header" />
-			</h1>
-			<ui:insert name="body-content" /> </header> </article>
+			<article> <header> <ui:insert name="body" /> </header> </article>
 
-			<aside> <img
-				src="#{request.contextPath}/resources/images/eclipselink-logo.png"
+			<aside> <img class="logo"
+				src="#{request.contextPath}/images/eclipselink-logo.png"
 				alt="EclipseLink" border="0" class="logo"
 				title="EclipseLink Employee Example" />
 			<h3>Inside EclipseLink</h3>
@@ -48,12 +43,11 @@
 			</aside>
 
 		</div>
-		<!-- #main -->
 	</div>
-	<!-- #main-container -->
 
 	<div class="footer-container">
-		<footer class="wrapper"><pre>SHOW SQL HERE</pre> </footer>
+		<footer class="wrapper">
+		<pre>SHOW SQL HERE</pre> </footer>
 	</div>
 
 </body>

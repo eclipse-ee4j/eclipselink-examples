@@ -8,18 +8,19 @@
 
 
 <ui:composition template="/WEB-INF/template.xhtml">
-	<ui:define name="body-header">Employee</ui:define>
-	<ui:define name="body-content">
+	<ui:define name="body">
+		<h1>Employee</h1>
 		<h:form>
-			<lu>
-			<li><h:commandLink action="#{employeeList.create}">Create</h:commandLink>
-			</li>
-			<li><h:commandLink
-					action="employee/search-results?faces-redirect=true">Search All</h:commandLink>
-			</li>
-			<li><h:commandLink action="admin/index?faces-redirect=true">Admin</h:commandLink>
-			</li>
-			</lu>
+			<ul>
+				<li><h:commandLink action="#{employeeList.create}">Create</h:commandLink>
+				</li>
+				<li>Searches
+					<ul>
+						<li><h:commandLink
+								action="employee/search-results?faces-redirect=true">All - index pagination</h:commandLink></li>
+					</ul>
+				</li>
+			</ul>
 		</h:form>
 	</ui:define>
 </ui:composition>
