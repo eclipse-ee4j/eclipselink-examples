@@ -8,31 +8,17 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  *
  * Contributors:
- *              dclarke - initial JPA Employee example using XML (bug 217884)
- *              mbraeuer - annotated version
+ * 		dclarke - initial JPA Employee example using XML (bug 217884)
  ******************************************************************************/
-package model;
-
-import javax.persistence.*;
+package eclipselink.example.jpa.employee.model;
 
 /**
+ * Simple enum used in an ObjectTypeConverter
  * 
+ * @see Employee#gender
  * @author dclarke
- * @since EclipseLink 1.0
+ * @since EclipseLink 1.1
  */
-@Entity
-@Table(name = "PROJECT")
-@DiscriminatorValue("S")
-public class SmallProject extends Project {
-
-	private SmallProject() {
-		super();
-	}
-
-	public SmallProject(String name, String description) {
-		this();
-		setName(name);
-		setDescription(description);
-	}
-
+public enum Gender {
+	Female, Male, ;
 }
