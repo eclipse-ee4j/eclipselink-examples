@@ -18,13 +18,22 @@
 angular.module('employee', [ 'employeeServices' ]).config(
 		[ '$routeProvider', function($routeProvider) {
 			$routeProvider
-				.when('/employee', {
-					templateUrl : 'partials/employee-list.html',
+				.when('/employee/search-results', {
+					templateUrl : 'employee/search-results.html',
 					controller : EmployeeListCtrl
-				}).when('/employee/:id', {
-					templateUrl : 'partials/employee-details.html',
-					controller : EmployeeDetailsCtrl
+				}).when('/employee/edit/:id', {
+					templateUrl : 'employee/edit.html',
+					controller : EmployeeEditCtrl
+				}).when('/employee/create', {
+					templateUrl : 'employee/create.html',
+					controller : EmployeeCreateCtrl
+				}).when('/home', {
+					templateUrl : 'partials/home.html'
+				}).when('/about', {
+					templateUrl : 'partials/about.html'
+				}).when('/admin', {
+					templateUrl : 'partials/admin.html'
 				}).otherwise({
-					redirectTo : '/employee'
+					redirectTo : '/home'
 				});
 		} ]);

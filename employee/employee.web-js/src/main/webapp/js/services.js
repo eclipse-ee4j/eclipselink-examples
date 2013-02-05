@@ -20,35 +20,26 @@ if (serverPort) {
 	serverUrl = serverUrl + ":" + serverPort;
 }
 
-var employeeServices = angular.module('employeeServices', ['ngResource']);
-
-/*
- * AngularJS as of 1.0.4 doesn't support overriding 'headers:' but is a 
- * pending feature.  Workaround in function below.
- */
-employeeServices.config(function($httpProvider){
-    $httpProvider.defaults.headers.post['Content-Type'] = 'application/json';
-    $httpProvider.defaults.headers.post['Accept'] = 'application/json';
-});
-
+var employeeServices = angular.module('employeeServices', [ 'ngResource' ]);
 
 employeeServices.factory('Employees', function($resource) {
-    return $resource(
-            serverUrl + '/employee/persistence/employee/query/Employee.findAll',
-            {},
-            {method: 'GET', isArray: true, headers: {'Accept': 'application/json'}}
-            );
+	return $resource(serverUrl
+			+ '/employee/persistence/employee/query/Employee.findAll', {}, {
+		method : 'GET',
+		isArray : true
+	});
 });
 
 employeeServices.factory('Employee', function($resource) {
-	return $resource(
-			serverUrl + '/employee/persistence/employee/entity/Employee/:id',
-			{},
-			{
-				get: {method: 'GET', isArray: false, headers: {'Accept': 'application/json'}},
-				save: {method: 'POST', isArray: false, headers: 
-					{'Content-Type': 'application/json', 'Accept': 'application/json'}}
-			});
+	return $resource(serverUrl
+			+ '/employee/persistence/employee/entity/Employee/:id', {}, {
+		get : {
+			method : 'GET',
+			isArray : false
+		},
+		save : {
+			method : 'POST',
+			isArray : false
+		}
+	});
 });
-
-

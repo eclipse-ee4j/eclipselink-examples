@@ -19,10 +19,32 @@ function EmployeeListCtrl($scope, Employees) {
 	$scope.employees = Employees.query();
 }
 
-function EmployeeDetailsCtrl($scope, $routeParams, Employee) {
-	$scope.employee = Employee.get({id:$routeParams.id});
+function EmployeeEditCtrl($scope, $routeParams, $location, Employee) {
+	$scope.employee = Employee.get({
+		id : $routeParams.id
+	});
+
+	$scope.save = function() {
+		$scope.employee.$save();
+		$scope.cancel();
+	};
+
+	$scope.cancel = function() {
+		$location.path("/home");
+	};
+
+}
+
+function EmployeeCreateCtrl($scope, $location, Employee) {
+	$scope.employee = new Employee();
+	$scope.employee.gender = 'Male';
 	
-	$scope.update = function(employee) {
-		employee.$save();
-	}
+	$scope.save = function() {
+		$scope.employee.$save();
+		$scope.cancel();
+	};
+
+	$scope.cancel = function() {
+		$location.path("/home");
+	};
 }
