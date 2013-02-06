@@ -64,7 +64,7 @@ public class EmployeeList {
 
             EntityManager em = getEmf().createEntityManager();
             try {
-                this.employees = em.createQuery("SELECT e FROM Employee e ORDER BY e.id", Employee.class).getResultList();
+                this.employees = em.createNamedQuery("Employee.findAll", Employee.class).getResultList();
             } finally {
                 em.close();
             }
