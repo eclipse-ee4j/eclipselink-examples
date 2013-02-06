@@ -13,6 +13,10 @@
 package eclipselink.example.jpa.employee.web;
 
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 
@@ -26,6 +30,7 @@ import eclipselink.example.jpa.employee.model.Employee;
  * @since EclipseLink 2.3.0
  */
 @ManagedBean
+@ViewScoped
 public class DeleteEmployee {
 
     private Employee employee;
@@ -52,13 +57,36 @@ public class DeleteEmployee {
     }
 
     public String confirm() {
-        this.employee = new Employee();
+        ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+        String idString = context.getRequestParameterMap().get("id");
+        int id = Integer.valueOf(idString);
+
+        System.out.println("CONFIRM DELETE EMPLOYEE: " + id);
+        EntityManager em = getEmf().createEntityManager();
+        try {
+            this.employee = em.find(Employee.class, id);
+            // TODO: Handle failure
+        } finally {
+            em.close();
+        }
         
         return PAGE;
     }
     
     public String delete() {
-        return EmployeeList.PAGE;
+        ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+        String idString = context.getRequestParameterMap().get("id");
+        int id = Integer.valueOf(idString);
+
+        System.out.println("DELETE EMPLOYEE: " + id);
+        EntityManager em = getEmf().createEntityManager();
+        try {
+            this.employee = em.find(Employee.class, id);
+            // TODO: Handle failure
+        } finally {
+            em.close();
+        }
+       return EmployeeList.PAGE;
    }
     
     public String cancel() {

@@ -78,13 +78,12 @@ body {
 }
 
 .footer-container,
-.main aside {
-    border-top: 20px solid #003366;
+.main aside div {
+    border-top: 20px;
 }
 
 .header-container,
-.footer-container,
-.main aside {
+.footer-container {
     background: #330066;
 }
 
@@ -136,8 +135,17 @@ nav a:hover {
 }
 
 .main aside {
-    color: white;
-    padding: 0px 5% 10px;
+    padding: 10px 10px 10px 10px;
+}
+
+.main aside img {
+	width: 100%;
+	padding: 4px 0px 4px 0;
+	border: 0;
+}
+
+.main aside p {
+	margin: 0;
 }
 
 .footer-container footer {
@@ -218,9 +226,9 @@ nav a:hover {
 
     .header-container,
     .main aside {
-        -webkit-box-shadow: 0 5px 10px #aaa;
-           -moz-box-shadow: 0 5px 10px #aaa;
-                box-shadow: 0 5px 10px #aaa;
+        -webkit-box-shadow: 2px 5px 10px #aaa;
+           -moz-box-shadow: 2px 5px 10px #aaa;
+                box-shadow: 2px 5px 10px #aaa;
     }
 
 /* ============

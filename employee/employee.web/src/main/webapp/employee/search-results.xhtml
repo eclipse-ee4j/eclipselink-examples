@@ -8,47 +8,44 @@
 
 
 <ui:composition template="/WEB-INF/template.xhtml">
-	<ui:define name="body-content">
+	<ui:define name="body">
+		<h1>All Employees</h1>
 		<h:form>
-			<div align="center">
-				<h:dataTable var="emp" value="#{employeeList.employees}" border="1"
-					width="500">
-					<h:column>
-						<f:facet name="header">ID</f:facet>
-						<h:outputText value="#{emp.id}" />
-					</h:column>
-					<h:column>
-						<f:facet name="header">Last Name</f:facet>
-						<h:outputText value="#{emp.lastName}" />
-					</h:column>
-					<h:column>
-						<f:facet name="header">First Name</f:facet>
-						<h:outputText value="#{emp.firstName}" />
-					</h:column>
-					<h:column>
-						<h:commandLink action="#{editEmployee.edit}" value="Edit">
-							<f:param name="id" value="#{emp.id}" />
-						</h:commandLink>
-					</h:column>
-					<h:column>
-						<h:commandLink action="#{deleteEmployee.confirm}" value="Delete">
-							<f:param name="id" value="#{emp.id}" />
-						</h:commandLink>
-					</h:column>
+			<h:dataTable var="emp" value="#{employeeList.employees}" border="1"
+				width="500">
+				<h:column>
+					<f:facet name="header">ID</f:facet>
+					<h:outputText value="#{emp.id}" />
+				</h:column>
+				<h:column>
+					<f:facet name="header">Last Name</f:facet>
+					<h:outputText value="#{emp.lastName}" />
+				</h:column>
+				<h:column>
+					<f:facet name="header">First Name</f:facet>
+					<h:outputText value="#{emp.firstName}" />
+				</h:column>
+				<h:column>
+					<h:commandLink action="#{editEmployee.edit}" value="Edit">
+						<f:param name="id" value="#{emp.id}" />
+					</h:commandLink>
+				</h:column>
+				<h:column>
+					<h:commandLink action="#{deleteEmployee.confirm}" value="Delete">
+						<f:param name="id" value="#{emp.id}" />
+					</h:commandLink>
+				</h:column>
 
-					<f:facet name="footer">
-						<table width="100%">
-							<tr>
-								<td><h:commandButton value="Previous Page" /></td>
-								<td width="100%" align="center">Page 1 of N</td>
-								<td><h:commandButton value="Next Page" /></td>
-							</tr>
-						</table>
-					</f:facet>
-				</h:dataTable>
-
-			</div>
-			<p>&nbsp;</p>
+				<f:facet name="footer">
+					<table width="100%">
+						<tr>
+							<td><h:commandButton value="Previous Page" /></td>
+							<td width="100%" align="center">Page 1 of N</td>
+							<td><h:commandButton value="Next Page" /></td>
+						</tr>
+					</table>
+				</f:facet>
+			</h:dataTable>
 		</h:form>
 	</ui:define>
 </ui:composition>

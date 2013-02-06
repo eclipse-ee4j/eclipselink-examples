@@ -9,23 +9,20 @@
 
 <ui:composition template="/WEB-INF/template.xhtml">
 	<ui:define name="body">
-	<h1>Create New Employee</h1>
+	<h1>Delete Employee</h1>
 		<h:form>
 			<div align="center">
 				<h:panelGrid width="400" columns="2" border="1">
 					<h:outputLabel value="First Name:" />
-					<h:inputText value="#{createEmployee.firstName}" />
+					<h:outputLabel value="#{createEmployee.firstName}" />
 					<h:outputLabel value="Last Name:" />
-					<h:inputText value="#{createEmployee.lastName}" />
+					<h:outputLabel value="#{createEmployee.lastName}" />
 					<h:outputLabel value="Gender:" />
-					<h:selectOneMenu value="#{createEmployee.gender}">
-						<f:selectItem id="male" itemLabel="Male" itemValue="Male" />
-						<f:selectItem id="female" itemLabel="Female" itemValue="Female" />
-					</h:selectOneMenu>
+					<h:outputLabel value="#{createEmployee.gender}"/>
 					<f:facet name="footer">
 						<div align="center">
-							<h:commandButton value="Create" action="#{createEmployee.create}" />
-							<h:commandButton value="Cancel" action="#{createEmployee.cancel}" />
+							<h:commandButton value="Confirm Delete" action="#{deleteEmployee.delete}" />
+							<h:commandButton value="Cancel" action="#{deleteEmployee.cancel}" />
 						</div>
 					</f:facet>
 				</h:panelGrid>

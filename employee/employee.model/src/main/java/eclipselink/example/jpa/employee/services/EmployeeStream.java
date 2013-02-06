@@ -17,14 +17,13 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.LocalBean;
 import javax.ejb.PostActivate;
+import javax.ejb.PrePassivate;
 import javax.ejb.Remove;
 import javax.ejb.Stateful;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
-import javax.persistence.PrePersist;
 import javax.persistence.Query;
-
 
 import org.eclipse.persistence.config.HintValues;
 import org.eclipse.persistence.config.QueryHints;
@@ -74,13 +73,10 @@ public class EmployeeStream {
             allEmpsQuery.setHint(QueryHints.CURSOR, HintValues.TRUE);
             allEmpsQuery.setHint(QueryHints.CURSOR_INITIAL_SIZE, 10);
             allEmpsQuery.setHint(QueryHints.CURSOR_PAGE_SIZE, 10);
+            // read ahead the position if this bean is being activated
+            allEmpsQuery.setFirstResult(getPosition());
 
             this.stream = (CursoredStream) allEmpsQuery.getSingleResult();
-            
-            // read ahead the position if this bean is being activated
-            if (this.position > 0) {
-                next(position);
-            }
         } finally {
             em.close();
         }
@@ -111,7 +107,11 @@ public class EmployeeStream {
         return this.stream.size();
     }
 
-    @PrePersist
+    public int getPosition() {
+        return position;
+    }
+
+    @PrePassivate
     @Remove
     public void close() {
         if (this.stream != null) {
