@@ -29,7 +29,14 @@
                <artifactId>employee.web</artifactId>
                <contextRoot>/employee</contextRoot>
              </webModule>
-             <jarModule>
+<!-- 
+             <webModule>
+               <groupId>${project.groupId}</groupId>
+               <artifactId>employee.web-js</artifactId>
+               <contextRoot>/employee-js</contextRoot>
+             </webModule>
+ -->
+               <jarModule>
                <groupId>${project.groupId}</groupId>
                <artifactId>employee.model</artifactId>
              </jarModule>
@@ -50,5 +57,13 @@
   		<artifactId>employee.model</artifactId>
   		<version>2.4.2-SNAPSHOT</version>
   	</dependency>
+  	<!-- 
+	<dependency>
+  		<groupId>eclipselink.example.jpa</groupId>
+  		<artifactId>employee.web-js</artifactId>
+  		<version>2.4.2-SNAPSHOT</version>
+  		<type>war</type>
+  	</dependency>
+  	 -->
   </dependencies>
 </project>

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang='en' ng-app='employee'>
+<head>
+<meta charset='utf-8'>
+<title>EclipseLink Employee Example</title>
+<script
+	src='http://ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular.js'></script>
+<script
+	src='http://ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular-resource.js'></script>
+<script src='js/app.js'></script>
+<script src='js/controllers.js'></script>
+<script src='js/directives.js'></script>
+<script src='js/filters.js'></script>
+<script src='js/services.js'></script>
+<style type='text/css' media='all'>
+@import url('css/main.css');
+
+@import url('css/normalize.css');
+</style>
+</head>
+<body>
+	<div class='header-container'>
+		<header class='wrapper clearfix'>
+			<h1 class='title'>EclipseLink Employee Example</h1>
+			<nav>
+				<form>
+					<ul>
+						<li><a href='#/home'>Home</a></li>
+						<li><a href='#/about'>About</a></li>
+						<li><a href='#/admin'>Admin</a></li>
+					</ul>
+				</form>
+			</nav>
+		</header>
+	</div>
+
+	<div class='main-container'>
+		<div class='main wrapper clearfix'>
+
+			<article>
+				<header>
+					<div ng-view></div>
+				</header>
+			</article>
+
+			<aside>
+				<img src='resources/images/eclipselink-logo.png' alt='EclipseLink'
+					title='EclipseLink Employee Example' />
+				<div class='commentary'>
+					<h3>Inside EclipseLink</h3>
+					<p>Over here we'll give some insight into what features of
+						EclipseLink are in use and provide diagnostic and informational
+						links.</p>
+				</div>
+			</aside>
+
+		</div>
+		<!-- #main -->
+	</div>
+	<!-- #main-container -->
+
+	<div class='footer-container'>
+		<footer class='wrapper'></footer>
+	</div>
+
+</body>
+</html>
