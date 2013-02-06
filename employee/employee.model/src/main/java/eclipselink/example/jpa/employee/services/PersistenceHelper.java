@@ -12,13 +12,22 @@
  ******************************************************************************/
 package eclipselink.example.jpa.employee.services;
 
+import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 
+import eclipselink.example.jpa.employee.persistence.SQLCaptureSessionLog;
+import eclipselink.example.jpa.employee.persistence.SQLCaptureSessionLog.SessionLogHandler;
+import eclipselink.example.jpa.employee.persistence.SQLTrace;
+
 /**
- * This utility class will cause the container to weave the persistence unit.
+ * This helper bean will cause the container to weave the persistence unit
+ * through its injection at application startup. It will also server as an
+ * interface to get the SQL trace for a given application operation.
+ * <p>
  * Since this example uses the persistence unit through the application
  * bootstrap API the container will not instrument/weave the entity classes.
  * This class is ONLY required in the application to force the weaving to occur
@@ -29,9 +38,37 @@ import javax.persistence.PersistenceUnit;
  */
 @Startup
 @Singleton
-public class PersistenceWeavingBean {
+@LocalBean
+public class PersistenceHelper {
 
     @PersistenceUnit(unitName = "employee")
     private EntityManagerFactory emf;
+
+    private SessionLogHandler handler;
+    
+    public EntityManagerFactory getEmf() {
+        return emf;
+    }
+
+    public void setEmf(EntityManagerFactory emf) {
+        this.emf = emf;
+    }
+
+    protected SessionLogHandler getHandler() {
+        if (handler == null) {
+            EntityManager em = getEmf().createEntityManager();
+            handler = SQLCaptureSessionLog.getHandler(em);
+            em.close();
+        }
+        return handler;
+    }
+
+    public SQLTrace startSQLTrace() {
+        return getHandler().start();
+    }
+
+    public SQLTrace endSQLTrace() {
+        return getHandler().stop();
+    }
 
 }

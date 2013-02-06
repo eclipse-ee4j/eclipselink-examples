@@ -12,6 +12,7 @@
  ******************************************************************************/
 package eclipselink.example.jpa.employee.web;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -29,6 +30,7 @@ import eclipselink.example.jpa.employee.model.Employee;
  * @since EclipseLink 2.3.0
  */
 @ManagedBean
+@ConversationScoped
 public class EditEmployee {
 
     private Employee employee;
@@ -42,10 +44,6 @@ public class EditEmployee {
             this.employee = new Employee();
         }
         return employee;
-    }
-
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
     }
 
     public EntityManagerFactory getEmf() {
@@ -62,6 +60,7 @@ public class EditEmployee {
         String idString = context.getRequestParameterMap().get("id");
         int id = Integer.valueOf(idString);
 
+        System.out.println("EDIT EMPLOYEE: " + id);
         EntityManager em = getEmf().createEntityManager();
         try {
             this.employee = em.find(Employee.class, id);
