@@ -12,12 +12,8 @@
  ******************************************************************************/
 package eclipselink.example.jpa.employee.services;
 
-import javax.ejb.LocalBean;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
 
 import eclipselink.example.jpa.employee.persistence.SQLCaptureSessionLog;
 import eclipselink.example.jpa.employee.persistence.SQLCaptureSessionLog.SessionLogHandler;
@@ -36,39 +32,18 @@ import eclipselink.example.jpa.employee.persistence.SQLTrace;
  * @author dclarke
  * @since EclipseLink 2.4.2
  */
-@Startup
-@Singleton
-@LocalBean
 public class PersistenceHelper {
 
-    @PersistenceUnit(unitName = "employee")
-    private EntityManagerFactory emf;
-
-    private SessionLogHandler handler;
-    
-    public EntityManagerFactory getEmf() {
-        return emf;
+    protected static SessionLogHandler getHandler(EntityManager em) {
+        return SQLCaptureSessionLog.getHandler(em);
     }
 
-    public void setEmf(EntityManagerFactory emf) {
-        this.emf = emf;
+    public static SQLTrace startSQLTrace(EntityManager em) {
+        return getHandler(em).start();
     }
 
-    protected SessionLogHandler getHandler() {
-        if (handler == null) {
-            EntityManager em = getEmf().createEntityManager();
-            handler = SQLCaptureSessionLog.getHandler(em);
-            em.close();
-        }
-        return handler;
-    }
-
-    public SQLTrace startSQLTrace() {
-        return getHandler().start();
-    }
-
-    public SQLTrace endSQLTrace() {
-        return getHandler().stop();
+    public static SQLTrace endSQLTrace(EntityManager em) {
+        return getHandler(em).stop();
     }
 
 }

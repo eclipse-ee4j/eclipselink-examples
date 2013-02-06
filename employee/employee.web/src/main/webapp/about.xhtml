@@ -8,9 +8,24 @@
 
 
 <ui:composition template="/WEB-INF/template.xhtml">
-	<ui:define name="body-header">About this Example</ui:define>
-	<ui:define name="body-content">
-		<a href="http://wiki.eclipse.org/EclipseLink/Examples/JPA/Employee">Wiki page</a>
+	<ui:define name="body">
+		<h1>About the Employee Example</h1>
+		<p>This example illustrates how EclipseLink can be used</p>
+		<h2>Interfaces</h2>
+		<h2>Links</h2>
+		<ul>
+			<a href="http://wiki.eclipse.org/EclipseLink/Examples/JPA/Employee">Wiki
+				page</a>
+		</ul>
+	</ui:define>
+
+
+	<ui:define name="eclipselink">
+		<ul>
+			<li><a href="/employee">JSF Interface</a></li>
+			<li><a href="/employee/persistence">REST Interface</a> (use REST client)</li>
+			<li><a href="">JS (TSA) Interface</a></li>
+		</ul>
 	</ui:define>
 </ui:composition>
 </html>

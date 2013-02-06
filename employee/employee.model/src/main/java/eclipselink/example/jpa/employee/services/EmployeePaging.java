@@ -14,11 +14,8 @@ package eclipselink.example.jpa.employee.services;
 
 import java.util.List;
 
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
 import javax.persistence.TypedQuery;
 
 import eclipselink.example.jpa.employee.model.Employee;
@@ -28,8 +25,6 @@ import eclipselink.example.jpa.employee.model.Employee;
  * 
  * @since EclipseLink 2.4.2
  */
-@Stateless
-@LocalBean
 public class EmployeePaging {
 
     private EntityManagerFactory emf;
@@ -38,7 +33,6 @@ public class EmployeePaging {
         return emf;
     }
 
-    @PersistenceUnit(unitName = "employee")
     public void setEmf(EntityManagerFactory emf) {
         this.emf = emf;
     }
@@ -46,9 +40,10 @@ public class EmployeePaging {
     /**
      * Retrieve a page of Employee instances.
      * 
-     * @param startPosition position of the first result, 
-     *        numbered from 0
-     * @param maxResult  maximum number of results to retrieve
+     * @param startPosition
+     *            position of the first result, numbered from 0
+     * @param maxResult
+     *            maximum number of results to retrieve
      */
     public List<Employee> get(int startPosition, int maxResult) {
         EntityManager em = getEmf().createEntityManager();
@@ -69,11 +64,10 @@ public class EmployeePaging {
 
         try {
             TypedQuery<Number> countQuery = em.createQuery("SELECT COUNT(e) FROM Employee", Number.class);
-           return countQuery.getSingleResult().intValue();
+            return countQuery.getSingleResult().intValue();
         } finally {
             em.close();
         }
     }
-
 
 }

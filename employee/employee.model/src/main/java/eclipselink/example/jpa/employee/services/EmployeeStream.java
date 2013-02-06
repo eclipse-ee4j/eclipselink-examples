@@ -15,14 +15,12 @@ package eclipselink.example.jpa.employee.services;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.LocalBean;
 import javax.ejb.PostActivate;
 import javax.ejb.PrePassivate;
 import javax.ejb.Remove;
 import javax.ejb.Stateful;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
 import javax.persistence.Query;
 
 import org.eclipse.persistence.config.HintValues;
@@ -37,8 +35,6 @@ import eclipselink.example.jpa.employee.model.Employee;
  * 
  * @since EclipseLink 2.4.2
  */
-@Stateful
-@LocalBean
 public class EmployeeStream {
 
     private transient CursoredStream stream;
@@ -58,13 +54,10 @@ public class EmployeeStream {
         return emf;
     }
 
-    @PersistenceUnit(unitName = "employee")
     public void setEmf(EntityManagerFactory emf) {
         this.emf = emf;
     }
 
-    @PostConstruct
-    @PostActivate
     public void initialize() {
         EntityManager em = getEmf().createEntityManager();
 
@@ -111,8 +104,6 @@ public class EmployeeStream {
         return position;
     }
 
-    @PrePassivate
-    @Remove
     public void close() {
         if (this.stream != null) {
             this.stream.close();

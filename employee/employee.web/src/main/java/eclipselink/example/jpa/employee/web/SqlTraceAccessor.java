@@ -15,14 +15,12 @@ package eclipselink.example.jpa.employee.web;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ejb.EJB;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 
 import org.eclipse.persistence.logging.SessionLogEntry;
 
 import eclipselink.example.jpa.employee.persistence.SQLTrace;
-import eclipselink.example.jpa.employee.services.PersistenceHelper;
 
 /**
  * TODO
@@ -34,21 +32,10 @@ import eclipselink.example.jpa.employee.services.PersistenceHelper;
 @ApplicationScoped
 public class SqlTraceAccessor {
 
-    private PersistenceHelper persistence;
-
-    public PersistenceHelper getPersistence() {
-        return persistence;
-    }
-
-    @EJB
-    public void setPersistence(PersistenceHelper persistence) {
-        this.persistence = persistence;
-    }
-
     public List<String> getSql() {
         List<String> strings = new ArrayList<String>();
 
-        SQLTrace sqlTrace = getPersistence().endSQLTrace();
+        SQLTrace sqlTrace = null; // getPersistence().endSQLTrace();
         if (sqlTrace != null) {
             for (SessionLogEntry entry : sqlTrace.getEntries()) {
                 strings.add(entry.getMessage());
@@ -58,7 +45,4 @@ public class SqlTraceAccessor {
         return strings;
     }
 
-    public String create() {
-        return CreateEmployee.PAGE;
-    }
 }

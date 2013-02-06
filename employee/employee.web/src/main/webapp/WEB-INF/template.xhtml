@@ -40,17 +40,14 @@
 				alt="EclipseLink" border="0" class="logo"
 				title="EclipseLink Employee Example" />
 			<h3>Inside EclipseLink</h3>
-			<p>Over here we'll give some insight into what features of
-				EclipseLink are in use and provide diagnostic and informational
-				links.</p>
-			</aside>
+			<ui:insert name="eclipselink" /> </aside>
 
 		</div>
 	</div>
 
 	<div class="footer-container">
-		<footer class="wrapper"> <h:dataTable var="sql"
-			value="#{sqlTraceAccessor.sql}" width="100%">
+		<footer class="wrapper"> <ui:insert name="footer" />
+		<h:dataTable var="sql" value="#{sqlTraceAccessor.sql}" width="100%">
 			<h:column>
 				<h:outputText value="#{sql}" />
 			</h:column>

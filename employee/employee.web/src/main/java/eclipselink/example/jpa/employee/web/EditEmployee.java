@@ -12,8 +12,8 @@
  ******************************************************************************/
 package eclipselink.example.jpa.employee.web;
 
-import javax.enterprise.context.ConversationScoped;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.persistence.EntityManager;
@@ -22,7 +22,6 @@ import javax.persistence.PersistenceUnit;
 
 import eclipselink.example.jpa.employee.model.Employee;
 
-
 /**
  * Return list of available Leagues from JAX-RS call to MySports Admin app.
  * 
@@ -30,7 +29,7 @@ import eclipselink.example.jpa.employee.model.Employee;
  * @since EclipseLink 2.3.0
  */
 @ManagedBean
-@ConversationScoped
+@RequestScoped
 public class EditEmployee {
 
     private Employee employee;
