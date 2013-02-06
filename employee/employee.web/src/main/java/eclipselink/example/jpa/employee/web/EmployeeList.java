@@ -36,8 +36,6 @@ public class EmployeeList {
 
     protected static final String PAGE = "/employee/search-results?faces-redirect=true";
 
-    private PersistenceHelper persistence;
-
     private List<Employee> employees;
 
     public EntityManagerFactory getEmf() {
@@ -49,20 +47,12 @@ public class EmployeeList {
         this.emf = emf;
     }
 
-    public PersistenceHelper getPersistence() {
-        return persistence;
-    }
-
-    @EJB
-    public void setPersistence(PersistenceHelper persistence) {
-        this.persistence = persistence;
-    }
-
-    public List<Employee> getEmployees() {
+     public List<Employee> getEmployees() {
         if (this.employees == null) {
-            getPersistence().startSQLTrace();
 
             EntityManager em = getEmf().createEntityManager();
+            PersistenceHelper.startSQLTrace(em);
+
             try {
                 this.employees = em.createNamedQuery("Employee.findAll", Employee.class).getResultList();
             } finally {
