@@ -12,7 +12,7 @@
   <artifactId>employee.ear</artifactId>
   <packaging>ear</packaging>
 
-  <name>employee.ear</name>
+  <name>employee</name>
 
   <build>
   	<defaultGoal>package</defaultGoal>
@@ -52,11 +52,7 @@
   		<version>2.4.2-SNAPSHOT</version>
   		<type>war</type>
   	</dependency>
-  	<dependency>
-  		<groupId>eclipselink.example.jpa</groupId>
-  		<artifactId>employee.model</artifactId>
-  		<version>2.4.2-SNAPSHOT</version>
-  	</dependency>
+
   	<!-- 
 	<dependency>
   		<groupId>eclipselink.example.jpa</groupId>

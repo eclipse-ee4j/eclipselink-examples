@@ -11,7 +11,7 @@
 	<ui:define name="body">
 		<h1>All Employees</h1>
 		<h:form>
-			<h:dataTable var="emp" value="#{employeeList.employees}" border="1"
+			<h:dataTable var="emp" value="#{pageEmployees.employees}" border="1"
 				width="500">
 				<h:column>
 					<f:facet name="header">ID</f:facet>
@@ -39,14 +39,34 @@
 				<f:facet name="footer">
 					<table width="100%">
 						<tr>
-							<td><h:commandButton value="Previous Page" /></td>
-							<td width="100%" align="center">Page 1 of N</td>
-							<td><h:commandButton value="Next Page" /></td>
+							<td><h:commandButton value="Previous Page"
+									action="#{pageEmployees.previous}"
+									rendered="#{pageEmployees.hasPrevious}" /></td>
+							<td width="100%" align="center">Page <h:outputText
+									value="#{pageEmployees.currentPage}" /> of <h:outputText
+									value="#{pageEmployees.numPages}" /></td>
+							<td><h:commandButton value="Next Page"
+									action="#{pageEmployees.next}"
+									rendered="#{pageEmployees.hasNext}" /></td>
 						</tr>
 					</table>
 				</f:facet>
 			</h:dataTable>
 		</h:form>
 	</ui:define>
+
+	<ui:define name="eclipselink">
+		<h3>Entity Paging with FIRST/MAX</h3>
+		<p>EclipseLink supports paging entity results using a first/max
+			approach to control the entities returned for a given page. This
+			approach works well in a stateless environment as no physical
+			resources are maintained on the server between calls. It does
+			typically involve an additional query to get the size and it does
+			potentially risk a time skew in the results as changes made to the
+			database between page queries can effect the results shown. This
+			approach works well in large data sets where they are either static
+			or exact/complete results is not critical.</p>
+	</ui:define>
+
 </ui:composition>
 </html>

@@ -88,10 +88,10 @@ public class CreateEmployee {
             em.close();
         }
 
-        return EmployeeList.PAGE;
+        return StreamEmployees.PAGE;
     }
     
     public String cancel() {
-        return EmployeeList.PAGE;
+        return StreamEmployees.PAGE;
     }
 }

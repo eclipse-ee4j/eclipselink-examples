@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+
+<ui:composition template="/WEB-INF/template.xhtml">
+	<ui:define name="body">
+		<h1>All Employees</h1>
+		<h:form>
+			<h:dataTable var="emp" value="#{pageEmployees.employees}" border="1"
+				width="500">
+				<h:column>
+					<f:facet name="header">ID</f:facet>
+					<h:outputText value="#{emp.id}" />
+				</h:column>
+				<h:column>
+					<f:facet name="header">Last Name</f:facet>
+					<h:outputText value="#{emp.lastName}" />
+				</h:column>
+				<h:column>
+					<f:facet name="header">First Name</f:facet>
+					<h:outputText value="#{emp.firstName}" />
+				</h:column>
+				<h:column>
+					<h:commandLink action="#{editEmployee.edit}" value="Edit">
+						<f:param name="id" value="#{emp.id}" />
+					</h:commandLink>
+				</h:column>
+				<h:column>
+					<h:commandLink action="#{deleteEmployee.confirm}" value="Delete">
+						<f:param name="id" value="#{emp.id}" />
+					</h:commandLink>
+				</h:column>
+
+				<f:facet name="footer">
+					<table width="100%">
+						<tr>
+							<td><h:commandButton value="Previous Page"
+									action="#{pageEmployees.previous}"
+									rendered="#{pageEmployees.hasPrevious}" /></td>
+							<td width="100%" align="center">Page <h:outputText
+									value="#{pageEmployees.currentPage}" /> of <h:outputText
+									value="#{pageEmployees.numPages}" /></td>
+							<td><h:commandButton value="Next Page"
+									action="#{pageEmployees.next}"
+									rendered="#{pageEmployees.hasNext}" /></td>
+						</tr>
+					</table>
+				</f:facet>
+			</h:dataTable>
+		</h:form>
+	</ui:define>
+
+	<ui:define name="eclipselink">
+		<h3>Entity Paging with ID IN</h3>
+		<p>EclipseLink supports paging entity results using IDs IN
+			approach to control the entities returned for a given page. This
+			approach involves an initial query to retrieve all of the unique
+			identifiers for the given criteria and then breaks those into page
+			sets that can be used for querying using an IN operator.</p>
+	</ui:define>
+
+</ui:composition>
+</html>

@@ -14,10 +14,6 @@ package eclipselink.example.jpa.employee.services;
 
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.PostActivate;
-import javax.ejb.PrePassivate;
-import javax.ejb.Remove;
 import javax.ejb.Stateful;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -47,25 +43,24 @@ public class EmployeeStream {
 
     private EntityManagerFactory emf;
 
-    public EmployeeStream() {
+    public EmployeeStream(EntityManagerFactory emf, int pageSize) {
+        super();
+        this.emf = emf;
+        initialize(pageSize);
     }
 
     public EntityManagerFactory getEmf() {
         return emf;
     }
 
-    public void setEmf(EntityManagerFactory emf) {
-        this.emf = emf;
-    }
-
-    public void initialize() {
+    public void initialize(int pageSize) {
         EntityManager em = getEmf().createEntityManager();
 
         try {
             Query allEmpsQuery = em.createQuery("SELECT e FROM Employee e ORDER BY e.lastName,  e.firstName");
             allEmpsQuery.setHint(QueryHints.CURSOR, HintValues.TRUE);
-            allEmpsQuery.setHint(QueryHints.CURSOR_INITIAL_SIZE, 10);
-            allEmpsQuery.setHint(QueryHints.CURSOR_PAGE_SIZE, 10);
+            allEmpsQuery.setHint(QueryHints.CURSOR_INITIAL_SIZE, pageSize);
+            allEmpsQuery.setHint(QueryHints.CURSOR_PAGE_SIZE, pageSize);
             // read ahead the position if this bean is being activated
             allEmpsQuery.setFirstResult(getPosition());
 

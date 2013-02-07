@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+
+<ui:composition template="/WEB-INF/template.xhtml">
+	<ui:define name="body">
+		<h1>All Employees (Streamed)</h1>
+		<h:form>
+			<h:dataTable var="emp" value="#{streamEmployees.employees}"
+				border="1" width="500" >
+				<h:column>
+					<f:facet name="header">ID</f:facet>
+					<h:outputText value="#{emp.id}" />
+				</h:column>
+				<h:column>
+					<f:facet name="header">Last Name</f:facet>
+					<h:outputText value="#{emp.lastName}" />
+				</h:column>
+				<h:column>
+					<f:facet name="header">First Name</f:facet>
+					<h:outputText value="#{emp.firstName}" />
+				</h:column>
+				<h:column>
+					<h:commandLink action="#{editEmployee.edit}" value="Edit">
+						<f:param name="id" value="#{emp.id}" />
+					</h:commandLink>
+				</h:column>
+				<h:column>
+					<h:commandLink action="#{deleteEmployee.confirm}" value="Delete">
+						<f:param name="id" value="#{emp.id}" />
+					</h:commandLink>
+				</h:column>
+
+
+				<f:facet name="footer">
+					<table width="100%">
+						<tr>
+							<td><h:commandButton value="Previous Page"
+									action="#{streamEmployees.previous}"
+									rendered="false" /></td>
+							<td width="100%" align="center">Page <h:outputText
+									value="#{streamEmployees.currentPage}" /> of <h:outputText
+									value="#{streamEmployees.numPages}" /></td>
+							<td><h:commandButton value="Next Page"
+									action="#{streamEmployees.next}"
+									rendered="#{streamEmployees.hasNext}" /></td>
+						</tr>
+					</table>
+				</f:facet>
+			</h:dataTable>
+
+			<p>
+				Total employees available in stream:
+				<h:outputText value="#{streamEmployees.size}" />
+			</p>
+			<h:commandLink value="Refresh Stream"
+				action="#{streamEmployees.initialize}" />
+		</h:form>
+	</ui:define>
+
+	<ui:define name="eclipselink">
+		<h3>Streaming Entity Results</h3>
+		<p>EclipseLink supports streaming query results using a
+			CursoredStream. This requires a stateful resource in the container to
+			maintain the stream and ensure it is properly closed when no longer
+			needed.</p>
+	</ui:define>
+
+</ui:composition>
+</html>

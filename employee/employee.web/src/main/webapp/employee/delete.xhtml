@@ -13,15 +13,19 @@
 		<h:form>
 			<div align="center">
 				<h:panelGrid width="400" columns="2" border="1">
+					<h:outputLabel value="ID" />
+					<h:outputLabel value="#{deleteEmployee.employee.id}" />
 					<h:outputLabel value="First Name:" />
-					<h:outputLabel value="#{createEmployee.firstName}" />
+					<h:outputLabel value="#{deleteEmployee.employee.firstName}" />
 					<h:outputLabel value="Last Name:" />
-					<h:outputLabel value="#{createEmployee.lastName}" />
+					<h:outputLabel value="#{deleteEmployee.employee.lastName}" />
 					<h:outputLabel value="Gender:" />
-					<h:outputLabel value="#{createEmployee.gender}"/>
+					<h:outputLabel value="#{deleteEmployee.employee.gender}"/>
 					<f:facet name="footer">
 						<div align="center">
-							<h:commandButton value="Confirm Delete" action="#{deleteEmployee.delete}" />
+							<h:commandButton value="Confirm Delete" action="#{deleteEmployee.delete}" >
+								<f:param name="id" value="#{deleteEmployee.employee.id}"/>
+							</h:commandButton>
 							<h:commandButton value="Cancel" action="#{deleteEmployee.cancel}" />
 						</div>
 					</f:facet>

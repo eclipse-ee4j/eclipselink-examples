@@ -75,6 +75,6 @@ public class EditEmployee {
     }
 
     public String cancel() {
-        return EmployeeList.PAGE;
+        return StreamEmployees.PAGE;
     }
 }

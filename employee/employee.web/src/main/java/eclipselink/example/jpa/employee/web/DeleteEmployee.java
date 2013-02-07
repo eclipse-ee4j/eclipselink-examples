@@ -13,7 +13,6 @@
 package eclipselink.example.jpa.employee.web;
 
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -31,7 +30,7 @@ import eclipselink.example.jpa.employee.model.Employee;
  * @since EclipseLink 2.3.0
  */
 @ManagedBean
-@RequestScoped
+@ViewScoped
 public class DeleteEmployee {
 
     private Employee employee;
@@ -42,10 +41,6 @@ public class DeleteEmployee {
 
     public Employee getEmployee() {
         return employee;
-    }
-
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
     }
 
     public EntityManagerFactory getEmf() {
@@ -66,7 +61,7 @@ public class DeleteEmployee {
         EntityManager em = getEmf().createEntityManager();
         try {
             this.employee = em.find(Employee.class, id);
-            // TODO: Handle failure
+            // TODO: Handle find failure
         } finally {
             em.close();
         }
@@ -83,14 +78,20 @@ public class DeleteEmployee {
         EntityManager em = getEmf().createEntityManager();
         try {
             this.employee = em.find(Employee.class, id);
-            // TODO: Handle failure
+            // TODO: Handle find failure
+            em.getTransaction().begin();
+            em.remove(getEmployee());
+            em.getTransaction().commit();
         } finally {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
             em.close();
         }
-       return EmployeeList.PAGE;
+        return StreamEmployees.PAGE;
    }
     
     public String cancel() {
-        return EmployeeList.PAGE;
+        return StreamEmployees.PAGE;
     }
 }

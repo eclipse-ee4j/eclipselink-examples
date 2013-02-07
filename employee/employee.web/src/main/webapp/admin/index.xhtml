@@ -16,15 +16,16 @@
 				</h:panelGrid>
 			</div>
 		</h:form>
-		<h2>Diagnostics</h2>
+		<h2>Entity Status</h2>
 		<h:form>
-			<div align="center">
-				<h:panelGrid width="400" columns="1" border="1">
-				<h:outputLabel value="Employee"/>
-				<h:outputLabel value="Phone"/>
-				<h:outputLabel value="Address"/>
-				</h:panelGrid>
-			</div>
+			<h:panelGrid width="400" columns="2" border="1">
+				<h:outputLabel value="Employee" />
+				<h:selectBooleanCheckbox value="true" />
+				<h:outputLabel value="Phone" />
+				<h:selectBooleanCheckbox value="true" />
+				<h:outputLabel value="Address" />
+				<h:selectBooleanCheckbox value="true" />
+			</h:panelGrid>
 		</h:form>
 	</ui:define>
 </ui:composition>

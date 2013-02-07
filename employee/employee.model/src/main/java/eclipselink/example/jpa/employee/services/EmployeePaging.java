@@ -29,12 +29,13 @@ public class EmployeePaging {
 
     private EntityManagerFactory emf;
 
-    public EntityManagerFactory getEmf() {
-        return emf;
+    public EmployeePaging(EntityManagerFactory emf) {
+        super();
+        this.emf = emf;
     }
 
-    public void setEmf(EntityManagerFactory emf) {
-        this.emf = emf;
+    protected EntityManagerFactory getEmf() {
+        return emf;
     }
 
     /**
@@ -49,7 +50,7 @@ public class EmployeePaging {
         EntityManager em = getEmf().createEntityManager();
 
         try {
-            TypedQuery<Employee> empsQuery = em.createQuery("SELECT e FROM Employee e ORDER BY e.lastName,  e.firstName", Employee.class);
+            TypedQuery<Employee> empsQuery = em.createNamedQuery("Employee.findAll", Employee.class);
             empsQuery.setFirstResult(startPosition);
             empsQuery.setMaxResults(maxResult);
 
@@ -63,7 +64,7 @@ public class EmployeePaging {
         EntityManager em = getEmf().createEntityManager();
 
         try {
-            TypedQuery<Number> countQuery = em.createQuery("SELECT COUNT(e) FROM Employee", Number.class);
+            TypedQuery<Number> countQuery = em.createQuery("SELECT COUNT(e) FROM Employee e", Number.class);
             return countQuery.getSingleResult().intValue();
         } finally {
             em.close();

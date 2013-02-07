@@ -14,45 +14,48 @@
 </style>
 </head>
 <body>
-	<div class="header-container">
-		<header class="wrapper clearfix">
-		<h1 class="title">Employee Example</h1>
-		<nav> <h:form>
-			<ul>
-				<li><h:commandLink action="/index?faces-redirect=true"
-						value="Home" /></li>
-				<li><h:commandLink action="/about?faces-redirect=true"
-						value="About" /></li>
-				<li><h:commandLink action="/admin/index?faces-redirect=true"
-						value="Admin" /></li>
-			</ul>
-		</h:form></nav> </header>
-	</div>
+	<div id="body-container">
+		<div id="body-content">
+			<div class="header-container">
+
+				<header class="wrapper clearfix">
+				<h1 class="title">Employee Example</h1>
+				<nav> <h:form>
+					<ul>
+						<li><h:commandLink action="/index?faces-redirect=true"
+								value="Home" /></li>
+						<li><h:commandLink action="/about?faces-redirect=true"
+								value="About" /></li>
+						<li><h:commandLink action="/admin/index?faces-redirect=true"
+								value="Admin" /></li>
+					</ul>
+				</h:form></nav> </header>
+			</div>
 
 
-	<div class="main-container">
-		<div class="main wrapper clearfix">
+			<div class="main-container" style="height: auto; min-height: 100%;">
+				<div class="main wrapper clearfix">
 
-			<article> <header> <ui:insert name="body" /> </header> </article>
+					<article> <header> <ui:insert name="body" /> </header> </article>
 
-			<aside> <img
-				src="#{request.contextPath}/images/eclipselink-logo.png"
-				alt="EclipseLink" border="0" class="logo"
-				title="EclipseLink Employee Example" />
-			<h3>Inside EclipseLink</h3>
-			<ui:insert name="eclipselink" /> </aside>
+					<aside> <img
+						src="#{request.contextPath}/images/eclipselink-logo.png"
+						alt="EclipseLink" border="0" class="logo"
+						title="EclipseLink Employee Example" /> <ui:insert
+						name="eclipselink" /> </aside>
 
+				</div>
+			</div>
 		</div>
 	</div>
 
 	<div class="footer-container">
-		<footer class="wrapper"> <ui:insert name="footer" />
-		<h:dataTable var="sql" value="#{sqlTraceAccessor.sql}" width="100%">
+		<footer class="wrapper"> <ui:insert name="footer" /> <h:dataTable
+			var="sql" value="#{sqlTraceAccessor.sql}" width="100%">
 			<h:column>
 				<h:outputText value="#{sql}" />
 			</h:column>
 		</h:dataTable> </footer>
 	</div>
-
 </body>
 </html>
