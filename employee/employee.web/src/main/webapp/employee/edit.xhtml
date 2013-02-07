@@ -9,10 +9,10 @@
 
 <ui:composition template="/WEB-INF/template.xhtml">
 	<ui:define name="body">
-	<h1>Edit Employee</h1>
+		<h1>Edit Employee</h1>
 		<h:form>
 			<div align="center">
-				<h:panelGrid width="400" columns="2" border="1" >
+				<h:panelGrid width="400" columns="2" border="1">
 					<h:outputLabel value="First Name:" />
 					<h:inputText value="#{editEmployee.employee.firstName}" />
 					<h:outputLabel value="Last Name:" />
@@ -22,13 +22,26 @@
 						<f:selectItem id="male" itemLabel="Male" itemValue="Male" />
 						<f:selectItem id="female" itemLabel="Female" itemValue="Female" />
 					</h:selectOneMenu>
-					<f:facet name="footer">
-						<div align="center">
-							<h:commandButton value="Save" action="#{editEmployee.save}" />
-							<h:commandButton value="Cancel" action="#{editEmployee.cancel}" />
-						</div>
-					</f:facet>
+					<h:outputLabel value="Salary: $" />
+					<h:inputText value="#{editEmployee.employee.salary}" />
+
 				</h:panelGrid>
+
+				<h2>Address</h2>
+				<h:panelGrid width="400" columns="2" border="1">
+					<h:outputLabel value="Street:" />
+					<h:inputText value="" />
+					<h:outputLabel value="City:" />
+					<h:inputText value="" />
+					<h:outputLabel value="Country" />
+					<h:inputText value="" />
+
+				</h:panelGrid>
+
+
+				<h:commandButton value="Save" action="#{editEmployee.save}" />
+				&nbsp;
+				<h:commandButton value="Cancel" action="#{editEmployee.cancel}" />
 			</div>
 		</h:form>
 	</ui:define>

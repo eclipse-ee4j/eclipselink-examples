@@ -13,7 +13,7 @@
 package eclipselink.example.jpa.employee.web;
 
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.persistence.EntityManager;
@@ -22,7 +22,6 @@ import javax.persistence.PersistenceUnit;
 
 import eclipselink.example.jpa.employee.model.Employee;
 
-
 /**
  * Return list of available Leagues from JAX-RS call to MySports Admin app.
  * 
@@ -30,7 +29,7 @@ import eclipselink.example.jpa.employee.model.Employee;
  * @since EclipseLink 2.3.0
  */
 @ManagedBean
-@ViewScoped
+@SessionScoped
 public class DeleteEmployee {
 
     private Employee employee;
@@ -61,14 +60,17 @@ public class DeleteEmployee {
         EntityManager em = getEmf().createEntityManager();
         try {
             this.employee = em.find(Employee.class, id);
-            // TODO: Handle find failure
+
+            if (this.employee == null) {
+                throw new RuntimeException("DeleteEmployee - no employee found for id: " + id);
+            }
         } finally {
             em.close();
         }
-        
+
         return PAGE;
     }
-    
+
     public String delete() {
         ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
         String idString = context.getRequestParameterMap().get("id");
@@ -87,10 +89,11 @@ public class DeleteEmployee {
                 em.getTransaction().rollback();
             }
             em.close();
+            this.employee = null;
         }
         return StreamEmployees.PAGE;
-   }
-    
+    }
+
     public String cancel() {
         return StreamEmployees.PAGE;
     }

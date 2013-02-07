@@ -13,7 +13,7 @@
 package eclipselink.example.jpa.employee.web;
 
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
+import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.persistence.EntityManager;
@@ -29,7 +29,7 @@ import eclipselink.example.jpa.employee.model.Employee;
  * @since EclipseLink 2.3.0
  */
 @ManagedBean
-@RequestScoped
+@SessionScoped
 public class EditEmployee {
 
     private Employee employee;
@@ -71,6 +71,15 @@ public class EditEmployee {
     }
 
     public String save() {
+        EntityManager em = getEmf().createEntityManager();
+
+        try {
+            em.getTransaction().begin();
+            em.merge(getEmployee());
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
         return null;
     }
 

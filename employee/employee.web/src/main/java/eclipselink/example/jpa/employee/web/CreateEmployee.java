@@ -13,6 +13,7 @@
 package eclipselink.example.jpa.employee.web;
 
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
@@ -28,6 +29,7 @@ import eclipselink.example.jpa.employee.model.Gender;
  * @since EclipseLink 2.3.0
  */
 @ManagedBean
+@ViewScoped
 public class CreateEmployee {
 
     private String firstName;
