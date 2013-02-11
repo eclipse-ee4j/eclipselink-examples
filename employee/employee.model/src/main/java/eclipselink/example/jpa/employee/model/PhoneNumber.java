@@ -24,8 +24,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.eclipse.persistence.oxm.annotations.XmlInverseReference;
-
 @Entity
 @Table(name="PHONE")
 @IdClass(PhoneNumber.ID.class)
@@ -44,8 +42,6 @@ public class PhoneNumber implements Serializable {
 	@Basic
 	@Column(name = "P_NUMBER")
 	private String number;
-	// TODO Remove @XmlInverseReference https://bugs.eclipse.org/bugs/show_bug.cgi?id=399811
-	@XmlInverseReference(mappedBy="phoneNumbers")
 	@ManyToOne
 	@JoinColumn(name = "EMP_ID")
 	private Employee owner;
