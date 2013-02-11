@@ -18,9 +18,11 @@ import java.util.Random;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
+import javax.xml.crypto.dsig.keyinfo.PGPData;
 
 import eclipselink.example.jpa.employee.model.Employee;
 import eclipselink.example.jpa.employee.model.Gender;
+import eclipselink.example.jpa.employee.services.IdInPaging;
 
 
 /**
@@ -53,6 +55,10 @@ public class JavaSEExample {
             em.clear();
 
             example.deleteEmployee(em, 1);
+            em.clear();
+            
+            example.pagingIdIn(em);
+            
             em.close();
 
         } finally {
@@ -115,6 +121,16 @@ public class JavaSEExample {
 
         em.getTransaction().rollback();
 
+    }
+    
+    public void pagingIdIn(EntityManager em) {
+        
+        TypedQuery<Number> idQuery = em.createQuery("SELECT e.id FROM Employee e ORDER BY e.id", Number.class);
+        
+        IdInPaging paging = new IdInPaging(em.getEntityManagerFactory(), idQuery, 5);
+        
+        paging.get(1);
+        paging.get(2);
     }
 
     private static final String[] MALE_FIRST_NAMES = { "Jacob", "Et", "Michael", "Alexander", "William", "Joshua", "Daniel", "Jayden", "Noah", "Anthony" };

@@ -25,34 +25,41 @@ import eclipselink.example.jpa.employee.model.Employee;
  * 
  * @since EclipseLink 2.4.2
  */
-public class EmployeePaging {
+public class FirstMaxPaging {
 
     private EntityManagerFactory emf;
 
-    public EmployeePaging(EntityManagerFactory emf) {
+    private int pageSize;
+
+    public FirstMaxPaging(EntityManagerFactory emf, int pageSize) {
         super();
         this.emf = emf;
+        this.pageSize = pageSize;
     }
 
     protected EntityManagerFactory getEmf() {
         return emf;
     }
 
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public int getNumPages() {
+        return (size() / getPageSize()) + (size() % getPageSize() > 0 ? 1 : 0);
+    }
+
     /**
      * Retrieve a page of Employee instances.
-     * 
-     * @param startPosition
-     *            position of the first result, numbered from 0
-     * @param maxResult
-     *            maximum number of results to retrieve
      */
-    public List<Employee> get(int startPosition, int maxResult) {
+    public List<Employee> get(int page) {
         EntityManager em = getEmf().createEntityManager();
 
         try {
             TypedQuery<Employee> empsQuery = em.createNamedQuery("Employee.findAll", Employee.class);
-            empsQuery.setFirstResult(startPosition);
-            empsQuery.setMaxResults(maxResult);
+            int first = (page - 1) * getPageSize();
+            empsQuery.setFirstResult(first);
+            empsQuery.setMaxResults(getPageSize());
 
             return empsQuery.getResultList();
         } finally {

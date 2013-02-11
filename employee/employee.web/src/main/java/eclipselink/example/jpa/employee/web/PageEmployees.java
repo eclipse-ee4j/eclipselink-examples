@@ -20,7 +20,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 
 import eclipselink.example.jpa.employee.model.Employee;
-import eclipselink.example.jpa.employee.services.EmployeePaging;
+import eclipselink.example.jpa.employee.services.FirstMaxPaging;
 
 /**
  * Return list of available Leagues from JAX-RS call to MySports Admin app.
@@ -30,9 +30,9 @@ import eclipselink.example.jpa.employee.services.EmployeePaging;
  */
 @ManagedBean
 @SessionScoped
-public class PageEmployees {
+public class PageEmployees extends BaseBean {
 
-    private static final int PAGE_SIZE = 15;
+    private static final int PAGE_SIZE = 10;
 
     protected static final String PAGE = "/employee/stream?faces-redirect=true";
 
@@ -41,39 +41,27 @@ public class PageEmployees {
      */
     private List<Employee> employees;
 
-    private EmployeePaging paging;
-
-    private int size;
+    private FirstMaxPaging paging;
 
     private int currentPage = 1;
 
-    private int numPages = 1;
-
-    private EntityManagerFactory emf;
-
-    public EntityManagerFactory getEmf() {
-        return emf;
-    }
 
     @PersistenceUnit(unitName = "employee")
     public void setEmf(EntityManagerFactory emf) {
-        this.emf = emf;
+        super.setEmf(emf);
     }
 
-    public EmployeePaging getPaging() {
+    public FirstMaxPaging getPaging() {
         return paging;
     }
 
     public String initialize() {
-        this.paging = new EmployeePaging(getEmf());
+        startSqlCapture();
+        
+        this.paging = new FirstMaxPaging(getEmf(), PAGE_SIZE);
 
         this.currentPage = 1;
         this.employees = null;
-        this.size = getPaging().size();
-        this.numPages = this.size / PAGE_SIZE;
-        if ((this.numPages * PAGE_SIZE) < this.size) {
-            this.numPages++;
-        }
 
         return null;
     }
@@ -83,15 +71,15 @@ public class PageEmployees {
             initialize();
         }
         if (this.employees == null) {
-            int max = this.currentPage * PAGE_SIZE;
-            int first = max - PAGE_SIZE;
-            this.employees = getPaging().get(first, max);
+            startSqlCapture();
+            this.employees = getPaging().get(this.currentPage);
+            this.stopSqlCapture();
         }
         return this.employees;
     }
 
     public int getSize() {
-        return this.size;
+        return this.paging.size();
     }
 
     public int getCurrentPage() {
@@ -99,7 +87,7 @@ public class PageEmployees {
     }
 
     public int getNumPages() {
-        return numPages;
+        return this.paging.getNumPages();
     }
 
     public String next() {
@@ -111,7 +99,7 @@ public class PageEmployees {
     }
 
     public boolean getHasNext() {
-        return this.currentPage < this.numPages;
+        return this.currentPage < getNumPages();
     }
 
     public String previous() {
@@ -125,4 +113,5 @@ public class PageEmployees {
     public boolean getHasPrevious() {
         return this.currentPage > 1;
     }
+
 }

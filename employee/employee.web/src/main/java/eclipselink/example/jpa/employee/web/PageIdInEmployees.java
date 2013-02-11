@@ -22,7 +22,7 @@ import javax.persistence.PersistenceUnit;
 import javax.persistence.TypedQuery;
 
 import eclipselink.example.jpa.employee.model.Employee;
-import eclipselink.example.jpa.employee.services.StreamPaging;
+import eclipselink.example.jpa.employee.services.IdInPaging;
 
 /**
  * Return list of available Leagues from JAX-RS call to MySports Admin app.
@@ -32,84 +32,98 @@ import eclipselink.example.jpa.employee.services.StreamPaging;
  */
 @ManagedBean
 @SessionScoped
-public class StreamEmployees extends BaseBean {
+public class PageIdInEmployees extends BaseBean {
 
-    private static final int PAGE_SIZE = 10;
+    private static final int PAGE_SIZE = 15;
 
     protected static final String PAGE = "/employee/stream?faces-redirect=true";
 
+    /**
+     * Current employees being shown
+     */
     private List<Employee> employees;
 
-    private StreamPaging<Employee> stream;
+    private IdInPaging paging;
+
+    private int size;
+
+    private int currentPage = 1;
+
+    private int numPages = 1;
 
     @PersistenceUnit(unitName = "employee")
     public void setEmf(EntityManagerFactory emf) {
         super.setEmf(emf);
     }
 
-    public StreamPaging<Employee> getStream() {
-        return stream;
+    public IdInPaging getPaging() {
+        return paging;
     }
 
-    protected void initialize() {
+    public String initialize() {
         EntityManager em = getEmf().createEntityManager();
-        TypedQuery<Employee> query = em.createQuery("SELECT e FROM Employee e ORDER BY e.id", Employee.class);
-        this.stream = new StreamPaging<Employee>(query, PAGE_SIZE);
-        this.employees = null;
-    }
-
-    public String reset() {
+        TypedQuery<Number> idQuery = em.createQuery("SELECT e.id FROM Employee e ORDER BY e.id", Number.class);
+        
         startSqlCapture();
-        initialize();
-        stopSqlCapture();
+        this.paging = new IdInPaging(getEmf(), idQuery, 10);
+
+        this.currentPage = 1;
+        this.employees = null;
+        this.size = getPaging().size();
+        this.numPages = this.size / PAGE_SIZE;
+        if ((this.numPages * PAGE_SIZE) < this.size) {
+            this.numPages++;
+        }
+
         return null;
     }
 
     public List<Employee> getEmployees() {
-        if (this.stream == null) {
+        if (this.paging == null) {
             initialize();
         }
         if (this.employees == null) {
-            this.employees = getStream().next();
+            startSqlCapture();
+            this.employees = getPaging().get(this.currentPage);
+            this.stopSqlCapture();
         }
-        stopSqlCapture();
         return this.employees;
     }
 
     public int getSize() {
-        if (this.stream == null) {
-            initialize();
-        }
-        return getStream().size();
+        return this.size;
     }
 
     public int getCurrentPage() {
-        return 1;
+        return currentPage;
     }
 
     public int getNumPages() {
-        if (this.stream == null) {
-            initialize();
-        }
-        return getStream().getNumPages();
+        return numPages;
     }
 
     public String next() {
         if (getHasNext()) {
-            this.employees = getStream().next();
+            this.currentPage++;
+            this.employees = null;
         }
         return null;
     }
 
     public boolean getHasNext() {
-        if (this.stream == null) {
-            initialize();
-        }
-        return getStream().hasNext();
+        return this.currentPage < this.numPages;
     }
 
-    public List<String> getSql() {
+    public String previous() {
+        if (getHasPrevious()) {
+            this.currentPage--;
+            this.employees = null;
+        }
         return null;
+    }
+
+    public boolean getHasPrevious() {
+        return this.currentPage > 1;
     }
 
 }

@@ -30,11 +30,9 @@ import eclipselink.example.jpa.employee.model.Employee;
  */
 @ManagedBean
 @SessionScoped
-public class DeleteEmployee {
+public class DeleteEmployee extends BaseBean {
 
     private Employee employee;
-
-    private EntityManagerFactory emf;
 
     protected static final String PAGE = "/employee/delete?faces-redirect=true";
 
@@ -42,13 +40,9 @@ public class DeleteEmployee {
         return employee;
     }
 
-    public EntityManagerFactory getEmf() {
-        return emf;
-    }
-
     @PersistenceUnit(unitName = "employee")
     public void setEmf(EntityManagerFactory emf) {
-        this.emf = emf;
+        super.setEmf(emf);
     }
 
     public String confirm() {
@@ -77,6 +71,8 @@ public class DeleteEmployee {
         int id = Integer.valueOf(idString);
 
         System.out.println("DELETE EMPLOYEE: " + id);
+        
+        startSqlCapture();
         EntityManager em = getEmf().createEntityManager();
         try {
             this.employee = em.find(Employee.class, id);
@@ -84,6 +80,8 @@ public class DeleteEmployee {
             em.getTransaction().begin();
             em.remove(getEmployee());
             em.getTransaction().commit();
+            
+            stopSqlCapture();
         } finally {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
@@ -91,7 +89,11 @@ public class DeleteEmployee {
             em.close();
             this.employee = null;
         }
-        return StreamEmployees.PAGE;
+        return PAGE;
+    }
+    
+    public boolean getisDeleted() {
+        return this.employee == null;
     }
 
     public String cancel() {

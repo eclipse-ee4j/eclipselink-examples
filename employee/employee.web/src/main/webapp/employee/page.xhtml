@@ -52,6 +52,7 @@
 					</table>
 				</f:facet>
 			</h:dataTable>
+
 		</h:form>
 	</ui:define>
 
@@ -66,6 +67,16 @@
 			database between page queries can effect the results shown. This
 			approach works well in large data sets where they are either static
 			or exact/complete results is not critical.</p>
+	</ui:define>
+
+	<ui:define name="footer">
+		<h:dataTable var="sql" value="#{pageEmployees.sql}" width="100%">
+			<h:column>
+				<pre>
+				<h:outputText value="#{sql}" />
+				</pre>
+			</h:column>
+		</h:dataTable>
 	</ui:define>
 
 </ui:composition>

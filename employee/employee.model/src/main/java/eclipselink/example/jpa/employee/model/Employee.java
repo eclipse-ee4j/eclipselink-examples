@@ -33,8 +33,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.QueryHint;
 import javax.persistence.SecondaryTable;
 import javax.persistence.Version;
 
@@ -42,9 +45,11 @@ import org.eclipse.persistence.annotations.ConversionValue;
 import org.eclipse.persistence.annotations.Convert;
 import org.eclipse.persistence.annotations.ObjectTypeConverter;
 import org.eclipse.persistence.annotations.PrivateOwned;
-import javax.persistence.NamedQuery;
+import org.eclipse.persistence.config.HintValues;
+import org.eclipse.persistence.config.QueryHints;
 
 /**
+ * TODO
  * 
  * @author dclarke
  * @since EclipseLink 1.1
@@ -52,9 +57,13 @@ import javax.persistence.NamedQuery;
 @Entity
 @SecondaryTable(name = "SALARY")
 @ObjectTypeConverter(name = "gender", objectType = Gender.class, dataType = String.class, conversionValues = { @ConversionValue(dataValue = "M", objectValue = "Male"), @ConversionValue(dataValue = "F", objectValue = "Female") })
-@NamedQuery(name = "Employee.findAll", query = "SELECT e FROM Employee e ORDER BY e.id")
+@NamedQueries({ @NamedQuery(name = "Employee.findAll", query = "SELECT e FROM Employee e ORDER BY e.id"),
+/**
+ * Query used in {@link EmployeeIdInPaging}
+ */
+@NamedQuery(name = "Employee.idsIn", query = "SELECT e FROM Employee e WHERE e.id IN :IDS ORDER BY e.id", hints = { @QueryHint(name = QueryHints.QUERY_RESULTS_CACHE, value = HintValues.TRUE) }), })
 public class Employee {
-    
+
     @Id
     @Column(name = "EMP_ID")
     @GeneratedValue
@@ -65,7 +74,7 @@ public class Employee {
 
     /**
      * Gender mapped using Basic with an ObjectTypeConverter to map between
-     * single char code value in databse to enum. JPA only supports mapping to
+     * single char code value in database to enum. JPA only supports mapping to
      * the full name of the enum or its ordinal value.
      */
     @Basic
@@ -78,14 +87,14 @@ public class Employee {
 
     @Column(table = "SALARY")
     private double salary;
-    
+
     @Version
     private Long version;
     @ManyToMany
     @JoinTable(joinColumns = @JoinColumn(name = "EMP_ID"), inverseJoinColumns = @JoinColumn(name = "PROJ_ID"), name = "PROJ_EMP")
     private List<Project> projects = new ArrayList<Project>();
 
-    @ManyToOne(fetch=LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "MANAGER_ID")
     private Employee manager;
 
@@ -102,7 +111,7 @@ public class Employee {
     private Address address;
 
     @Embedded
-    @AttributeOverrides( { @AttributeOverride(name = "startDate", column = @Column(name = "START_DATE")), @AttributeOverride(name = "endDate", column = @Column(name = "END_DATE")) })
+    @AttributeOverrides({ @AttributeOverride(name = "startDate", column = @Column(name = "START_DATE")), @AttributeOverride(name = "endDate", column = @Column(name = "END_DATE")) })
     private EmploymentPeriod period;
 
     @ElementCollection
