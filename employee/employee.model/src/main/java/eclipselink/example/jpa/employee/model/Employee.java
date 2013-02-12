@@ -57,11 +57,13 @@ import org.eclipse.persistence.config.QueryHints;
 @Entity
 @SecondaryTable(name = "SALARY")
 @ObjectTypeConverter(name = "gender", objectType = Gender.class, dataType = String.class, conversionValues = { @ConversionValue(dataValue = "M", objectValue = "Male"), @ConversionValue(dataValue = "F", objectValue = "Female") })
-@NamedQueries({ @NamedQuery(name = "Employee.findAll", query = "SELECT e FROM Employee e ORDER BY e.id"),
-/**
- * Query used in {@link EmployeeIdInPaging}
- */
-@NamedQuery(name = "Employee.idsIn", query = "SELECT e FROM Employee e WHERE e.id IN :IDS ORDER BY e.id", hints = { @QueryHint(name = QueryHints.QUERY_RESULTS_CACHE, value = HintValues.TRUE) }), })
+@NamedQueries({ 
+	@NamedQuery(name = "Employee.findAll", query = "SELECT e FROM Employee e ORDER BY e.id"),
+	@NamedQuery(name = "Employee.count", query = "SELECT COUNT(e) FROM Employee e"),
+	/**
+	 * Query used in {@link EmployeeIdInPaging}
+	 */
+	@NamedQuery(name = "Employee.idsIn", query = "SELECT e FROM Employee e WHERE e.id IN :IDS ORDER BY e.id", hints = { @QueryHint(name = QueryHints.QUERY_RESULTS_CACHE, value = HintValues.TRUE) })})
 public class Employee {
 
     @Id
