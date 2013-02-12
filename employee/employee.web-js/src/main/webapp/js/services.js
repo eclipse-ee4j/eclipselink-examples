@@ -13,25 +13,48 @@
 
 /* Services */
 
-var serverHost = document.location.host;
+var serverHostname = document.location.hostname;
 var serverPort = document.location.port;
-var serverUrl = 'http://' + serverHost;
+var serverRootUrl = 'http://' + serverHostname;
+var resourceRootURL = serverRootUrl;
+var httpRootURL = serverRootUrl;
 if (serverPort) {
-	serverUrl = serverUrl + ":" + serverPort;
+	/* have to escape ":" because $resource interprets it as a parameter while
+	 * $http does not.
+	 */
+	resourceRootURL = resourceRootURL + "\\:" + serverPort;
+	httpRootURL = httpRootURL + ":" + serverPort;
 }
 
 var employeeServices = angular.module('employeeServices', [ 'ngResource' ]);
 
-employeeServices.factory('Employees', function($resource) {
-	return $resource(serverUrl
-			+ '/employee/persistence/employee/query/Employee.findAll', {}, {
-		method : 'GET',
-		isArray : true
-	});
+employeeServices.factory('Employees', function($resource, $http) {
+	var resource = $resource(
+		resourceRootURL + '/employee/persistence/employee/query/Employee.findAll', 
+		{},
+		{
+			getPage : {
+				method : 'GET',
+				params: {'eclipselink.jdbc.first-result' : '@first', 'eclipselink.jdbc.max-rows' : '@max'},
+				isArray : true	
+			},	
+			getAll : {
+				method : 'GET',
+				params: {},
+				isArray : true
+			}
+		});
+	/*
+	 * Add method to resource to obtain total number of Employees.
+	 */
+	resource.count = function() {
+		return $http.get(httpRootURL + "/employee/persistence/employee/singleResultQuery/Employee.count");
+	};
+	return resource;
 });
 
 employeeServices.factory('Employee', function($resource) {
-	return $resource(serverUrl
+	return $resource(resourceRootURL
 			+ '/employee/persistence/employee/entity/Employee/:id', {}, {
 		get : {
 			method : 'GET',

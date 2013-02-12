@@ -12,34 +12,52 @@
  *  shsmith - EclipseLink 2.4
  ******************************************************************************/
  -->
-<div class="container-fluid">
-	<div class="row-fluid">
-		<div class="span2">
-			<!--Sidebar content-->
-			Filter: <input ng-model="query">
-
-		</div>
-		<div class="span8">
-			<div align="center">
-				<table border="1" styleClass="pretty" width="500">
-					<tr>
-						<td colspan='5'>Employees</td>
-					</tr>
-					<tr>
-						<td>ID</td>
-						<td>Last Name</td>
-						<td>First Name</td>
-						<td></td>
-						<td></td>
-					</tr>
-					<tr ng-repeat="employee in employees | filter:query">
-						<td>{{employee.id}}</td>
-						<td>{{employee.lastName}}</td>
-						<td>{{employee.firstName}}</td>
-						<td><a href="#/employee/edit/{{employee.id}}">Edit</a></td>
-						<td>Delete</td>
-					</tr>
-				</table>
-			</div>
-		</div>
+<div>
+	<div>
+		<h1>Employees</h1>
+		<table id='employee-list'>
+			<thead id='employee-list-head'>
+				<tr>
+					<td colspan='5'>Filter: <input ng-model='query'></td>
+				</tr>
+			</thead>
+			<tbody id='employee-list-body'>
+				<tr>
+					<td>ID</td>
+					<td>Last Name</td>
+					<td>First Name</td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr ng-repeat='employee in employees | filter:query'>
+					<td>{{employee.id}}</td>
+					<td>{{employee.lastName}}</td>
+					<td>{{employee.firstName}}</td>
+					<td class='employee-action'><a
+						href='#/employee/edit/{{employee.id}}'>Edit</a></td>
+					<td class='employee-action'>Delete</td>
+				</tr>
+			</tbody>
+			<tfoot id='employee-list-foot'>
+				<tr>
+					<td colspan='5'>
+						<table id='employees-pagination' width='100%'>
+							<tr>
+								<td>
+									<button type='button' id='employees-previous'
+										ng-click='pagePrevious()'>Previous Page</button>
+								</td>
+								<td colspan='3'><span id='employees-pages'>Page {{pageNum}} of
+										{{totalPages}}</span></td>
+								<td>
+									<button type='button' id='employees-next' ng-click='pageNext()'>Next
+										Page</button>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</tfoot>
+		</table>
 	</div>
+</div>
