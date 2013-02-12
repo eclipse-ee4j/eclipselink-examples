@@ -19,6 +19,7 @@ import static javax.persistence.FetchType.LAZY;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ejb.Lock;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Basic;
@@ -41,9 +42,11 @@ import javax.persistence.QueryHint;
 import javax.persistence.SecondaryTable;
 import javax.persistence.Version;
 
+import org.eclipse.persistence.annotations.CascadeOnDelete;
 import org.eclipse.persistence.annotations.ConversionValue;
 import org.eclipse.persistence.annotations.Convert;
 import org.eclipse.persistence.annotations.ObjectTypeConverter;
+import org.eclipse.persistence.annotations.OptimisticLocking;
 import org.eclipse.persistence.annotations.PrivateOwned;
 import org.eclipse.persistence.config.HintValues;
 import org.eclipse.persistence.config.QueryHints;
@@ -64,6 +67,7 @@ import org.eclipse.persistence.config.QueryHints;
 	 * Query used in {@link EmployeeIdInPaging}
 	 */
 	@NamedQuery(name = "Employee.idsIn", query = "SELECT e FROM Employee e WHERE e.id IN :IDS ORDER BY e.id", hints = { @QueryHint(name = QueryHints.QUERY_RESULTS_CACHE, value = HintValues.TRUE) })})
+@OptimisticLocking(cascade=true)
 public class Employee {
 
     @Id

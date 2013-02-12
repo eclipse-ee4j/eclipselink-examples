@@ -18,12 +18,10 @@
 				&nbsp;
 				<h:commandButton value="Cancel" action="#{editEmployee.cancel}" />
 			</div>
-			<h1>
-				Edit Employee:
-				<h:outputLabel value="#{editEmployee.employee.id}" />
-			</h1>
 			<div align="center">
 				<h:panelGrid width="400" columns="2" border="1">
+					<h:outputLabel value="ID:" />
+					<h:outputLabel value="#{editEmployee.employee.id}" />
 					<h:outputLabel value="First Name:" />
 					<h:inputText value="#{editEmployee.employee.firstName}" />
 					<h:outputLabel value="Last Name:" />

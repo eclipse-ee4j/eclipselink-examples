@@ -66,11 +66,11 @@ public class EditEmployee extends BaseBean {
             em.getTransaction().begin();
             this.employee = em.merge(getEmployee());
             em.getTransaction().commit();
-        } catch (OptimisticLockException e) {
-            FacesContext.getCurrentInstance().addMessage("OptimisticLockException", new FacesMessage("Save Failed: Optimistic Lock Exception."));
         } catch (RollbackException e) {
             if (e.getCause() instanceof OptimisticLockException) {
-                FacesContext.getCurrentInstance().addMessage("OptimisticLockException", new FacesMessage("Save Failed: Optimistic Lock Exception."));
+                FacesContext.getCurrentInstance().addMessage("OptimisticLockException", new FacesMessage("Commit Failed: Optimistic Lock Exception."));
+            } else {
+                throw e;
             }
         } finally {
             close(em);
@@ -102,17 +102,24 @@ public class EditEmployee extends BaseBean {
      */
     public String updateVersion() {
         EntityManager em = createEntityManager();
+        int newVersion = -1;
 
         try {
             em.getTransaction().begin();
             em.createNativeQuery("UPDATE EMPLOYEE SET VERSION = VERSION + 1 WHERE EMP_ID = " + getEmployee().getId()).executeUpdate();
             em.getTransaction().commit();
+
+            Number result = (Number) em.createNativeQuery("SELECT VERSION FROM EMPLOYEE WHERE EMP_ID = " + getEmployee().getId()).getSingleResult();
+            newVersion = result.intValue();
         } finally {
             close(em);
         }
+
+        FacesContext.getCurrentInstance().addMessage("Update version", new FacesMessage("DATABASE EMPLOYEE ID: " + getEmployee().getId() + " VERSION= " + newVersion));
+
         return null;
     }
-    
+
     public String removeAddress() {
         getEmployee().setAddress(null);
         return null;
@@ -122,7 +129,7 @@ public class EditEmployee extends BaseBean {
         getEmployee().setAddress(new Address());
         return null;
     }
-    
+
     public String addPhone() {
         getEmployee().addPhoneNumber("", "", "");
         return null;

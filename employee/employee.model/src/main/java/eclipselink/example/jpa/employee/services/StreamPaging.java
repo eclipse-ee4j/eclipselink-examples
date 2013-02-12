@@ -18,7 +18,7 @@ import javax.persistence.TypedQuery;
 
 import org.eclipse.persistence.config.HintValues;
 import org.eclipse.persistence.config.QueryHints;
-import org.eclipse.persistence.queries.CursoredStream;
+import org.eclipse.persistence.queries.ScrollableCursor;
 
 /**
  * Example of using an EclipseLink {@link CursoredStream} to page query results.
@@ -30,7 +30,7 @@ import org.eclipse.persistence.queries.CursoredStream;
  */
 public class StreamPaging<T> {
 
-    private CursoredStream stream;
+    private ScrollableCursor stream;
 
     private int pageSize;
 
@@ -38,11 +38,9 @@ public class StreamPaging<T> {
         super();
         this.pageSize = pageSize;
 
-        query.setHint(QueryHints.CURSOR, HintValues.TRUE);
-        query.setHint(QueryHints.CURSOR_INITIAL_SIZE, getPageSize());
-        query.setHint(QueryHints.CURSOR_PAGE_SIZE, getPageSize());
+        query.setHint(QueryHints.SCROLLABLE_CURSOR, HintValues.TRUE);
 
-        this.stream = (CursoredStream) query.getSingleResult();
+        this.stream = (ScrollableCursor) query.getSingleResult();
     }
 
     public int getPageSize() {
@@ -51,7 +49,7 @@ public class StreamPaging<T> {
 
     @SuppressWarnings("unchecked")
     public List<T> next() {
-        return this.stream.nextElements(getPageSize());
+        return (List<T>) this.stream.next(getPageSize());
     }
 
     public boolean hasNext() {

@@ -118,7 +118,7 @@ public class Diagnostics implements InvocationHandler {
         private List<SessionLogEntry> entries = new ArrayList<SessionLogEntry>();
 
         protected void add(SessionLogEntry entry) {
-            if (entry.getNameSpace().equals(SessionLog.SQL)) {
+            if (SessionLog.SQL.equals(entry.getNameSpace())) {
                 this.entries.add(entry);
             }
         }
