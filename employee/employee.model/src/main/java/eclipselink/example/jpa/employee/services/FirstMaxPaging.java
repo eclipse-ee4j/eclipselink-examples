@@ -74,7 +74,7 @@ public class FirstMaxPaging {
             EntityManager em = getEmf().createEntityManager();
 
             try {
-                TypedQuery<Number> countQuery = em.createQuery("SELECT COUNT(e) FROM Employee e", Number.class);
+                TypedQuery<Number> countQuery = em.createNamedQuery("Employee.count", Number.class);
                 this.size = countQuery.getSingleResult().intValue();
             } finally {
                 em.close();
