@@ -15,8 +15,43 @@
 
 /* Controllers */
 
-function EmployeeListCtrl($scope, Employees) {
-	$scope.employees = Employees.query();
+function EmployeeListCtrl($scope, $http, Employees) {
+	$scope.pageNum = 1;
+	$scope.totalPages = 0;
+	$scope.pageSize = 10;
+	$scope.first = 0;
+	$scope.max = $scope.pageSize;
+	Employees.count().then(function (response) {
+		$scope.count = response.data.COUNT;
+		$scope.totalPages = Math.floor($scope.count / $scope.pageSize) + ($scope.count % $scope.pageSize > 0 ? 1 : 0);
+	});
+	
+	function fetchPage() {
+		$scope.employees = Employees.getPage({}, {
+			first : $scope.first,
+			max : $scope.max
+		});	
+	}
+	
+	$scope.pageNext = function () {
+		if ($scope.count > $scope.max)  {
+			$scope.first = $scope.max;
+			$scope.max = $scope.max + $scope.pageSize;
+			$scope.pageNum++;
+			fetchPage();
+		}
+	};
+	
+	$scope.pagePrevious = function() {
+		if ($scope.first - $scope.pageSize >= 0) {
+			$scope.max = $scope.first;
+			$scope.first = $scope.first - $scope.pageSize;
+			$scope.pageNum--;
+			fetchPage();
+		}
+	};
+	
+	fetchPage();
 }
 
 function EmployeeEditCtrl($scope, $routeParams, $location, Employee) {
