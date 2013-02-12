@@ -158,12 +158,12 @@ html,body,#body-container {
 	clear: both;
 	position: relative;
 	z-index: 15;
-	height: 15em;
-	margin-top: -15em;
+	height: 10em;
+	margin-top: -10em;
 }
 
 #body-content {
-	padding-bottom: 15em;
+	padding-bottom: 10em;
 }
 
 /* ==========================================================================

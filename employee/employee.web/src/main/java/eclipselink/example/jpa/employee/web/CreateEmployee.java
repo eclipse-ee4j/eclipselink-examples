@@ -30,15 +30,13 @@ import eclipselink.example.jpa.employee.model.Gender;
  */
 @ManagedBean
 @ViewScoped
-public class CreateEmployee {
+public class CreateEmployee extends BaseBean {
 
     private String firstName;
 
     private String lastName;
 
     private String gender;
-
-    private EntityManagerFactory emf;
 
     protected static final String PAGE = "/employee/create?faces-redirect=true";
 
@@ -66,13 +64,9 @@ public class CreateEmployee {
         this.gender = gender;
     }
 
-    public EntityManagerFactory getEmf() {
-        return emf;
-    }
-
     @PersistenceUnit(unitName = "employee")
     public void setEmf(EntityManagerFactory emf) {
-        this.emf = emf;
+        super.setEmf(emf);
     }
 
     public String create() {
@@ -81,19 +75,19 @@ public class CreateEmployee {
         emp.setLastName(getLastName());
         emp.setGender(Gender.valueOf(getGender()));
 
-        EntityManager em = getEmf().createEntityManager();
+        EntityManager em = createEntityManager();
         try {
             em.getTransaction().begin();
             em.persist(emp);
             em.getTransaction().commit();
         } finally {
-            em.close();
+            close(em);
         }
 
-        return StreamEmployees.PAGE;
+        return null;
     }
     
     public String cancel() {
-        return StreamEmployees.PAGE;
+        return "/index";
     }
 }

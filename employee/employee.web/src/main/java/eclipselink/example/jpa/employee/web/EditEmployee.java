@@ -12,14 +12,19 @@
  ******************************************************************************/
 package eclipselink.example.jpa.employee.web;
 
+import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
-import javax.faces.context.ExternalContext;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.context.Flash;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.OptimisticLockException;
 import javax.persistence.PersistenceUnit;
+import javax.persistence.RollbackException;
 
+import eclipselink.example.jpa.employee.model.Address;
 import eclipselink.example.jpa.employee.model.Employee;
 
 /**
@@ -29,56 +34,60 @@ import eclipselink.example.jpa.employee.model.Employee;
  * @since EclipseLink 2.3.0
  */
 @ManagedBean
-@SessionScoped
-public class EditEmployee {
+@ViewScoped
+public class EditEmployee extends BaseBean {
 
     private Employee employee;
 
-    private EntityManagerFactory emf;
+    protected static final String PAGE = "/employee/edit";
+    protected static final String PAGE_REDIRECT = "/employee/edit?faces-redirect=true";
 
-    protected static final String PAGE = "/employee/edit?faces-redirect=true";
+    @PostConstruct
+    private void init() {
+        Flash flashScope = FacesContext.getCurrentInstance().getExternalContext().getFlash();
+        this.employee = (Employee) flashScope.get("employee");
 
-    public Employee getEmployee() {
-        if (this.employee == null) {
-            this.employee = new Employee();
-        }
-        return employee;
+        refresh();
     }
 
-    public EntityManagerFactory getEmf() {
-        return emf;
+    public Employee getEmployee() {
+        return employee;
     }
 
     @PersistenceUnit(unitName = "employee")
     public void setEmf(EntityManagerFactory emf) {
-        this.emf = emf;
-    }
-
-    public String edit() {
-        ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
-        String idString = context.getRequestParameterMap().get("id");
-        int id = Integer.valueOf(idString);
-
-        System.out.println("EDIT EMPLOYEE: " + id);
-        EntityManager em = getEmf().createEntityManager();
-        try {
-            this.employee = em.find(Employee.class, id);
-            // TODO: Handle failure
-        } finally {
-            em.close();
-        }
-        return PAGE;
+        super.setEmf(emf);
     }
 
     public String save() {
-        EntityManager em = getEmf().createEntityManager();
+        EntityManager em = createEntityManager();
 
         try {
             em.getTransaction().begin();
-            em.merge(getEmployee());
+            this.employee = em.merge(getEmployee());
             em.getTransaction().commit();
+        } catch (OptimisticLockException e) {
+            FacesContext.getCurrentInstance().addMessage("OptimisticLockException", new FacesMessage("Save Failed: Optimistic Lock Exception."));
+        } catch (RollbackException e) {
+            if (e.getCause() instanceof OptimisticLockException) {
+                FacesContext.getCurrentInstance().addMessage("OptimisticLockException", new FacesMessage("Save Failed: Optimistic Lock Exception."));
+            }
         } finally {
-            em.close();
+            close(em);
+        }
+        return null;
+    }
+
+    public String refresh() {
+        EntityManager em = createEntityManager();
+
+        try {
+            this.employee = em.find(Employee.class, getEmployee().getId());
+            em.refresh(getEmployee());
+            getEmployee().getAddress();
+            getEmployee().getPhoneNumbers().size();
+        } finally {
+            close(em);
         }
         return null;
     }
@@ -86,4 +95,37 @@ public class EditEmployee {
     public String cancel() {
         return StreamEmployees.PAGE;
     }
+
+    /**
+     * Force the optimistic version field to be updated so that the save
+     * operations will fail.
+     */
+    public String updateVersion() {
+        EntityManager em = createEntityManager();
+
+        try {
+            em.getTransaction().begin();
+            em.createNativeQuery("UPDATE EMPLOYEE SET VERSION = VERSION + 1 WHERE EMP_ID = " + getEmployee().getId()).executeUpdate();
+            em.getTransaction().commit();
+        } finally {
+            close(em);
+        }
+        return null;
+    }
+    
+    public String removeAddress() {
+        getEmployee().setAddress(null);
+        return null;
+    }
+
+    public String addAddress() {
+        getEmployee().setAddress(new Address());
+        return null;
+    }
+    
+    public String addPhone() {
+        getEmployee().addPhoneNumber("", "", "");
+        return null;
+    }
+
 }

@@ -16,6 +16,8 @@ import java.util.List;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
+import javax.faces.context.Flash;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
@@ -34,7 +36,7 @@ import eclipselink.example.jpa.employee.services.IdInPaging;
 @SessionScoped
 public class PageIdInEmployees extends BaseBean {
 
-    private static final int PAGE_SIZE = 15;
+    private static final int PAGE_SIZE = 10;
 
     protected static final String PAGE = "/employee/stream?faces-redirect=true";
 
@@ -45,11 +47,7 @@ public class PageIdInEmployees extends BaseBean {
 
     private IdInPaging paging;
 
-    private int size;
-
     private int currentPage = 1;
-
-    private int numPages = 1;
 
     @PersistenceUnit(unitName = "employee")
     public void setEmf(EntityManagerFactory emf) {
@@ -62,19 +60,23 @@ public class PageIdInEmployees extends BaseBean {
 
     public String initialize() {
         EntityManager em = getEmf().createEntityManager();
-        TypedQuery<Number> idQuery = em.createQuery("SELECT e.id FROM Employee e ORDER BY e.id", Number.class);
-        
-        startSqlCapture();
-        this.paging = new IdInPaging(getEmf(), idQuery, 10);
 
-        this.currentPage = 1;
-        this.employees = null;
-        this.size = getPaging().size();
-        this.numPages = this.size / PAGE_SIZE;
-        if ((this.numPages * PAGE_SIZE) < this.size) {
-            this.numPages++;
+        try {
+            startSqlCapture();
+
+            TypedQuery<Number> idQuery = em.createQuery("SELECT e.id FROM Employee e ORDER BY e.id", Number.class);
+
+            this.paging = new IdInPaging(getEmf(), idQuery, PAGE_SIZE);
+
+            this.currentPage = 1;
+            this.paging.size();
+            stopSqlCapture();
+
+            this.employees = getEmployees();
+
+        } finally {
+            em.close();
         }
-
         return null;
     }
 
@@ -91,7 +93,7 @@ public class PageIdInEmployees extends BaseBean {
     }
 
     public int getSize() {
-        return this.size;
+        return getPaging().size();
     }
 
     public int getCurrentPage() {
@@ -99,31 +101,47 @@ public class PageIdInEmployees extends BaseBean {
     }
 
     public int getNumPages() {
-        return numPages;
+        return getPaging().getNumPages();
     }
 
     public String next() {
         if (getHasNext()) {
             this.currentPage++;
             this.employees = null;
+            getEmployees();
         }
         return null;
     }
 
     public boolean getHasNext() {
-        return this.currentPage < this.numPages;
+        return this.currentPage < getNumPages();
     }
 
     public String previous() {
         if (getHasPrevious()) {
             this.currentPage--;
             this.employees = null;
+            getEmployees();
         }
         return null;
     }
 
     public boolean getHasPrevious() {
         return this.currentPage > 1;
+    }
+
+    public String edit(Employee employee) {
+        Flash flashScope = FacesContext.getCurrentInstance().getExternalContext().getFlash();
+        flashScope.put("employee", employee);
+
+        return EditEmployee.PAGE_REDIRECT;
+    }
+
+    public String delete(Employee employee) {
+        Flash flashScope = FacesContext.getCurrentInstance().getExternalContext().getFlash();
+        flashScope.put("employee", employee);
+
+        return DeleteEmployee.PAGE;
     }
 
 }

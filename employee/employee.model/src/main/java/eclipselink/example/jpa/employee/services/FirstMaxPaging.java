@@ -31,6 +31,8 @@ public class FirstMaxPaging {
 
     private int pageSize;
 
+    private int size = -1;
+
     public FirstMaxPaging(EntityManagerFactory emf, int pageSize) {
         super();
         this.emf = emf;
@@ -68,14 +70,17 @@ public class FirstMaxPaging {
     }
 
     public int size() {
-        EntityManager em = getEmf().createEntityManager();
+        if (this.size < 0) {
+            EntityManager em = getEmf().createEntityManager();
 
-        try {
-            TypedQuery<Number> countQuery = em.createQuery("SELECT COUNT(e) FROM Employee e", Number.class);
-            return countQuery.getSingleResult().intValue();
-        } finally {
-            em.close();
+            try {
+                TypedQuery<Number> countQuery = em.createQuery("SELECT COUNT(e) FROM Employee e", Number.class);
+                this.size = countQuery.getSingleResult().intValue();
+            } finally {
+                em.close();
+            }
         }
+        return this.size;
     }
 
 }

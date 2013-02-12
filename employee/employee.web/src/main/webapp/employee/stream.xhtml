@@ -9,7 +9,7 @@
 
 <ui:composition template="/WEB-INF/template.xhtml">
 	<ui:define name="body">
-		<h1>All Employees (Streamed)</h1>
+		<h1>All Employees</h1>
 		<h:form>
 			<h:dataTable var="emp" value="#{streamEmployees.employees}"
 				border="1" width="500">
@@ -26,14 +26,10 @@
 					<h:outputText value="#{emp.firstName}" />
 				</h:column>
 				<h:column>
-					<h:commandLink action="#{editEmployee.edit}" value="Edit">
-						<f:param name="id" value="#{emp.id}" />
-					</h:commandLink>
+					<h:commandLink value="Edit" action="#{pageEmployees.edit(emp)}" />
 				</h:column>
 				<h:column>
-					<h:commandLink action="#{deleteEmployee.confirm}" value="Delete">
-						<f:param name="id" value="#{emp.id}" />
-					</h:commandLink>
+					<h:commandLink value="Delete" action="#{pageEmployees.delete(emp)}" />
 				</h:column>
 
 
@@ -52,13 +48,6 @@
 					</table>
 				</f:facet>
 			</h:dataTable>
-
-			<p>
-				Total employees available in stream:
-				<h:outputText value="#{streamEmployees.size}" />
-			</p>
-			<h:commandLink value="Refresh Stream"
-				action="#{streamEmployees.reset}" />
 		</h:form>
 	</ui:define>
 
@@ -68,16 +57,6 @@
 			CursoredStream. This requires a stateful resource in the container to
 			maintain the stream and ensure it is properly closed when no longer
 			needed.</p>
-	</ui:define>
-
-	<ui:define name="footer">
-		<h:dataTable var="sql" value="#{streamEmployees.sql}" width="100%">
-			<h:column>
-				<pre>
-				<h:outputText value="#{sql}" />
-				</pre>
-			</h:column>
-		</h:dataTable>
 	</ui:define>
 
 </ui:composition>

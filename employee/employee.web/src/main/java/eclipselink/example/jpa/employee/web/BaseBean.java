@@ -12,9 +12,9 @@
  ******************************************************************************/
 package eclipselink.example.jpa.employee.web;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
 import org.eclipse.persistence.logging.SessionLogEntry;
@@ -34,8 +34,6 @@ public abstract class BaseBean {
 
     private Diagnostics diagnostics;
 
-    private List<String> sql;
-
     public EntityManagerFactory getEmf() {
         return emf;
     }
@@ -44,37 +42,37 @@ public abstract class BaseBean {
         this.emf = emf;
         this.diagnostics = Diagnostics.getInstance(emf);
     }
+    
+    protected EntityManager createEntityManager() {
+        EntityManager em = getEmf().createEntityManager();
+        startSqlCapture();
+        return em;
+    }
+    
+    protected void close(EntityManager em) {
+        if (em.getTransaction().isActive()) {
+            em.getTransaction().rollback();
+        }
+        em.close();
+        stopSqlCapture();
+    }
 
     protected void startSqlCapture() {
-        this.sql = null;
         this.diagnostics.start();
     }
 
     protected void stopSqlCapture() {
-        setSql(this.diagnostics.stop());
+        addMessages(this.diagnostics.stop());
     }
 
-    private void setSql(SQLTrace sqlTrace) {
-        if (sqlTrace != null) {
-            List<String> strings = new ArrayList<String>();
-            for (SessionLogEntry entry : sqlTrace.getEntries()) {
-                String val = entry.getMessage().trim();
-                while (!val.isEmpty() && (val.endsWith("\n") || val.endsWith("\r"))) {
-                    val = val.substring(0, val.length());
-                }
-                if (!val.isEmpty()) {
-                    System.out.println("SQL: '" + val + "'");
-                    strings.add(val);
-                }
-            }
-            this.sql = strings;
-        } else {
-            this.sql = null;
+    /**
+     * Add each SQL string to the messages TODO: Allow this to be
+     * enabled/disabled
+     */
+    private void addMessages(SQLTrace sqlTrace) {
+        for (SessionLogEntry entry : sqlTrace.getEntries()) {
+            FacesContext.getCurrentInstance().addMessage("SQL", new FacesMessage(entry.getMessage()));
         }
-    }
-
-    public List<String> getSql() {
-        return sql;
     }
 
 }

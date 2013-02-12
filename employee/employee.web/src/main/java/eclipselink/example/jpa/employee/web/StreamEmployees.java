@@ -15,7 +15,9 @@ package eclipselink.example.jpa.employee.web;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.faces.context.Flash;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
@@ -31,7 +33,7 @@ import eclipselink.example.jpa.employee.services.StreamPaging;
  * @since EclipseLink 2.4.2
  */
 @ManagedBean
-@SessionScoped
+@ViewScoped
 public class StreamEmployees extends BaseBean {
 
     private static final int PAGE_SIZE = 10;
@@ -53,8 +55,14 @@ public class StreamEmployees extends BaseBean {
 
     protected void initialize() {
         EntityManager em = getEmf().createEntityManager();
-        TypedQuery<Employee> query = em.createQuery("SELECT e FROM Employee e ORDER BY e.id", Employee.class);
-        this.stream = new StreamPaging<Employee>(query, PAGE_SIZE);
+
+        try {
+            TypedQuery<Employee> query = em.createQuery("SELECT e FROM Employee e ORDER BY e.id", Employee.class);
+            this.stream = new StreamPaging<Employee>(query, PAGE_SIZE);
+            this.stream.size();
+        } finally {
+            em.close();
+        }
         this.employees = null;
     }
 
@@ -66,6 +74,7 @@ public class StreamEmployees extends BaseBean {
     }
 
     public List<Employee> getEmployees() {
+        startSqlCapture();
         if (this.stream == null) {
             initialize();
         }
@@ -108,8 +117,18 @@ public class StreamEmployees extends BaseBean {
         return getStream().hasNext();
     }
 
-    public List<String> getSql() {
-        return null;
+    public String edit(Employee employee) {
+        Flash flashScope = FacesContext.getCurrentInstance().getExternalContext().getFlash();
+        flashScope.put("employee", employee);
+
+        return EditEmployee.PAGE_REDIRECT;
+    }
+
+    public String delete(Employee employee) {
+        Flash flashScope = FacesContext.getCurrentInstance().getExternalContext().getFlash();
+        flashScope.put("employee", employee);
+
+        return DeleteEmployee.PAGE;
     }
 
 }

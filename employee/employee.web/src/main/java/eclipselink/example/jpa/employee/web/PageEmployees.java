@@ -14,8 +14,11 @@ package eclipselink.example.jpa.employee.web;
 
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.faces.context.Flash;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 
@@ -23,13 +26,13 @@ import eclipselink.example.jpa.employee.model.Employee;
 import eclipselink.example.jpa.employee.services.FirstMaxPaging;
 
 /**
- * Return list of available Leagues from JAX-RS call to MySports Admin app.
+ * TODO
  * 
  * @author dclarke
  * @since EclipseLink 2.4.2
  */
 @ManagedBean
-@SessionScoped
+@ViewScoped
 public class PageEmployees extends BaseBean {
 
     private static final int PAGE_SIZE = 10;
@@ -45,7 +48,6 @@ public class PageEmployees extends BaseBean {
 
     private int currentPage = 1;
 
-
     @PersistenceUnit(unitName = "employee")
     public void setEmf(EntityManagerFactory emf) {
         super.setEmf(emf);
@@ -55,21 +57,16 @@ public class PageEmployees extends BaseBean {
         return paging;
     }
 
-    public String initialize() {
-        startSqlCapture();
-        
+    @PostConstruct
+    public void initialize() {
         this.paging = new FirstMaxPaging(getEmf(), PAGE_SIZE);
 
         this.currentPage = 1;
         this.employees = null;
-
-        return null;
+        getEmployees();
     }
 
     public List<Employee> getEmployees() {
-        if (this.paging == null) {
-            initialize();
-        }
         if (this.employees == null) {
             startSqlCapture();
             this.employees = getPaging().get(this.currentPage);
@@ -114,4 +111,17 @@ public class PageEmployees extends BaseBean {
         return this.currentPage > 1;
     }
 
+    public String edit(Employee employee) {
+        Flash flashScope = FacesContext.getCurrentInstance().getExternalContext().getFlash();
+        flashScope.put("employee", employee);
+
+        return EditEmployee.PAGE_REDIRECT;
+    }
+
+    public String delete(Employee employee) {
+        Flash flashScope = FacesContext.getCurrentInstance().getExternalContext().getFlash();
+        flashScope.put("employee", employee);
+
+        return DeleteEmployee.PAGE;
+    }
 }

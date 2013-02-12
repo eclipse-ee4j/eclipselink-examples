@@ -9,8 +9,19 @@
 
 <ui:composition template="/WEB-INF/template.xhtml">
 	<ui:define name="body">
-		<h1>Edit Employee</h1>
+
 		<h:form>
+			<div align="right">
+				<h:commandButton value="Save" action="#{editEmployee.save}" />
+				&nbsp;
+				<h:commandButton value="Refresh" action="#{editEmployee.refresh}" />
+				&nbsp;
+				<h:commandButton value="Cancel" action="#{editEmployee.cancel}" />
+			</div>
+			<h1>
+				Edit Employee:
+				<h:outputLabel value="#{editEmployee.employee.id}" />
+			</h1>
 			<div align="center">
 				<h:panelGrid width="400" columns="2" border="1">
 					<h:outputLabel value="First Name:" />
@@ -24,26 +35,70 @@
 					</h:selectOneMenu>
 					<h:outputLabel value="Salary: $" />
 					<h:inputText value="#{editEmployee.employee.salary}" />
+					<h:outputLabel value="Version" />
+					<h:outputLabel value="#{editEmployee.employee.version}" />
 
 				</h:panelGrid>
 
 				<h2>Address</h2>
-				<h:panelGrid width="400" columns="2" border="1">
+				<h:panelGrid width="400" columns="2" border="1"
+					rendered="#{editEmployee.employee.address != null}">
 					<h:outputLabel value="Street:" />
-					<h:inputText value="" />
+					<h:inputText value="#{editEmployee.employee.address.street}" />
 					<h:outputLabel value="City:" />
-					<h:inputText value="" />
+					<h:inputText value="#{editEmployee.employee.address.city}" />
 					<h:outputLabel value="Country" />
-					<h:inputText value="" />
-
+					<h:inputText value="#{editEmployee.employee.address.country}" />
+					<f:facet name="footer">
+						<div align="right">
+							<h:commandLink value="Remove Address"
+								action="#{editEmployee.removeAddress}" />
+						</div>
+					</f:facet>
 				</h:panelGrid>
+				<h:commandLink value="Add Address"
+					action="#{editEmployee.addAddress}"
+					rendered="#{editEmployee.employee.address == null}" />
 
-
-				<h:commandButton value="Save" action="#{editEmployee.save}" />
-				&nbsp;
-				<h:commandButton value="Cancel" action="#{editEmployee.cancel}" />
+				<h2>Phone Numbers</h2>
+				<h:dataTable width="300" var="phone"
+					value="#{editEmployee.employee.phoneNumbers}" border="1">
+					<h:column>
+						<f:facet name="header">Type</f:facet>
+						<h:inputText value="#{phone.type}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">Area Code</f:facet>
+						<h:inputText value="#{phone.areaCode}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">Number</f:facet>
+						<h:inputText value="#{phone.number}" />
+					</h:column>
+					<f:facet name="footer">
+						<div align="right">
+							<h:commandLink value="Add Phone"
+								action="#{editEmployee.addPhone}" />
+						</div>
+					</f:facet>
+				</h:dataTable>
 			</div>
 		</h:form>
+	</ui:define>
+
+	<ui:define name="eclipselink">
+		<h3>Edit Entity</h3>
+		<p>This page performs an edit operation on an Employee entity
+			along with its dependent PhoneNumber(s) and Address entities. The
+			save operation will merge a new entity in causing all necessary
+			updates, inserts, and deletes as well as ensuring that optimistic
+			locking is properly checked.</p>
+		<div align="center">
+			<h:form>
+				<h:commandButton value="Force Version Update"
+					action="#{editEmployee.updateVersion}" />
+			</h:form>
+		</div>
 	</ui:define>
 </ui:composition>
 </html>

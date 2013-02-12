@@ -12,10 +12,11 @@
  ******************************************************************************/
 package eclipselink.example.jpa.employee.web;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.context.Flash;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
@@ -36,6 +37,12 @@ public class DeleteEmployee extends BaseBean {
 
     protected static final String PAGE = "/employee/delete?faces-redirect=true";
 
+    @PostConstruct
+    private void init() {
+        Flash flashScope = FacesContext.getCurrentInstance().getExternalContext().getFlash();
+        this.employee = (Employee) flashScope.get("employee");
+    }
+
     public Employee getEmployee() {
         return employee;
     }
@@ -45,53 +52,22 @@ public class DeleteEmployee extends BaseBean {
         super.setEmf(emf);
     }
 
-    public String confirm() {
-        ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
-        String idString = context.getRequestParameterMap().get("id");
-        int id = Integer.valueOf(idString);
-
-        System.out.println("CONFIRM DELETE EMPLOYEE: " + id);
-        EntityManager em = getEmf().createEntityManager();
-        try {
-            this.employee = em.find(Employee.class, id);
-
-            if (this.employee == null) {
-                throw new RuntimeException("DeleteEmployee - no employee found for id: " + id);
-            }
-        } finally {
-            em.close();
-        }
-
-        return PAGE;
-    }
-
     public String delete() {
-        ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
-        String idString = context.getRequestParameterMap().get("id");
-        int id = Integer.valueOf(idString);
-
-        System.out.println("DELETE EMPLOYEE: " + id);
-        
-        startSqlCapture();
-        EntityManager em = getEmf().createEntityManager();
+        EntityManager em = createEntityManager();
         try {
-            this.employee = em.find(Employee.class, id);
+            this.employee = em.find(Employee.class, getEmployee().getId());
             // TODO: Handle find failure
             em.getTransaction().begin();
             em.remove(getEmployee());
             em.getTransaction().commit();
-            
-            stopSqlCapture();
+
         } finally {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            em.close();
+            close(em);
             this.employee = null;
         }
-        return PAGE;
+        return null;
     }
-    
+
     public boolean getisDeleted() {
         return this.employee == null;
     }
