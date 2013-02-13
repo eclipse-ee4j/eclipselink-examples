@@ -9,12 +9,11 @@
 
 <ui:composition template="/WEB-INF/template.xhtml">
 	<ui:define name="body">
-		<h1>Employee</h1>
 		<h:form>
-			<ul>
-				<li><h:commandLink action="/employee/edit?faces-redirect=true">Create</h:commandLink>
-				</li>
-				<li>Searches
+			<h:panelGrid width="600" columns="2" class="table-design">
+				<f:facet name="header">Employee</f:facet>
+				<h:panelGroup>
+					<h3>Searches</h3>
 					<ul>
 						<li><h:commandLink action="employee/page?faces-redirect=true">All Employees (first/max paging)</h:commandLink></li>
 						<li><h:commandLink
@@ -22,8 +21,21 @@
 						<li><h:commandLink
 								action="employee/stream?faces-redirect=true">All Employees (streaming)</h:commandLink></li>
 					</ul>
-				</li>
-			</ul>
+				</h:panelGroup>
+				<h:commandLink action="/employee/edit?faces-redirect=true"
+					value="Create" />
+			</h:panelGrid>
+			<p />
+			<h:panelGrid width="600" columns="1" class="table-design">
+				<f:facet name="header">Projects</f:facet>
+				<h:panelGroup>
+					<h3>Searches</h3>
+					<ul>
+					</ul>
+				</h:panelGroup>
+				<h:commandLink action="/employee/edit?faces-redirect=true"
+					value="Create" />
+			</h:panelGrid>
 		</h:form>
 	</ui:define>
 

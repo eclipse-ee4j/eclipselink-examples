@@ -24,55 +24,39 @@ import javax.persistence.PersistenceUnit;
 import eclipselink.example.jpa.employee.model.Employee;
 
 /**
- * Return list of available Leagues from JAX-RS call to MySports Admin app.
+ * TODO
  * 
  * @author dclarke
  * @since EclipseLink 2.3.0
  */
 @ManagedBean
 @ViewScoped
-public class DeleteEmployee extends BaseBean {
+public class SearchEmployees extends BaseBean {
 
-    private Employee employee;
+    private String firstName = "%";
 
-    protected static final String PAGE = "/employee/delete?faces-redirect=true";
-
-    @PostConstruct
-    private void init() {
-        Flash flashScope = FacesContext.getCurrentInstance().getExternalContext().getFlash();
-        this.employee = (Employee) flashScope.get("employee");
+    private String lastName = "%";
+    
+    public String getFirstName() {
+        return firstName;
     }
 
-    public Employee getEmployee() {
-        return employee;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    @PersistenceUnit(unitName = "employee")
-    public void setEmf(EntityManagerFactory emf) {
-        super.setEmf(emf);
+    public String getLastName() {
+        return lastName;
     }
 
-    public String delete() {
-        EntityManager em = createEntityManager();
-        try {
-            this.employee = em.find(Employee.class, getEmployee().getId());
-            // TODO: Handle find failure
-            em.getTransaction().begin();
-            em.remove(getEmployee());
-            em.getTransaction().commit();
-
-        } finally {
-            close(em);
-            this.employee = null;
-        }
-        return null;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+    
+    public String search() {
+        Flash flash = FacesContext.getCurrentInstance().getExternalContext().getFlash();
+        flash.put("", "");
+        return EmployeeResults.PAGE;
     }
 
-    public boolean getisDeleted() {
-        return this.employee == null;
-    }
-
-    public String cancel() {
-        return StreamEmployees.PAGE;
-    }
 }

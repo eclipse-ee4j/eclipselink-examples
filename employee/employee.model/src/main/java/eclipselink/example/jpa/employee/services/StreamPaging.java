@@ -29,25 +29,19 @@ import org.eclipse.persistence.queries.ScrollableCursor;
  * 
  * @since EclipseLink 2.4.2
  */
-public class StreamPaging<T> {
+public class StreamPaging<T> extends EntityPaging<T> {
 
     private ScrollableCursor stream;
 
-    private int pageSize;
-
     public StreamPaging(TypedQuery<T> query, int pageSize) {
-        super();
-        this.pageSize = pageSize;
+        super(null, pageSize);
 
         query.setHint(QueryHints.SCROLLABLE_CURSOR, HintValues.TRUE);
 
         this.stream = (ScrollableCursor) query.getSingleResult();
     }
 
-    public int getPageSize() {
-        return pageSize;
-    }
-
+    @Override
     @SuppressWarnings("unchecked")
     public List<T> next() {
         if (!this.stream.hasNext()) {
@@ -58,22 +52,29 @@ public class StreamPaging<T> {
             quantity = this.stream.size() - this.stream.getPosition() + 1;
         }
         List<T> entities = (List<T>) this.stream.next(quantity);
-
+        this.currentPage++;
         return entities;
     }
 
+    @Override
     public List<T> previous() {
         throw new RuntimeException("NOT YET IMPLEMENTED");
     }
 
-    public boolean hasNext() {
-        return this.stream.hasNext();
+    @Override
+    public List<T> get(int page) {
+        if (page == getCurrentPage() + 1) {
+            return next();
+        }
+        throw new RuntimeException("NOT YET IMPLEMENTED");
     }
 
+    @Override
     public int size() {
         return this.stream.size();
     }
 
+    @Override
     public int getNumPages() {
         return (size() / getPageSize()) + (size() % getPageSize() > 0 ? 1 : 0);
     }
@@ -87,4 +88,5 @@ public class StreamPaging<T> {
             this.stream = null;
         }
     }
+
 }

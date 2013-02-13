@@ -12,8 +12,8 @@
 		<h1>Administration</h1>
 		<h:form>
 			<div align="center">
-				<h:panelGrid width="400" columns="1" border="1">
-				</h:panelGrid>
+			<h:commandButton value="Reset Database" action="#{admin.resetDatabase}"/>
+			<h:commandButton value="#{config.displaySql ? 'Disable SQL Display' : 'Enable SQL Display}" action="#{config.toggleSqlDisplay}"/>
 			</div>
 		</h:form>
 		<h2>Entity Status</h2>
