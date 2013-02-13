@@ -25,26 +25,12 @@ import eclipselink.example.jpa.employee.model.Employee;
  * 
  * @since EclipseLink 2.4.2
  */
-public class FirstMaxPaging {
-
-    private EntityManagerFactory emf;
-
-    private int pageSize;
+public class FirstMaxPaging extends EntityPaging<Employee> {
 
     private int size = -1;
 
     public FirstMaxPaging(EntityManagerFactory emf, int pageSize) {
-        super();
-        this.emf = emf;
-        this.pageSize = pageSize;
-    }
-
-    protected EntityManagerFactory getEmf() {
-        return emf;
-    }
-
-    public int getPageSize() {
-        return pageSize;
+        super(emf, pageSize);
     }
 
     public int getNumPages() {
@@ -62,7 +48,7 @@ public class FirstMaxPaging {
             int first = (page - 1) * getPageSize();
             empsQuery.setFirstResult(first);
             empsQuery.setMaxResults(getPageSize());
-
+            this.currentPage = page;
             return empsQuery.getResultList();
         } finally {
             em.close();

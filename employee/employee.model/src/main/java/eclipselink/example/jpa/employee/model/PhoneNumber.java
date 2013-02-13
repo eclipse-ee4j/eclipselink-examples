@@ -25,102 +25,104 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="PHONE")
+@Table(name = "PHONE")
 @IdClass(PhoneNumber.ID.class)
 public class PhoneNumber implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-	@Column(name = "EMP_ID", updatable = false, insertable = false)
-	private int id;
-	@Id
-	@Column(updatable = false)
-	private String type;
-	@Basic
-	@Column(name = "AREA_CODE")
-	private String areaCode;
-	@Basic
-	@Column(name = "P_NUMBER")
-	private String number;
-	@ManyToOne
-	@JoinColumn(name = "EMP_ID")
-	private Employee owner;
+    @Column(name = "EMP_ID", updatable = false, insertable = false)
+    private int id;
+    @Id
+    @Column(updatable = false)
+    private String type;
+    @Basic
+    @Column(name = "AREA_CODE")
+    private String areaCode;
+    @Basic
+    @Column(name = "P_NUMBER")
+    private String number;
+    @ManyToOne
+    @JoinColumn(name = "EMP_ID")
+    private Employee owner;
 
-	public PhoneNumber() {
-	}
+    public PhoneNumber() {
+    }
 
-	public PhoneNumber(String type, String areaCode, String number) {
-		this();
-		setType(type);
-		setAreaCode(areaCode);
-		setNumber(number);
-	}
+    public PhoneNumber(String type, String areaCode, String number) {
+        this();
+        setType(type);
+        setAreaCode(areaCode);
+        setNumber(number);
+    }
 
-	public String getAreaCode() {
-		return areaCode;
-	}
+    public String getAreaCode() {
+        return areaCode;
+    }
 
-	public void setAreaCode(String areaCode) {
-		this.areaCode = areaCode;
-	}
+    public void setAreaCode(String areaCode) {
+        this.areaCode = areaCode;
+    }
 
-	public int getId() {
-		return this.id;
-	}
+    public int getId() {
+        return this.id;
+    }
 
-	public void setId(int empId) {
-		this.id = empId;
-	}
+    public void setId(int empId) {
+        this.id = empId;
+    }
 
-	public String getNumber() {
-		return this.number;
-	}
+    public String getNumber() {
+        return this.number;
+    }
 
-	public void setNumber(String pNumber) {
-		this.number = pNumber;
-	}
+    public void setNumber(String pNumber) {
+        this.number = pNumber;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public Employee getOwner() {
-		return this.owner;
-	}
+    public Employee getOwner() {
+        return this.owner;
+    }
 
-	protected void setOwner(Employee employee) {
-		this.owner = employee;
-		this.id = employee.getId();
-	}
+    protected void setOwner(Employee employee) {
+        this.owner = employee;
+        if (employee != null) {
+            this.id = employee.getId();
+        }
+    }
 
-	public static class ID implements Serializable {
+    public static class ID implements Serializable {
         private static final long serialVersionUID = 1L;
 
         public int id;
-		public String type;
+        public String type;
 
-		public ID() {
-		}
+        public ID() {
+        }
 
-		public ID(int empId, String type) {
-			this.id = empId;
-			this.type = type;
-		}
+        public ID(int empId, String type) {
+            this.id = empId;
+            this.type = type;
+        }
 
-		public boolean equals(Object other) {
-			if (other instanceof ID) {
-				final ID otherID = (ID) other;
-				return otherID.id == id && otherID.type.equals(type);
-			}
-			return false;
-		}
+        public boolean equals(Object other) {
+            if (other instanceof ID) {
+                final ID otherID = (ID) other;
+                return otherID.id == id && otherID.type.equals(type);
+            }
+            return false;
+        }
 
-		public int hashCode() {
-			return super.hashCode();
-		}
-	}
+        public int hashCode() {
+            return super.hashCode();
+        }
+    }
 }

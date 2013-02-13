@@ -16,6 +16,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.TypedQuery;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -24,8 +25,8 @@ import org.junit.Test;
 
 import eclipselink.example.jpa.employee.model.Employee;
 import eclipselink.example.jpa.employee.services.Diagnostics;
-import eclipselink.example.jpa.employee.services.FirstMaxPaging;
 import eclipselink.example.jpa.employee.services.Diagnostics.SQLTrace;
+import eclipselink.example.jpa.employee.services.IdInPaging;
 import example.JavaSEExample;
 import example.PersistenceTesting;
 
@@ -38,23 +39,23 @@ import example.PersistenceTesting;
 public class PageIdsInEmployeesTest {
 
     @Test
-    public void streamAll() {
+    public void page5ByIndex() {
         EntityManager em = getEmf().createEntityManager();
         Diagnostics diagnostics = Diagnostics.getInstance(getEmf());
 
         SQLTrace start = diagnostics.start();
         Assert.assertTrue(start.getEntries().isEmpty());
 
-        FirstMaxPaging paging = new FirstMaxPaging(emf, 5);
+        TypedQuery<Number> idQuery = em.createQuery("SELECT e.id FROM Employee e ORDER BY e.id", Number.class);
+        IdInPaging paging = new IdInPaging(emf, idQuery, 5);
         Assert.assertEquals(25, paging.size());
 
         SQLTrace end = diagnostics.stop();
 
         Assert.assertNotNull(end);
         Assert.assertSame(start, end);
-        Assert.assertFalse(end.getEntries().isEmpty());
         Assert.assertEquals(1, end.getEntries().size());
-                
+
         Assert.assertEquals(5, paging.getNumPages());
 
         for (int index = 0; index < 5; index++) {
@@ -65,7 +66,109 @@ public class PageIdsInEmployeesTest {
             }
         }
 
-        
+        Assert.assertFalse(paging.hasNext());
+
+        em.close();
+    }
+
+    @Test
+    public void page5ByNext() {
+        EntityManager em = getEmf().createEntityManager();
+        Diagnostics diagnostics = Diagnostics.getInstance(getEmf());
+
+        SQLTrace start = diagnostics.start();
+        Assert.assertTrue(start.getEntries().isEmpty());
+
+        TypedQuery<Number> idQuery = em.createQuery("SELECT e.id FROM Employee e ORDER BY e.id", Number.class);
+        IdInPaging paging = new IdInPaging(emf, idQuery, 5);
+        Assert.assertEquals(25, paging.size());
+
+        SQLTrace end = diagnostics.stop();
+
+        Assert.assertNotNull(end);
+        Assert.assertSame(start, end);
+        Assert.assertEquals(1, end.getEntries().size());
+
+        Assert.assertEquals(5, paging.getNumPages());
+
+        for (int index = 0; index < 5; index++) {
+            List<Employee> emps = paging.next();
+            Assert.assertEquals(5, emps.size());
+            for (Employee e : emps) {
+                System.out.println("> " + e);
+            }
+        }
+
+        Assert.assertFalse(paging.hasNext());
+
+        em.close();
+    }
+
+    @Test
+    public void page10ByIndex() {
+        EntityManager em = getEmf().createEntityManager();
+        Diagnostics diagnostics = Diagnostics.getInstance(getEmf());
+
+        SQLTrace start = diagnostics.start();
+        Assert.assertTrue(start.getEntries().isEmpty());
+
+        TypedQuery<Number> idQuery = em.createQuery("SELECT e.id FROM Employee e ORDER BY e.id", Number.class);
+        IdInPaging paging = new IdInPaging(emf, idQuery, 10);
+        Assert.assertEquals(25, paging.size());
+
+        SQLTrace end = diagnostics.stop();
+
+        Assert.assertNotNull(end);
+        Assert.assertSame(start, end);
+        Assert.assertFalse(end.getEntries().isEmpty());
+        Assert.assertEquals(1, end.getEntries().size());
+
+        Assert.assertEquals(3, paging.getNumPages());
+
+        for (int index = 0; index < paging.getNumPages(); index++) {
+            List<Employee> emps = paging.get(index + 1);
+            Assert.assertEquals(index < 2 ? 10 : 5, emps.size());
+            for (Employee e : emps) {
+                System.out.println("> " + e);
+            }
+        }
+
+        Assert.assertFalse(paging.hasNext());
+
+        em.close();
+    }
+
+    @Test
+    public void page10ByNext() {
+        EntityManager em = getEmf().createEntityManager();
+        Diagnostics diagnostics = Diagnostics.getInstance(getEmf());
+
+        SQLTrace start = diagnostics.start();
+        Assert.assertTrue(start.getEntries().isEmpty());
+
+        TypedQuery<Number> idQuery = em.createQuery("SELECT e.id FROM Employee e ORDER BY e.id", Number.class);
+        IdInPaging paging = new IdInPaging(emf, idQuery, 10);
+        Assert.assertEquals(25, paging.size());
+
+        SQLTrace end = diagnostics.stop();
+
+        Assert.assertNotNull(end);
+        Assert.assertSame(start, end);
+        Assert.assertFalse(end.getEntries().isEmpty());
+        Assert.assertEquals(1, end.getEntries().size());
+
+        Assert.assertEquals(3, paging.getNumPages());
+
+        for (int index = 0; index < paging.getNumPages(); index++) {
+            List<Employee> emps = paging.next();
+            Assert.assertEquals(index < 2 ? 10 : 5, emps.size());
+            for (Employee e : emps) {
+                System.out.println("> " + e);
+            }
+        }
+
+        Assert.assertFalse(paging.hasNext());
+
         em.close();
     }
 

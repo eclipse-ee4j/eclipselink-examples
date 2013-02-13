@@ -19,7 +19,6 @@ import static javax.persistence.FetchType.LAZY;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ejb.Lock;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Basic;
@@ -42,7 +41,6 @@ import javax.persistence.QueryHint;
 import javax.persistence.SecondaryTable;
 import javax.persistence.Version;
 
-import org.eclipse.persistence.annotations.CascadeOnDelete;
 import org.eclipse.persistence.annotations.ConversionValue;
 import org.eclipse.persistence.annotations.Convert;
 import org.eclipse.persistence.annotations.ObjectTypeConverter;

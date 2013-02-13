@@ -13,15 +13,17 @@
 		<h:form>
 			<div align="right">
 				<h:commandButton value="Save" action="#{editEmployee.save}" />
-				&nbsp;
 				<h:commandButton value="Refresh" action="#{editEmployee.refresh}" />
-				&nbsp;
+				<h:commandButton value="Delete" action="#{editEmployee.delete}"
+					rendered="#{!editEmployee.create}" />
 				<h:commandButton value="Cancel" action="#{editEmployee.cancel}" />
 			</div>
 			<div align="center">
-				<h:panelGrid width="400" columns="2" border="1">
-					<h:outputLabel value="ID:" />
-					<h:outputLabel value="#{editEmployee.employee.id}" />
+				<h:panelGrid width="600" columns="2" border="1" class="table-design">
+					<f:facet name="header">Employee</f:facet>
+					<h:outputLabel value="ID:" rendered="{#editEmployee.create}" />
+					<h:outputLabel value="#{editEmployee.employee.id}"
+						rendered="{#editEmployee.create}" />
 					<h:outputLabel value="First Name:" />
 					<h:inputText value="#{editEmployee.employee.firstName}" />
 					<h:outputLabel value="Last Name:" />
@@ -38,9 +40,10 @@
 
 				</h:panelGrid>
 
-				<h2>Address</h2>
-				<h:panelGrid width="400" columns="2" border="1"
-					rendered="#{editEmployee.employee.address != null}">
+				<h:panelGrid width="600" columns="2" border="1"
+					rendered="#{editEmployee.employee.address != null}"
+					class="table-design">
+					<f:facet name="header">Address</f:facet>
 					<h:outputLabel value="Street:" />
 					<h:inputText value="#{editEmployee.employee.address.street}" />
 					<h:outputLabel value="City:" />
@@ -49,21 +52,22 @@
 					<h:inputText value="#{editEmployee.employee.address.country}" />
 					<f:facet name="footer">
 						<div align="right">
-							<h:commandLink value="Remove Address"
-								action="#{editEmployee.removeAddress}" />
+							<h:commandButton value="Remove"
+								action="#{editEmployee.removeAddress}" class="remove-button" />
 						</div>
 					</f:facet>
 				</h:panelGrid>
-				<h:commandLink value="Add Address"
+				<h:commandButton value="Add Address"
 					action="#{editEmployee.addAddress}"
-					rendered="#{editEmployee.employee.address == null}" />
+					rendered="#{editEmployee.employee.address == null}" width="600" />
 
-				<h2>Phone Numbers</h2>
-				<h:dataTable width="300" var="phone"
-					value="#{editEmployee.employee.phoneNumbers}" border="1">
+				<h:dataTable width="600" var="phone"
+					value="#{editEmployee.employee.phoneNumbers}" border="1"
+					class="table-design">
+					<f:facet name="header">Phone Numbers</f:facet>
 					<h:column>
 						<f:facet name="header">Type</f:facet>
-						<h:inputText value="#{phone.type}" />
+						<h:outputLabel value="#{phone.type}" />
 					</h:column>
 					<h:column>
 						<f:facet name="header">Area Code</f:facet>
@@ -73,10 +77,15 @@
 						<f:facet name="header">Number</f:facet>
 						<h:inputText value="#{phone.number}" />
 					</h:column>
+					<h:column>
+						<h:commandButton value="Remove"
+							action="#{editEmployee.remove(phone)}" class="remove-button" />
+					</h:column>
 					<f:facet name="footer">
 						<div align="right">
-							<h:commandLink value="Add Phone"
-								action="#{editEmployee.addPhone}" />
+							<h:inputText value="#{editEmployee.type}" />
+							<h:commandButton value="Add" action="#{editEmployee.addPhone}"
+								class="add-button" />
 						</div>
 					</f:facet>
 				</h:dataTable>
@@ -91,12 +100,16 @@
 			save operation will merge a new entity in causing all necessary
 			updates, inserts, and deletes as well as ensuring that optimistic
 			locking is properly checked.</p>
+		<br />
 		<div align="center">
 			<h:form>
-				<h:commandButton value="Force Version Update"
+				<h:commandButton value="Force Database Version Update"
 					action="#{editEmployee.updateVersion}" />
 			</h:form>
 		</div>
+		<br />
+		<p>If you cause an optimistic lock failure you will need to
+			refresh the entity to make changes.</p>
 	</ui:define>
 </ui:composition>
 </html>

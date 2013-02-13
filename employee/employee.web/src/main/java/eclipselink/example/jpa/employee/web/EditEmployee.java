@@ -26,9 +26,10 @@ import javax.persistence.RollbackException;
 
 import eclipselink.example.jpa.employee.model.Address;
 import eclipselink.example.jpa.employee.model.Employee;
+import eclipselink.example.jpa.employee.model.PhoneNumber;
 
 /**
- * Return list of available Leagues from JAX-RS call to MySports Admin app.
+ * Backing bean to edit or create an {@link Employee}.
  * 
  * @author dclarke
  * @since EclipseLink 2.3.0
@@ -39,6 +40,13 @@ public class EditEmployee extends BaseBean {
 
     private Employee employee;
 
+    /**
+     * TODO
+     */
+    private String type;
+
+    boolean create = false;
+
     protected static final String PAGE = "/employee/edit";
     protected static final String PAGE_REDIRECT = "/employee/edit?faces-redirect=true";
 
@@ -47,11 +55,35 @@ public class EditEmployee extends BaseBean {
         Flash flashScope = FacesContext.getCurrentInstance().getExternalContext().getFlash();
         this.employee = (Employee) flashScope.get("employee");
 
-        refresh();
+        if (this.employee != null) {
+            refresh();
+        } else {
+            this.employee = new Employee();
+            this.employee.setAddress(new Address());
+        }
     }
 
     public Employee getEmployee() {
         return employee;
+    }
+
+    public String getEmployeeId() {
+        if (getEmployee().getId() <= 0) {
+            return "None Assigned";
+        }
+        return Integer.toString(getEmployee().getId());
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public boolean isCreate() {
+        return getEmployee().getId() <= 0;
     }
 
     @PersistenceUnit(unitName = "employee")
@@ -66,6 +98,9 @@ public class EditEmployee extends BaseBean {
             em.getTransaction().begin();
             this.employee = em.merge(getEmployee());
             em.getTransaction().commit();
+            if (isCreate()) {
+                em.refresh(getEmployee());
+            }
         } catch (RollbackException e) {
             if (e.getCause() instanceof OptimisticLockException) {
                 FacesContext.getCurrentInstance().addMessage("OptimisticLockException", new FacesMessage("Commit Failed: Optimistic Lock Exception."));
@@ -131,8 +166,25 @@ public class EditEmployee extends BaseBean {
     }
 
     public String addPhone() {
-        getEmployee().addPhoneNumber("", "", "");
+        if (getType() != null && !getType().isEmpty()) {
+            getEmployee().addPhoneNumber(getType(), "", "");
+        } else {
+            FacesContext.getCurrentInstance().addMessage("input", new FacesMessage("Invalid type. Phone number could not be added"));
+        }
+        setType("");
         return null;
+    }
+
+    public String remove(PhoneNumber phone) {
+        getEmployee().removePhoneNumber(phone);
+        return null;
+    }
+
+    public String delete() {
+        Flash flashScope = FacesContext.getCurrentInstance().getExternalContext().getFlash();
+        flashScope.put("employee", getEmployee());
+
+        return DeleteEmployee.PAGE;
     }
 
 }

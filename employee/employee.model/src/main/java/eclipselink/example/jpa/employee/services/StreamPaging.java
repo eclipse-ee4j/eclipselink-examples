@@ -12,6 +12,7 @@
  ******************************************************************************/
 package eclipselink.example.jpa.employee.services;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.TypedQuery;
@@ -49,7 +50,20 @@ public class StreamPaging<T> {
 
     @SuppressWarnings("unchecked")
     public List<T> next() {
-        return (List<T>) this.stream.next(getPageSize());
+        if (!this.stream.hasNext()) {
+            return Collections.emptyList();
+        }
+        int quantity = getPageSize();
+        if ((quantity + this.stream.getPosition() - 1) > this.stream.size()) {
+            quantity = this.stream.size() - this.stream.getPosition() + 1;
+        }
+        List<T> entities = (List<T>) this.stream.next(quantity);
+
+        return entities;
+    }
+
+    public List<T> previous() {
+        throw new RuntimeException("NOT YET IMPLEMENTED");
     }
 
     public boolean hasNext() {

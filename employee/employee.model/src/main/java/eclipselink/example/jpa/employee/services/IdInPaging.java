@@ -29,7 +29,7 @@ import eclipselink.example.jpa.employee.model.Employee;
  * 
  * @since EclipseLink 2.4.2
  */
-public class IdInPaging {
+public class IdInPaging extends EntityPaging<Employee> {
 
     /**
      * A named query is used with result caching enabled to minimize retrieving
@@ -37,36 +37,26 @@ public class IdInPaging {
      */
     private static final String QUERY_NAME = "Employee.idsIn";
 
-    private EntityManagerFactory emf;
-
-    private int pageSize;
-
     private int size;
 
     private List<List<Number>> idPages = new ArrayList<List<Number>>();
 
     public IdInPaging(EntityManagerFactory emf, TypedQuery<Number> idQuery, int pageSize) {
-        super();
-        this.emf = emf;
-        this.pageSize = pageSize;
+        super(emf, pageSize);
 
         List<Number> ids = idQuery.getResultList();
         this.size = ids.size();
 
         int start = 0;
         while (start < ids.size()) {
-            List<Number> subList = ids.subList(start, start + pageSize);
+            int end = start + pageSize;
+            if (end > this.size) {
+                end = this.size;
+            }
+            List<Number> subList = ids.subList(start, end);
             idPages.add(subList);
-            start += subList.size();
+            start = end;
         }
-    }
-
-    protected EntityManagerFactory getEmf() {
-        return emf;
-    }
-
-    public int getPageSize() {
-        return pageSize;
     }
 
     public int getNumPages() {
@@ -87,7 +77,7 @@ public class IdInPaging {
         try {
             TypedQuery<Employee> empsQuery = em.createNamedQuery(QUERY_NAME, Employee.class);
             empsQuery.setParameter("IDS", ids);
-
+            this.currentPage = pageNum;
             return empsQuery.getResultList();
         } finally {
             em.close();

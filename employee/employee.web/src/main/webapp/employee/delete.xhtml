@@ -12,12 +12,12 @@
 		<h1>
 			<h:outputLabel value="Employee Deleted"
 				rendered="#{deleteEmployee.isDeleted}" />
-			<h:outputLabel value="Confirm Delete Employee"
-				rendered="#{!deleteEmployee.isDeleted}" />
 		</h1>
 		<h:form>
 			<div align="center">
-				<h:panelGrid width="400" columns="2" border="1" rendered="#{!deleteEmployee.isDeleted}">
+				<h:panelGrid width="400" columns="2" border="1"
+					rendered="#{!deleteEmployee.isDeleted}" class="table-design">
+					<f:facet name="header">Delete Employee?</f:facet>
 					<h:outputLabel value="ID" />
 					<h:outputLabel value="#{deleteEmployee.employee.id}" />
 					<h:outputLabel value="First Name:" />
@@ -40,14 +40,6 @@
 
 
 		</h:form>
-	</ui:define>
-
-	<ui:define name="footer">
-		<h:dataTable var="sql" value="#{deleteEmployee.sql}" width="100%">
-			<h:column>
-				<h:outputText value="#{sql}" />
-			</h:column>
-		</h:dataTable>
 	</ui:define>
 
 </ui:composition>

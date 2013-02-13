@@ -12,12 +12,13 @@
 		<h1>Employee</h1>
 		<h:form>
 			<ul>
-				<li><h:commandLink action="employee/create">Create</h:commandLink>
+				<li><h:commandLink action="/employee/edit?faces-redirect=true">Create</h:commandLink>
 				</li>
 				<li>Searches
 					<ul>
 						<li><h:commandLink action="employee/page?faces-redirect=true">All Employees (first/max paging)</h:commandLink></li>
-						<li><h:commandLink action="employee/page-ids?faces-redirect=true">All Employees (id IN paging)</h:commandLink></li>
+						<li><h:commandLink
+								action="employee/page-ids?faces-redirect=true">All Employees (id IN paging)</h:commandLink></li>
 						<li><h:commandLink
 								action="employee/stream?faces-redirect=true">All Employees (streaming)</h:commandLink></li>
 					</ul>
