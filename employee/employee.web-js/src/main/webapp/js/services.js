@@ -26,24 +26,25 @@ if (serverPort) {
 	httpRootURL = httpRootURL + ":" + serverPort;
 }
 
-var employeeServices = angular.module('employeeServices', [ 'ngResource' ]);
+var employeeServices = angular.module('employeeServices', ['ngResource']);
 
 employeeServices.factory('Employees', function($resource, $http) {
 	var resource = $resource(
-		resourceRootURL + '/employee/persistence/employee/query/Employee.findAll', 
-		{},
-		{
-			getPage : {
-				method : 'GET',
-				params: {'eclipselink.jdbc.first-result' : '@first', 'eclipselink.jdbc.max-rows' : '@max'},
-				isArray : true	
-			},	
-			getAll : {
-				method : 'GET',
-				params: {},
-				isArray : true
-			}
-		});
+	resourceRootURL + '/employee/persistence/employee/query/Employee.findAll', {}, {
+		getPage: {
+			method: 'GET',
+			params: {
+				'eclipselink.jdbc.first-result': '@first',
+				'eclipselink.jdbc.max-rows': '@max'
+			},
+			isArray: true
+		},
+		getAll: {
+			method: 'GET',
+			params: {},
+			isArray: true
+		}
+	});
 	/*
 	 * Add method to resource to obtain total number of Employees.
 	 */
@@ -54,15 +55,14 @@ employeeServices.factory('Employees', function($resource, $http) {
 });
 
 employeeServices.factory('Employee', function($resource) {
-	return $resource(resourceRootURL
-			+ '/employee/persistence/employee/entity/Employee/:id', {}, {
-		get : {
-			method : 'GET',
-			isArray : false
+	return $resource(resourceRootURL + '/employee/persistence/employee/entity/Employee/:id', {}, {
+		get: {
+			method: 'GET',
+			isArray: false
 		},
-		save : {
-			method : 'POST',
-			isArray : false
+		save: {
+			method: 'POST',
+			isArray: false
 		}
 	});
 });

@@ -45,7 +45,7 @@
 			<groupId>org.apache.derby</groupId>
 			<artifactId>derby</artifactId>
 			<version>10.9.1.0</version>
-			<scope>runtime</scope>
+			<scope>test</scope>
 		</dependency>
 		
 		<dependency>
