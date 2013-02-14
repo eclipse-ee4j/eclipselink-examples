@@ -12,11 +12,14 @@
 
 		<h:form>
 			<div align="right">
-				<h:commandButton value="Save" action="#{editEmployee.save}" />
-				<h:commandButton value="Refresh" action="#{editEmployee.refresh}" />
-				<h:commandButton value="Delete" action="#{editEmployee.delete}"
-					rendered="#{!editEmployee.create}" />
-				<h:commandButton value="Cancel" action="#{editEmployee.cancel}" />
+				<h:commandButton value="Save" action="#{editEmployee.save}"
+					class="button-small" />
+				<h:commandButton value="Refresh" action="#{editEmployee.refresh}"
+					class="button-small" />
+				<h:commandButton value="Delete" action="#{editEmployee.delete}" 
+					rendered="#{!editEmployee.create}" class="button-small" />
+				<h:commandButton value="Cancel" action="#{editEmployee.cancel}"
+					class="button-small" />
 			</div>
 			<div align="center">
 				<h:panelGrid width="600" columns="2" border="1" class="table-design">
@@ -52,13 +55,14 @@
 					<f:facet name="footer">
 						<div align="right">
 							<h:commandButton value="Remove"
-								action="#{editEmployee.removeAddress}" class="remove-button" />
+								action="#{editEmployee.removeAddress}" class="button-small" />
 						</div>
 					</f:facet>
 				</h:panelGrid>
 				<h:commandButton value="Add Address"
 					action="#{editEmployee.addAddress}"
-					rendered="#{editEmployee.employee.address == null}" width="600" />
+					rendered="#{editEmployee.employee.address == null}" width="600"
+					class="button-small" />
 
 				<h:dataTable width="600" var="phone"
 					value="#{editEmployee.employee.phoneNumbers}" border="1"
@@ -78,13 +82,13 @@
 					</h:column>
 					<h:column>
 						<h:commandButton value="Remove"
-							action="#{editEmployee.remove(phone)}" class="remove-button" />
+							action="#{editEmployee.remove(phone)}" class="button-small" />
 					</h:column>
 					<f:facet name="footer">
 						<div align="right">
 							<h:inputText value="#{editEmployee.type}" />
 							<h:commandButton value="Add" action="#{editEmployee.addPhone}"
-								class="add-button" />
+								class="button-small" />
 						</div>
 					</f:facet>
 				</h:dataTable>

@@ -18,6 +18,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaQuery;
 
 import eclipselink.example.jpa.employee.model.Employee;
 
@@ -41,10 +42,12 @@ public class IdInPaging extends EntityPaging<Employee> {
 
     private List<List<Number>> idPages = new ArrayList<List<Number>>();
 
-    public IdInPaging(EntityManagerFactory emf, TypedQuery<Number> idQuery, int pageSize) {
+    public IdInPaging(EntityManagerFactory emf, CriteriaQuery<Number> criteria, int pageSize) {
         super(emf, pageSize);
 
-        List<Number> ids = idQuery.getResultList();
+        EntityManager em = emf.createEntityManager();
+        List<Number> ids = em.createQuery(criteria).getResultList();
+        em.close();
         this.size = ids.size();
 
         int start = 0;

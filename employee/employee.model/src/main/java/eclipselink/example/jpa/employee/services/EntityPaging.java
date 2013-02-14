@@ -78,5 +78,5 @@ public abstract class EntityPaging<T> {
         return get(--this.currentPage);
     }
     
-    public enum Type { PAGE, PAGE_IN, CURSOR }
+    public enum Type { NONE, PAGE, PAGE_IN, CURSOR }
 }

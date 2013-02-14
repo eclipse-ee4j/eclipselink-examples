@@ -8,54 +8,46 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  *
  * Contributors:
- *  dclarke - EclipseLink 2.3 - MySports Demo Bug 344608
+ *  dclarke - initial
  ******************************************************************************/
 package eclipselink.example.jpa.employee.web;
 
-import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.context.Flash;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
 
-import eclipselink.example.jpa.employee.model.Employee;
+import eclipselink.example.jpa.employee.services.EmployeeCriteria;
 
 /**
  * TODO
  * 
  * @author dclarke
- * @since EclipseLink 2.3.0
+ * @since EclipseLink 2.4.2
  */
 @ManagedBean
 @ViewScoped
-public class SearchEmployees extends BaseBean {
+public class SearchEmployees {
 
-    private String firstName = "%";
+    /**
+     * Flash property name used to pass the criteria through to the results
+     * rendering page.
+     */
+    protected final static String CRITERIA = "CRITERIA";
 
-    private String lastName = "%";
-    
-    public String getFirstName() {
-        return firstName;
+    private EmployeeCriteria criteria = new EmployeeCriteria();
+
+    public EmployeeCriteria getCriteria() {
+        return criteria;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setCriteria(EmployeeCriteria criteria) {
+        this.criteria = criteria;
     }
 
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-    
     public String search() {
         Flash flash = FacesContext.getCurrentInstance().getExternalContext().getFlash();
-        flash.put("", "");
+        flash.put(CRITERIA, getCriteria());
         return EmployeeResults.PAGE;
     }
 

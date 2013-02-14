@@ -16,7 +16,6 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.TypedQuery;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -26,7 +25,8 @@ import org.junit.Test;
 import eclipselink.example.jpa.employee.model.Employee;
 import eclipselink.example.jpa.employee.services.Diagnostics;
 import eclipselink.example.jpa.employee.services.Diagnostics.SQLTrace;
-import eclipselink.example.jpa.employee.services.IdInPaging;
+import eclipselink.example.jpa.employee.services.EmployeeCriteria;
+import eclipselink.example.jpa.employee.services.EntityPaging;
 import example.JavaSEExample;
 import example.PersistenceTesting;
 
@@ -46,8 +46,13 @@ public class PageIdsInEmployeesTest {
         SQLTrace start = diagnostics.start();
         Assert.assertTrue(start.getEntries().isEmpty());
 
-        TypedQuery<Number> idQuery = em.createQuery("SELECT e.id FROM Employee e ORDER BY e.id", Number.class);
-        IdInPaging paging = new IdInPaging(emf, idQuery, 5);
+        EmployeeCriteria criteria = new EmployeeCriteria();
+        criteria.setFirstName(null);
+        criteria.setLastName(null);
+        criteria.setPageSize(5);
+        criteria.setPagingType(EntityPaging.Type.PAGE_IN.name());
+        EntityPaging<Employee> paging = criteria.getPaging(getEmf());
+
         Assert.assertEquals(25, paging.size());
 
         SQLTrace end = diagnostics.stop();
@@ -79,8 +84,13 @@ public class PageIdsInEmployeesTest {
         SQLTrace start = diagnostics.start();
         Assert.assertTrue(start.getEntries().isEmpty());
 
-        TypedQuery<Number> idQuery = em.createQuery("SELECT e.id FROM Employee e ORDER BY e.id", Number.class);
-        IdInPaging paging = new IdInPaging(emf, idQuery, 5);
+        EmployeeCriteria criteria = new EmployeeCriteria();
+        criteria.setFirstName(null);
+        criteria.setLastName(null);
+        criteria.setPageSize(5);
+        criteria.setPagingType(EntityPaging.Type.PAGE_IN.name());
+        EntityPaging<Employee> paging = criteria.getPaging(getEmf());
+
         Assert.assertEquals(25, paging.size());
 
         SQLTrace end = diagnostics.stop();
@@ -112,8 +122,13 @@ public class PageIdsInEmployeesTest {
         SQLTrace start = diagnostics.start();
         Assert.assertTrue(start.getEntries().isEmpty());
 
-        TypedQuery<Number> idQuery = em.createQuery("SELECT e.id FROM Employee e ORDER BY e.id", Number.class);
-        IdInPaging paging = new IdInPaging(emf, idQuery, 10);
+        EmployeeCriteria criteria = new EmployeeCriteria();
+        criteria.setFirstName(null);
+        criteria.setLastName(null);
+        criteria.setPageSize(10);
+        criteria.setPagingType(EntityPaging.Type.PAGE_IN.name());
+        EntityPaging<Employee> paging = criteria.getPaging(getEmf());
+
         Assert.assertEquals(25, paging.size());
 
         SQLTrace end = diagnostics.stop();
@@ -146,8 +161,13 @@ public class PageIdsInEmployeesTest {
         SQLTrace start = diagnostics.start();
         Assert.assertTrue(start.getEntries().isEmpty());
 
-        TypedQuery<Number> idQuery = em.createQuery("SELECT e.id FROM Employee e ORDER BY e.id", Number.class);
-        IdInPaging paging = new IdInPaging(emf, idQuery, 10);
+        EmployeeCriteria criteria = new EmployeeCriteria();
+        criteria.setFirstName(null);
+        criteria.setLastName(null);
+        criteria.setPageSize(10);
+        criteria.setPagingType(EntityPaging.Type.PAGE_IN.name());
+        EntityPaging<Employee> paging = criteria.getPaging(getEmf());
+
         Assert.assertEquals(25, paging.size());
 
         SQLTrace end = diagnostics.stop();

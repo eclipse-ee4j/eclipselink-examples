@@ -15,11 +15,17 @@ package eclipselink.example.jpa.employee.services;
 import java.util.Collections;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaQuery;
 
 import org.eclipse.persistence.config.HintValues;
 import org.eclipse.persistence.config.QueryHints;
+import org.eclipse.persistence.queries.CursoredStream;
 import org.eclipse.persistence.queries.ScrollableCursor;
+
+import eclipselink.example.jpa.employee.model.Employee;
 
 /**
  * Example of using an EclipseLink {@link CursoredStream} to page query results.
@@ -33,12 +39,19 @@ public class StreamPaging<T> extends EntityPaging<T> {
 
     private ScrollableCursor stream;
 
-    public StreamPaging(TypedQuery<T> query, int pageSize) {
+    public StreamPaging(EntityManagerFactory emf, CriteriaQuery<Employee> criteria, int pageSize) {
         super(null, pageSize);
 
-        query.setHint(QueryHints.SCROLLABLE_CURSOR, HintValues.TRUE);
+        EntityManager em = emf.createEntityManager();
 
-        this.stream = (ScrollableCursor) query.getSingleResult();
+        try {
+            TypedQuery<?> query = em.createQuery(criteria);
+            query.setHint(QueryHints.SCROLLABLE_CURSOR, HintValues.TRUE);
+
+            this.stream = (ScrollableCursor) query.getSingleResult();
+        } finally {
+            em.close();
+        }
     }
 
     @Override

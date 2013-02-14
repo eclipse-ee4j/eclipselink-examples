@@ -83,7 +83,7 @@ public class EditEmployee extends BaseBean {
     }
 
     public boolean isCreate() {
-        return getEmployee().getId() <= 0;
+        return  getEmployee() != null && getEmployee().getId() <= 0;
     }
 
     @PersistenceUnit(unitName = "employee")
@@ -91,6 +91,10 @@ public class EditEmployee extends BaseBean {
         super.setEmf(emf);
     }
 
+    /**
+     * 
+     * @return
+     */
     public String save() {
         EntityManager em = createEntityManager();
 
@@ -112,6 +116,23 @@ public class EditEmployee extends BaseBean {
         }
         return null;
     }
+    
+    public String delete() {
+        EntityManager em = createEntityManager();
+        try {
+            this.employee = em.find(Employee.class, getEmployee().getId());
+            // TODO: Handle find failure
+            em.getTransaction().begin();
+            em.remove(getEmployee());
+            em.getTransaction().commit();
+
+        } finally {
+            close(em);
+            this.employee = null;
+        }
+        return cancel();
+    }
+
 
     public String refresh() {
         EntityManager em = createEntityManager();
@@ -128,7 +149,7 @@ public class EditEmployee extends BaseBean {
     }
 
     public String cancel() {
-        return StreamEmployees.PAGE;
+        return "/index?faces-redirect=true";
     }
 
     /**
@@ -178,13 +199,6 @@ public class EditEmployee extends BaseBean {
     public String remove(PhoneNumber phone) {
         getEmployee().removePhoneNumber(phone);
         return null;
-    }
-
-    public String delete() {
-        Flash flashScope = FacesContext.getCurrentInstance().getExternalContext().getFlash();
-        flashScope.put("employee", getEmployee());
-
-        return DeleteEmployee.PAGE;
     }
 
 }

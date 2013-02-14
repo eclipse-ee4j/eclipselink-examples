@@ -18,11 +18,11 @@ import java.util.Random;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
-import javax.xml.crypto.dsig.keyinfo.PGPData;
 
 import eclipselink.example.jpa.employee.model.Employee;
 import eclipselink.example.jpa.employee.model.Gender;
-import eclipselink.example.jpa.employee.services.IdInPaging;
+import eclipselink.example.jpa.employee.services.EmployeeCriteria;
+import eclipselink.example.jpa.employee.services.EntityPaging;
 
 
 /**
@@ -57,7 +57,7 @@ public class JavaSEExample {
             example.deleteEmployee(em, 1);
             em.clear();
             
-            example.pagingIdIn(em);
+            example.pagingIdIn(emf);
             
             em.close();
 
@@ -123,11 +123,13 @@ public class JavaSEExample {
 
     }
     
-    public void pagingIdIn(EntityManager em) {
+    public void pagingIdIn(EntityManagerFactory emf) {
+        EmployeeCriteria criteria = new EmployeeCriteria();
+        criteria.setFirstName(null);
+        criteria.setLastName(null);
+        criteria.setPagingType(EntityPaging.Type.PAGE.name());
         
-        TypedQuery<Number> idQuery = em.createQuery("SELECT e.id FROM Employee e ORDER BY e.id", Number.class);
-        
-        IdInPaging paging = new IdInPaging(em.getEntityManagerFactory(), idQuery, 5);
+        EntityPaging<Employee> paging = criteria.getPaging(emf);
         
         paging.get(1);
         paging.get(2);
