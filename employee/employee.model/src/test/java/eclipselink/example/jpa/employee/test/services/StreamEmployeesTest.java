@@ -16,7 +16,6 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.TypedQuery;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -25,8 +24,9 @@ import org.junit.Test;
 
 import eclipselink.example.jpa.employee.model.Employee;
 import eclipselink.example.jpa.employee.services.Diagnostics;
-import eclipselink.example.jpa.employee.services.StreamPaging;
 import eclipselink.example.jpa.employee.services.Diagnostics.SQLTrace;
+import eclipselink.example.jpa.employee.services.EmployeeCriteria;
+import eclipselink.example.jpa.employee.services.EntityPaging;
 import example.JavaSEExample;
 import example.PersistenceTesting;
 
@@ -46,8 +46,13 @@ public class StreamEmployeesTest {
         SQLTrace start = diagnostics.start();
         Assert.assertTrue(start.getEntries().isEmpty());
 
-        TypedQuery<Employee> query = em.createQuery("SELECT e FROM Employee e ORDER BY e.id", Employee.class);
-        StreamPaging<Employee> stream = new StreamPaging<Employee>(query, 5);
+        EmployeeCriteria criteria = new EmployeeCriteria();
+        criteria.setFirstName(null);
+        criteria.setLastName(null);
+        criteria.setPageSize(5);
+        criteria.setPagingType(EntityPaging.Type.CURSOR.name());
+        EntityPaging<Employee> stream = criteria.getPaging(getEmf());
+        
         Assert.assertEquals(25, stream.size());
 
         SQLTrace end = diagnostics.stop();
@@ -83,7 +88,7 @@ public class StreamEmployeesTest {
         em.close();
     }
 
-    @Test
+   /* @Test
     public void streamPartial() {
         EntityManager em = getEmf().createEntityManager();
         Diagnostics diagnostics = Diagnostics.getInstance(getEmf());
@@ -91,8 +96,12 @@ public class StreamEmployeesTest {
         SQLTrace start = diagnostics.start();
         Assert.assertTrue(start.getEntries().isEmpty());
 
-        TypedQuery<Object[]> query = em.createQuery("SELECT e.id, e.firstName, e.lastName FROM Employee e ORDER BY e.id", Object[].class);
-        StreamPaging<Object[]> stream = new StreamPaging<Object[]>(query, 5);
+        EmployeeCriteria criteria = new EmployeeCriteria();
+        criteria.setFirstName(null);
+        criteria.setLastName(null);
+        criteria.setPageSize(5);
+        criteria.setPagingType(EntityPaging.Type.CURSOR.name());
+        EntityPaging<Employee> stream = criteria.getPaging(getEmf());
 
         Assert.assertEquals(25, stream.size());
 
@@ -128,7 +137,7 @@ public class StreamEmployeesTest {
 
         em.close();
     }
-
+*/
     private static EntityManagerFactory emf;
 
     public static EntityManagerFactory getEmf() {

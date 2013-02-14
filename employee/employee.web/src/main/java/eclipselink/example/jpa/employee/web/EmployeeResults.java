@@ -19,11 +19,14 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.context.Flash;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
+import javax.persistence.criteria.CriteriaQuery;
 
 import eclipselink.example.jpa.employee.model.Employee;
-import eclipselink.example.jpa.employee.services.FirstMaxPaging;
+import eclipselink.example.jpa.employee.services.EmployeeCriteria;
+import eclipselink.example.jpa.employee.services.EntityPaging;
 
 /**
  * Backing bean to manage search results for an Employee query. The results can
@@ -36,8 +39,6 @@ import eclipselink.example.jpa.employee.services.FirstMaxPaging;
 @ViewScoped
 public class EmployeeResults extends BaseBean {
 
-    private static final int PAGE_SIZE = 10;
-
     protected static final String PAGE = "/employee/results?faces-redirect=true";
 
     /**
@@ -45,7 +46,7 @@ public class EmployeeResults extends BaseBean {
      */
     private List<Employee> employees;
 
-    private FirstMaxPaging paging;
+    private EntityPaging<Employee> paging;
 
     private int currentPage = 1;
 
@@ -54,21 +55,34 @@ public class EmployeeResults extends BaseBean {
         super.setEmf(emf);
     }
 
-    public FirstMaxPaging getPaging() {
-        return paging;
+    public EntityPaging<Employee> getPaging() {
+        return this.paging;
     }
 
     @PostConstruct
     public void initialize() {
-        this.paging = new FirstMaxPaging(getEmf(), PAGE_SIZE);
+        Flash flash = FacesContext.getCurrentInstance().getExternalContext().getFlash();
+        EmployeeCriteria criteria = (EmployeeCriteria) flash.get(SearchEmployees.CRITERIA);
 
         this.currentPage = 1;
         this.employees = null;
-        getEmployees();
+
+        this.paging = criteria.getPaging(getEmf());
+
+        if (!hasPaging()) {
+            EntityManager em = createEntityManager();
+            try {
+                startSqlCapture();
+                CriteriaQuery<Employee> cq = criteria.createQuery(getEmf());
+                this.employees = em.createQuery(cq).getResultList();
+            } finally {
+                close(em);
+            }
+        }
     }
 
     public List<Employee> getEmployees() {
-        if (this.employees == null) {
+        if (this.employees == null && hasPaging()) {
             startSqlCapture();
             this.employees = getPaging().get(this.currentPage);
             this.stopSqlCapture();
@@ -76,8 +90,15 @@ public class EmployeeResults extends BaseBean {
         return this.employees;
     }
 
+    public boolean hasPaging() {
+        return this.paging != null;
+    }
+
     public int getSize() {
-        return this.paging.size();
+        if (hasPaging()) {
+            return this.paging.size();
+        }
+        return getEmployees().size();
     }
 
     public int getCurrentPage() {
@@ -85,7 +106,10 @@ public class EmployeeResults extends BaseBean {
     }
 
     public int getNumPages() {
-        return this.paging.getNumPages();
+        if (hasPaging()) {
+            return this.paging.getNumPages();
+        }
+        return 1;
     }
 
     public String next() {
@@ -119,10 +143,4 @@ public class EmployeeResults extends BaseBean {
         return EditEmployee.PAGE;
     }
 
-    public String delete(Employee employee) {
-        Flash flashScope = FacesContext.getCurrentInstance().getExternalContext().getFlash();
-        flashScope.put("employee", employee);
-
-        return DeleteEmployee.PAGE;
-    }
 }

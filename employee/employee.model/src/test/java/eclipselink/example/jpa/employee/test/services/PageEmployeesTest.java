@@ -25,7 +25,8 @@ import org.junit.Test;
 import eclipselink.example.jpa.employee.model.Employee;
 import eclipselink.example.jpa.employee.services.Diagnostics;
 import eclipselink.example.jpa.employee.services.Diagnostics.SQLTrace;
-import eclipselink.example.jpa.employee.services.FirstMaxPaging;
+import eclipselink.example.jpa.employee.services.EmployeeCriteria;
+import eclipselink.example.jpa.employee.services.EntityPaging;
 import example.JavaSEExample;
 import example.PersistenceTesting;
 
@@ -45,7 +46,13 @@ public class PageEmployeesTest {
         SQLTrace start = diagnostics.start();
         Assert.assertTrue(start.getEntries().isEmpty());
 
-        FirstMaxPaging paging = new FirstMaxPaging(emf, 5);
+        EmployeeCriteria criteria = new EmployeeCriteria();
+        criteria.setFirstName(null);
+        criteria.setLastName(null);
+        criteria.setPageSize(5);
+        criteria.setPagingType(EntityPaging.Type.PAGE.name());
+        EntityPaging<Employee> paging = criteria.getPaging(getEmf());
+        
         Assert.assertEquals(25, paging.size());
 
         SQLTrace end = diagnostics.stop();
@@ -77,7 +84,13 @@ public class PageEmployeesTest {
         SQLTrace start = diagnostics.start();
         Assert.assertTrue(start.getEntries().isEmpty());
 
-        FirstMaxPaging paging = new FirstMaxPaging(emf, 5);
+        EmployeeCriteria criteria = new EmployeeCriteria();
+        criteria.setFirstName(null);
+        criteria.setLastName(null);
+        criteria.setPageSize(5);
+        criteria.setPagingType(EntityPaging.Type.PAGE.name());
+        EntityPaging<Employee> paging = criteria.getPaging(getEmf());
+
         Assert.assertEquals(25, paging.size());
 
         SQLTrace end = diagnostics.stop();
@@ -109,7 +122,13 @@ public class PageEmployeesTest {
         SQLTrace start = diagnostics.start();
         Assert.assertTrue(start.getEntries().isEmpty());
 
-        FirstMaxPaging paging = new FirstMaxPaging(emf, 10);
+        EmployeeCriteria criteria = new EmployeeCriteria();
+        criteria.setFirstName(null);
+        criteria.setLastName(null);
+        criteria.setPageSize(10);
+        criteria.setPagingType(EntityPaging.Type.PAGE.name());
+        EntityPaging<Employee> paging = criteria.getPaging(getEmf());
+
         Assert.assertEquals(25, paging.size());
 
         SQLTrace end = diagnostics.stop();
@@ -142,7 +161,13 @@ public class PageEmployeesTest {
         SQLTrace start = diagnostics.start();
         Assert.assertTrue(start.getEntries().isEmpty());
 
-        FirstMaxPaging paging = new FirstMaxPaging(emf, 10);
+        EmployeeCriteria criteria = new EmployeeCriteria();
+        criteria.setFirstName(null);
+        criteria.setLastName(null);
+        criteria.setPageSize(10);
+        criteria.setPagingType(EntityPaging.Type.PAGE.name());
+        EntityPaging<Employee> paging = criteria.getPaging(getEmf());
+
         Assert.assertEquals(25, paging.size());
 
         SQLTrace end = diagnostics.stop();

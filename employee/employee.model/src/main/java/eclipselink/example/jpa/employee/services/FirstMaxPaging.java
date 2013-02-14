@@ -17,6 +17,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaQuery;
 
 import eclipselink.example.jpa.employee.model.Employee;
 
@@ -29,7 +30,7 @@ public class FirstMaxPaging extends EntityPaging<Employee> {
 
     private int size = -1;
 
-    public FirstMaxPaging(EntityManagerFactory emf, int pageSize) {
+    public FirstMaxPaging(EntityManagerFactory emf, CriteriaQuery<Employee> criteria, int pageSize) {
         super(emf, pageSize);
     }
 

@@ -10,47 +10,41 @@
 <ui:composition template="/WEB-INF/template.xhtml">
 	<ui:define name="body">
 		<h:form>
-			<h:panelGrid width="600" columns="1" class="table-design">
-				<f:facet name="header">Employee</f:facet>
-				<h:panelGroup>
-					<h4>Employee Quick Search</h4>
-					<div align="center">
-						First Name:
-						<h:inputText value="%" />
-						Last Name:
-						<h:inputText value="%" />
-						<h:commandButton value="Search" class="menu-button" />
+			<div align="right">
+				<h:commandButton action="/employee/edit?faces-redirect=true"
+					value="Create" class="menu-button" />
+			</div>
+			<h:panelGrid width="600" columns="2" class="table-design">
+				<f:facet name="header">Employee Search</f:facet>
+				<h:outputLabel value="First Name:" />
+				<h:inputText value="#{searchEmployees.criteria.firstName}" />
+				<h:outputLabel value="Last Name:" />
+				<h:inputText value="#{searchEmployees.criteria.lastName}" />
+				<h:outputLabel value="Page Results:" />
+				<h:selectOneMenu value="#{searchEmployees.criteria.pagingType}">
+					<f:selectItem itemValue="NONE" itemLabel="None" />
+					<f:selectItem itemValue="PAGE" itemLabel="First/Max Paging" />
+					<f:selectItem itemValue="PAGE_IN" itemLabel="Ids IN Paging" />
+					<f:selectItem itemValue="CURSOR"
+						itemLabel="ScrollableCursor Paging" />
+				</h:selectOneMenu>
+				<f:facet name="footer">
+					<div align="right">
+						<h:commandButton action="#{searchEmployees.search}" value="Search"
+							class="menu-button" />
 					</div>
-				</h:panelGroup>
-
-				<h:panelGroup>
-					<h3>Searches</h3>
-					<ul>
-						<li><h:commandLink action="page?faces-redirect=true">All Employees (first/max paging)</h:commandLink></li>
-						<li><h:commandLink action="page-ids?faces-redirect=true">All Employees (id IN paging)</h:commandLink></li>
-						<li><h:commandLink action="stream?faces-redirect=true">All Employees (streaming)</h:commandLink></li>
-					</ul>
-				</h:panelGroup>
-				<h:panelGroup>
-					<div align="center">
-						<h:commandButton action="/employee/edit?faces-redirect=true"
-							value="Create" class="menu-button" />
-					</div>
-				</h:panelGroup>
+				</f:facet>
 			</h:panelGrid>
 		</h:form>
 	</ui:define>
 
 	<ui:define name="eclipselink">
-		<h3>Inside EclipseLink</h3>
-		<p>Each feature of the example will be explained including links
-			to relevant documentation and wiki content.</p>
+		<h3>Detail Searches</h3>
+		<p>This page represents a more complex search approach where a
+			variety of criteria can be selected. Behind the scene a query is
+			dynamically constructed using the JPA criteria API.</p>
+		<p>Three different options are available to page the results.</p>
 	</ui:define>
 
-	<ui:define name="footer">
-		<p>When diagnostics are enabled (see Admin tab) SQL and
-			performance trace info will be displayed here for the last server
-			operation.</p>
-	</ui:define>
 </ui:composition>
 </html>
