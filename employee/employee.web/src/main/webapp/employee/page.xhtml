@@ -35,15 +35,15 @@
 				<f:facet name="footer">
 					<table width="100%">
 						<tr>
-							<td><h:commandButton value="Previous Page"
+							<td><h:commandButton value="Previous"
 									action="#{pageEmployees.previous}"
-									rendered="#{pageEmployees.hasPrevious}" /></td>
+									rendered="#{pageEmployees.hasPrevious}" class="button-small" /></td>
 							<td width="100%" align="center">Page <h:outputText
 									value="#{pageEmployees.currentPage}" /> of <h:outputText
 									value="#{pageEmployees.numPages}" /></td>
-							<td><h:commandButton value="Next Page"
+							<td><h:commandButton value="Next"
 									action="#{pageEmployees.next}"
-									rendered="#{pageEmployees.hasNext}" /></td>
+									rendered="#{pageEmployees.hasNext}" class="button-small" /></td>
 						</tr>
 					</table>
 				</f:facet>

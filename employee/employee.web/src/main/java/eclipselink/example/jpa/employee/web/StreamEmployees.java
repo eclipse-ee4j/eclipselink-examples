@@ -117,6 +117,13 @@ public class StreamEmployees extends BaseBean {
         return getStream().hasNext();
     }
 
+    public boolean getHasPrevious() {
+        if (this.stream == null) {
+            initialize();
+        }
+        return getStream().hasPrevious();
+    }
+
     public String edit(Employee employee) {
         Flash flashScope = FacesContext.getCurrentInstance().getExternalContext().getFlash();
         flashScope.put("employee", employee);

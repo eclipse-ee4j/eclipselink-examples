@@ -18,12 +18,18 @@
 						First Name:
 						<h:inputText value="%" />
 						Last Name:
-						<h:inputText value="%" /><p/>
+						<h:inputText value="%" />
 						<h:commandButton value="Search" class="menu-button" />
 					</div>
-					<div align="right">
-						<h:commandLink value="Advanced Search" action="employee/search?faces-redirect=true"/>
-					</div>
+				</h:panelGroup>
+
+				<h:panelGroup>
+					<h3>Searches</h3>
+					<ul>
+						<li><h:commandLink action="page?faces-redirect=true">All Employees (first/max paging)</h:commandLink></li>
+						<li><h:commandLink action="page-ids?faces-redirect=true">All Employees (id IN paging)</h:commandLink></li>
+						<li><h:commandLink action="stream?faces-redirect=true">All Employees (streaming)</h:commandLink></li>
+					</ul>
 				</h:panelGroup>
 				<h:panelGroup>
 					<div align="center">
@@ -31,17 +37,6 @@
 							value="Create" class="menu-button" />
 					</div>
 				</h:panelGroup>
-			</h:panelGrid>
-			<p />
-			<h:panelGrid width="600" columns="1" class="table-design">
-				<f:facet name="header">Projects</f:facet>
-				<h:panelGroup>
-					<h3>Searches</h3>
-					<ul>
-					</ul>
-				</h:panelGroup>
-				<h:commandLink action="/employee/edit?faces-redirect=true"
-					value="Create" />
 			</h:panelGrid>
 		</h:form>
 	</ui:define>

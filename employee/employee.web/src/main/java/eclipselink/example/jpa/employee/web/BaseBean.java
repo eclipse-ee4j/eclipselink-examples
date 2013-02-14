@@ -33,7 +33,7 @@ public abstract class BaseBean {
     private EntityManagerFactory emf;
 
     private Diagnostics diagnostics;
-
+    
     public EntityManagerFactory getEmf() {
         return emf;
     }

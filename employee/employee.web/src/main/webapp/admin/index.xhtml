@@ -11,21 +11,39 @@
 	<ui:define name="body">
 		<h1>Administration</h1>
 		<h:form>
-			<div align="center">
-			<h:commandButton value="Reset Database" action="#{admin.resetDatabase}"/>
-			<h:commandButton value="#{config.displaySql ? 'Disable SQL Display' : 'Enable SQL Display}" action="#{config.toggleSqlDisplay}"/>
+			<div align="center" class="main-menu">
+				<p />
+				<h:commandButton value="Reset Database"
+					action="#{admin.resetDatabase}" class="menu-button"
+					style="width: 400" />
+				<p />
+				<h:commandButton value="Populate (25)"
+					action="#{admin.populateDatabase}" class="menu-button"
+					style="width: 400" />
+				<p />
+				<h:commandButton value="#{config.toggleSqlDisplayButton}"
+					action="#{config.toggleSqlDisplay}" class="menu-button"
+					style="width: 400" />
+				<p />
 			</div>
 		</h:form>
 		<h2>Entity Status</h2>
 		<h:form>
-			<h:panelGrid width="400" columns="2" border="1">
-				<h:outputLabel value="Employee" />
-				<h:selectBooleanCheckbox value="true" />
-				<h:outputLabel value="Phone" />
-				<h:selectBooleanCheckbox value="true" />
-				<h:outputLabel value="Address" />
-				<h:selectBooleanCheckbox value="true" />
-			</h:panelGrid>
+			<h:dataTable var="type" value="#{config.typeNames}"
+				class="table-design" width="500">
+				<h:column>
+					<f:facet name="header">Type</f:facet>
+					<h:outputLabel value="#{type}" />
+				</h:column>
+				<h:column>
+					<f:facet name="header">
+						<div align="center">Cache Size</div>
+					</f:facet>
+					<div align="center">
+						<h:outputLabel value="#{config.getCacheSize(type)}" />
+					</div>
+				</h:column>
+			</h:dataTable>
 		</h:form>
 	</ui:define>
 </ui:composition>

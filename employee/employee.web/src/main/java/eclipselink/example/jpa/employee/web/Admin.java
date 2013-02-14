@@ -21,6 +21,8 @@ import javax.persistence.PersistenceUnit;
 import org.eclipse.persistence.sessions.server.Server;
 import org.eclipse.persistence.tools.schemaframework.SchemaManager;
 
+import eclipselink.example.jpa.employee.model.SamplePopulation;
+
 /**
  * TODO
  * 
@@ -44,11 +46,24 @@ public class Admin {
 
     public String resetDatabase() {
         EntityManager em = getEmf().createEntityManager();
-        
+
         try {
             SchemaManager sm = new SchemaManager(em.unwrap(Server.class));
             sm.replaceDefaultTables();
             sm.replaceSequences();
+
+            em.unwrap(Server.class).getIdentityMapAccessor().initializeAllIdentityMaps();
+        } finally {
+            em.close();
+        }
+        return null;
+    }
+
+    public String populateDatabase() {
+        EntityManager em = getEmf().createEntityManager();
+
+        try {
+            new SamplePopulation().createNewEmployees(em, 25);
         } finally {
             em.close();
         }

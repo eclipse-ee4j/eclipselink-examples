@@ -11,8 +11,8 @@
 	<ui:define name="body">
 		<h1>All Employees</h1>
 		<h:form>
-			<h:dataTable var="emp" value="#{pageIdInEmployees.employees}" border="1"
-				width="500"  class="table-design">
+			<h:dataTable var="emp" value="#{pageIdInEmployees.employees}"
+				border="1" width="500" class="table-design">
 				<h:column>
 					<f:facet name="header">ID</f:facet>
 					<h:outputText value="#{emp.id}" />
@@ -37,13 +37,14 @@
 						<tr>
 							<td><h:commandButton value="Previous Page"
 									action="#{pageIdInEmployees.previous}"
-									rendered="#{pageIdInEmployees.hasPrevious}" /></td>
+									rendered="#{pageIdInEmployees.hasPrevious}"
+									class="button-small" /></td>
 							<td width="100%" align="center">Page <h:outputText
 									value="#{pageIdInEmployees.currentPage}" /> of <h:outputText
 									value="#{pageIdInEmployees.numPages}" /></td>
 							<td><h:commandButton value="Next Page"
 									action="#{pageIdInEmployees.next}"
-									rendered="#{pageIdInEmployees.hasNext}" /></td>
+									rendered="#{pageIdInEmployees.hasNext}" class="button-small" /></td>
 						</tr>
 					</table>
 				</f:facet>

@@ -3,7 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
 	  http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
-	  
+
 	<context-param>
 		<param-name>javax.faces.CONFIG_FILES</param-name>
 		<param-value>/WEB-INF/faces-config.xml</param-value>
@@ -22,4 +22,8 @@
 		<url-pattern>/faces/*</url-pattern>
 	</servlet-mapping>
 
+	<error-page>
+		<exception-type>javax.faces.application.ViewExpiredException</exception-type>
+		<location>/faces/index.xhtml</location>
+	</error-page>
 </web-app>

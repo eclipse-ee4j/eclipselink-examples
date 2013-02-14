@@ -23,25 +23,29 @@ html,body,#body-container {
 .table-design {
 	border: 1px solid #e3e3e3;
 	background-color: #f2f2f2;
-        width: 100%;
+	width: 100%;
 	border-radius: 6px;
 	-webkit-border-radius: 6px;
 	-moz-border-radius: 6px;
 }
-.table-design td, .table-design th {
+
+.table-design td,.table-design th {
 	padding: 5px;
 	color: #333;
 }
+
 .table-design thead {
 	font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
 	padding: .2em 0 .2em .5em;
 	text-align: left;
 	color: #4B4B4B;
 	background-color: #C8C8C8;
-	background-image: -webkit-gradient(linear, left top, left bottom, from(#f2f2f2), to(#e3e3e3), color-stop(.6,#B3B3B3));
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#f2f2f2),
+		to(#e3e3e3), color-stop(.6, #B3B3B3) );
 	background-image: -moz-linear-gradient(top, #D6D6D6, #B0B0B0, #B3B3B3 90%);
 	border-bottom: solid 1px #999;
 }
+
 .table-design th {
 	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 	font-size: 17px;
@@ -51,6 +55,7 @@ html,body,#body-container {
 	text-align: left;
 	text-shadow: white 1px 1px 1px;
 }
+
 .table-design td {
 	line-height: 20px;
 	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -58,6 +63,81 @@ html,body,#body-container {
 	border-bottom: 1px solid #fff;
 	border-top: 1px solid #fff;
 }
-.table-design td:hover {
-	background-color: #fff;
+
+.main-menu {
+	border: 2px solid;
+	border-radius: 25px;
+	-moz-border-radius: 25px; /* Old Firefox */
+}
+
+.menu-button {
+	border-top: 1px solid #96d1f8;
+	background: #65a9d7;
+	background: -webkit-gradient(linear, left top, left bottom, from(#003366),
+		to(#65a9d7) );
+	background: -webkit-linear-gradient(top, #003366, #65a9d7);
+	background: -moz-linear-gradient(top, #003366, #65a9d7);
+	background: -ms-linear-gradient(top, #003366, #65a9d7);
+	background: -o-linear-gradient(top, #003366, #65a9d7);
+	padding: 10.5px 21px;
+	-webkit-border-radius: 18px;
+	-moz-border-radius: 18px;
+	border-radius: 18px;
+	-webkit-box-shadow: rgba(0, 0, 0, 1) 0 1px 0;
+	-moz-box-shadow: rgba(0, 0, 0, 1) 0 1px 0;
+	box-shadow: rgba(0, 0, 0, 1) 0 1px 0;
+	text-shadow: rgba(0, 0, 0, .4) 0 1px 0;
+	color: white;
+	font-size: 19px;
+	font-family: Helvetica, Arial, Sans-Serif;
+	text-decoration: none;
+	vertical-align: middle;
+	width: 200px;
+	padding: 5px 5px 5px 5px;
+}
+
+.menu-button:hover {
+	border-top-color: #330066;
+	background: #330066;
+	color: #ccc;
+}
+
+.menu-button:active {
+	border-top-color: #ff0000;
+	background: #ff0000;
+}
+
+.button-small {
+	border-top: 1px solid #96d1f8;
+	background: #65a9d7;
+	background: -webkit-gradient(linear, left top, left bottom, from(#003366),
+		to(#65a9d7) );
+	background: -webkit-linear-gradient(top, #003366, #65a9d7);
+	background: -moz-linear-gradient(top, #003366, #65a9d7);
+	background: -ms-linear-gradient(top, #003366, #65a9d7);
+	background: -o-linear-gradient(top, #003366, #65a9d7);
+	padding: 4px 8px;
+	-webkit-border-radius: 18px;
+	-moz-border-radius: 18px;
+	border-radius: 18px;
+	-webkit-box-shadow: rgba(0, 0, 0, 1) 0 1px 0;
+	-moz-box-shadow: rgba(0, 0, 0, 1) 0 1px 0;
+	box-shadow: rgba(0, 0, 0, 1) 0 1px 0;
+	text-shadow: rgba(0, 0, 0, .4) 0 1px 0;
+	color: white;
+	font-size: 17px;
+	font-family: Helvetica, Arial, Sans-Serif;
+	text-decoration: none;
+	vertical-align: middle;
+}
+
+.button-small:hover {
+	border-top-color: #330066;
+	background: #330066;
+	color: #ccc;
+}
+
+.button-small:active {
+	border-top-color: #ff0000;
+	background: #ff0000;
 }
