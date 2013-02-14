@@ -21,20 +21,24 @@ function EmployeeListCtrl($scope, $http, Employees) {
 	$scope.pageSize = 10;
 	$scope.first = 0;
 	$scope.max = $scope.pageSize;
+
 	Employees.count().then(function (response) {
 		$scope.count = response.data.COUNT;
 		$scope.totalPages = Math.floor($scope.count / $scope.pageSize) + ($scope.count % $scope.pageSize > 0 ? 1 : 0);
+		fetchPage();
 	});
 	
 	function fetchPage() {
 		$scope.employees = Employees.getPage({}, {
 			first : $scope.first,
 			max : $scope.max
-		});	
+		});
+		$scope.nextAvailable = $scope.count > $scope.max;
+		$scope.prevAvailable = $scope.first - $scope.pageSize >= 0;
 	}
 	
 	$scope.pageNext = function () {
-		if ($scope.count > $scope.max)  {
+		if ($scope.nextAvailable)  {
 			$scope.first = $scope.max;
 			$scope.max = $scope.max + $scope.pageSize;
 			$scope.pageNum++;
@@ -43,7 +47,7 @@ function EmployeeListCtrl($scope, $http, Employees) {
 	};
 	
 	$scope.pagePrevious = function() {
-		if ($scope.first - $scope.pageSize >= 0) {
+		if ($scope.prevAvailable) {
 			$scope.max = $scope.first;
 			$scope.first = $scope.first - $scope.pageSize;
 			$scope.pageNum--;
@@ -51,7 +55,6 @@ function EmployeeListCtrl($scope, $http, Employees) {
 		}
 	};
 	
-	fetchPage();
 }
 
 function EmployeeEditCtrl($scope, $routeParams, $location, Employee) {

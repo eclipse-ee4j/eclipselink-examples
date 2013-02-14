@@ -15,53 +15,55 @@
 <style type='text/css' media='all'>
 @import url('css/main.css');
 @import url('css/normalize.css');
+@import url('css/custom.css');
 @import url('css/local.css');
 </style>
 </head>
 <body>
-	<div class='header-container'>
-		<header class='wrapper clearfix'>
-			<h1 class='title'>EclipseLink Employee Example</h1>
-			<nav>
-				<form>
-					<ul>
-						<li><a href='#/home'>Home</a></li>
-						<li><a href='#/about'>About</a></li>
-						<li><a href='#/admin'>Admin</a></li>
-					</ul>
-				</form>
-			</nav>
-		</header>
-	</div>
-
-	<div class='main-container'>
-		<div class='main wrapper clearfix'>
-
-			<article>
-				<header>
-					<div ng-view></div>
-				</header>
-			</article>
-
-			<aside>
-				<img src='resources/images/eclipselink-logo.png' alt='EclipseLink'
-					title='EclipseLink Employee Example' />
-				<div class='commentary'>
-					<h3>Inside EclipseLink</h3>
-					<p>Over here we'll give some insight into what features of
-						EclipseLink are in use and provide diagnostic and informational
-						links.</p>
-				</div>
-			</aside>
-
+	<div id="body-container">
+		<div id='header-container'>
+			<header class='wrapper clearfix'>
+				<h1 class='title'>EclipseLink Employee Example</h1>
+				<nav>
+					<form>
+						<ul>
+							<li><a href='#/home'>Home</a></li>
+							<li><a href='#/about'>About</a></li>
+							<li><a href='#/admin'>Admin</a></li>
+						</ul>
+					</form>
+				</nav>
+			</header>
 		</div>
-		<!-- #main -->
-	</div>
-	<!-- #main-container -->
 
-	<div class='footer-container'>
-		<footer class='wrapper'></footer>
-	</div>
+		<div id='main-container'>
+			<div class='main wrapper clearfix'>
 
+				<article>
+					<header>
+						<div ng-view></div>
+					</header>
+				</article>
+
+				<aside>
+					<img src='resources/images/eclipselink-logo.png' alt='EclipseLink'
+						title='EclipseLink Employee Example' />
+					<div class='commentary'>
+						<h3>Inside EclipseLink</h3>
+						<p>Over here we'll give some insight into what features of
+							EclipseLink are in use and provide diagnostic and informational
+							links.</p>
+					</div>
+				</aside>
+
+			</div>
+			<!-- #main -->
+		</div>
+		<!-- #main-container -->
+
+		<div id='footer-container'>
+			<footer class='wrapper'></footer>
+		</div>
+	</div>
 </body>
 </html>

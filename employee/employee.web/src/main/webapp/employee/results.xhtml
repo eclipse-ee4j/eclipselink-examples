@@ -11,8 +11,8 @@
 	<ui:define name="body">
 		<h1>Employee Search Results</h1>
 		<h:form>
-			<h:dataTable var="emp" value="#{pageEmployees.employees}" border="1"
-				width="500" class="table-design">
+			<h:dataTable var="emp" value="#{pageEmployees.employees}"
+				class="table-design">
 				<h:column>
 					<f:facet name="header">ID</f:facet>
 					<h:outputText value="#{emp.id}" />
