@@ -1,36 +1,3 @@
-#employee-list {
-	width: 500px;
-}
-
-#employe-list-head td, #employee-list-body td {
-	border: 1px solid;
-}
-
-#employee-list-foot tr {
-	border: 1px solid;
-}
-
-#employee-list-foot td {
-	border: 0;
-}
-
 .employee-action {
 	text-align: center;
 }
-
-#employees-pagination tr {
-	border: 0;
-}
-
-#employees-previous {
-	float: left;
-}
-
-#employees-pages {
-	float: center;
-}
-
-#employees-next {
-	float: right;
-}
-

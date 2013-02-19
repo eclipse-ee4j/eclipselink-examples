@@ -14,21 +14,20 @@
  -->
 <div>
 	<div>
-		<h1>Employees</h1>
-		<table id='employee-list'>
-			<thead id='employee-list-head'>
+		<h1>Employee Search Results</h1>
+		<table class='table-design'>
+			<thead>
 				<tr>
 					<td colspan='5'>Filter: <input ng-model='query'></td>
 				</tr>
-			</thead>
-			<tbody id='employee-list-body'>
 				<tr>
 					<td>ID</td>
 					<td>Last Name</td>
 					<td>First Name</td>
-					<td></td>
-					<td></td>
+					<td colspan='2'></td>
 				</tr>
+			</thead>
+			<tbody>
 				<tr ng-repeat='employee in employees | filter:query'>
 					<td>{{employee.id}}</td>
 					<td>{{employee.lastName}}</td>
@@ -38,20 +37,20 @@
 					<td class='employee-action'>Delete</td>
 				</tr>
 			</tbody>
-			<tfoot id='employee-list-foot'>
+			<tfoot>
 				<tr>
 					<td colspan='5'>
-						<table id='employees-pagination' width='100%'>
+						<table width='100%'>
 							<tr>
 								<td>
-									<button type='button' id='employees-previous'
-										ng-click='pagePrevious()'>Previous Page</button>
+									<button ng-show='prevAvailable' class='button-small' type='button'
+										ng-click='pagePrevious()'>Previous</button>
 								</td>
-								<td colspan='3'><span id='employees-pages'>Page {{pageNum}} of
+								<td align='center' width='100%' colspan='3'><span id='employees-pages'>Page {{pageNum}} of
 										{{totalPages}}</span></td>
 								<td>
-									<button type='button' id='employees-next' ng-click='pageNext()'>Next
-										Page</button>
+									<button ng-show='nextAvailable' class='button-small' type='button' 
+										ng-click='pageNext()'>Next</button>
 								</td>
 							</tr>
 						</table>
