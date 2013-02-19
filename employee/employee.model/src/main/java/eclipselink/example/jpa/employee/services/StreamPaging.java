@@ -12,7 +12,6 @@
  ******************************************************************************/
 package eclipselink.example.jpa.employee.services;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -57,12 +56,13 @@ public class StreamPaging<T> extends EntityPaging<T> {
     @Override
     @SuppressWarnings("unchecked")
     public List<T> next() {
-        if (!this.stream.hasNext()) {
-            return Collections.emptyList();
+        if (!hasNext()) {
+            return super.next();
         }
         int quantity = getPageSize();
+        // Adjust size if there are less elements on stream then a full page
         if ((quantity + this.stream.getPosition() - 1) > this.stream.size()) {
-            quantity = this.stream.size() - this.stream.getPosition() + 1;
+            quantity = this.stream.size() - this.stream.getPosition();
         }
         List<T> entities = (List<T>) this.stream.next(quantity);
         this.currentPage++;
@@ -70,16 +70,14 @@ public class StreamPaging<T> extends EntityPaging<T> {
     }
 
     @Override
-    public List<T> previous() {
-        throw new RuntimeException("NOT YET IMPLEMENTED");
-    }
-
-    @Override
     public List<T> get(int page) {
         if (page == getCurrentPage() + 1) {
             return next();
         }
-        throw new RuntimeException("NOT YET IMPLEMENTED");
+        int position = (page - 1) * getPageSize();
+        this.stream.absolute(position);
+        this.currentPage = page - 1;
+        return next();
     }
 
     @Override

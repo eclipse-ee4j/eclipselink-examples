@@ -16,11 +16,12 @@
 					<h4>Employee Quick Search</h4>
 					<div align="center">
 						First Name:
-						<h:inputText value="%" />
+						<h:inputText value="#{searchEmployees.criteria.firstName}" />
 						Last Name:
-						<h:inputText value="%" />
+						<h:inputText value="#{searchEmployees.criteria.lastName}" />
 						<p />
-						<h:commandButton value="Search" class="menu-button" />
+						<h:commandButton value="Search" action="#{searchEmployees.search}"
+							class="menu-button" />
 					</div>
 					<div align="right">
 						<h:commandLink value="Advanced Search"

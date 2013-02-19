@@ -30,8 +30,22 @@ public class FirstMaxPaging extends EntityPaging<Employee> {
 
     private int size = -1;
 
-    public FirstMaxPaging(EntityManagerFactory emf, CriteriaQuery<Employee> criteria, int pageSize) {
+    private CriteriaQuery<Employee> criteria;
+
+    private CriteriaQuery<Number> countCriteria;
+
+    public FirstMaxPaging(EntityManagerFactory emf, CriteriaQuery<Employee> criteria, CriteriaQuery<Number> countCriteria, int pageSize) {
         super(emf, pageSize);
+        this.criteria = criteria;
+        this.countCriteria = countCriteria;
+    }
+
+    public CriteriaQuery<Employee> getCriteria() {
+        return criteria;
+    }
+
+    public CriteriaQuery<Number> getCountCriteria() {
+        return countCriteria;
     }
 
     public int getNumPages() {
@@ -45,7 +59,7 @@ public class FirstMaxPaging extends EntityPaging<Employee> {
         EntityManager em = getEmf().createEntityManager();
 
         try {
-            TypedQuery<Employee> empsQuery = em.createNamedQuery("Employee.findAll", Employee.class);
+            TypedQuery<Employee> empsQuery = em.createQuery(getCriteria());
             int first = (page - 1) * getPageSize();
             empsQuery.setFirstResult(first);
             empsQuery.setMaxResults(getPageSize());
@@ -61,7 +75,7 @@ public class FirstMaxPaging extends EntityPaging<Employee> {
             EntityManager em = getEmf().createEntityManager();
 
             try {
-                TypedQuery<Number> countQuery = em.createNamedQuery("Employee.count", Number.class);
+                TypedQuery<Number> countQuery = em.createQuery(getCountCriteria());
                 this.size = countQuery.getSingleResult().intValue();
             } finally {
                 em.close();

@@ -34,7 +34,7 @@ public class EmployeeCriteria {
 
     private String lastName = "%";
 
-    private String pagingType = "None";
+    private String pagingType = "NONE";
 
     private int pageSize = 10;
 
@@ -70,33 +70,33 @@ public class EmployeeCriteria {
         this.pageSize = pageSize;
     }
 
+    @SuppressWarnings("unchecked")
     public CriteriaQuery<Employee> createQuery(EntityManagerFactory emf) {
         CriteriaBuilder cb = emf.getCriteriaBuilder();
         CriteriaQuery<Employee> query = cb.createQuery(Employee.class);
         Root<Employee> employee = query.from(Employee.class);
-
-        Predicate where = cb.conjunction();
-
-        if (getFirstName() != null && !getFirstName().isEmpty()) {
-            where = cb.and(where, cb.like(employee.get(Employee_.firstName), getFirstName()));
-        }
-
-        if (getLastName() != null && !getLastName().isEmpty()) {
-            where = cb.and(where, cb.like(employee.get(Employee_.lastName), getLastName()));
-        }
-
-        query.where(where);
-        query.orderBy(cb.asc(employee.get(Employee_.id)));
-
-        return query;
+        return (CriteriaQuery<Employee>) addWhereOrder(cb, query, employee, true);
     }
 
+    @SuppressWarnings("unchecked")
     public CriteriaQuery<Number> createIdQuery(EntityManagerFactory emf) {
         CriteriaBuilder cb = emf.getCriteriaBuilder();
         CriteriaQuery<Number> query = cb.createQuery(Number.class);
         Root<Employee> employee = query.from(Employee.class);
         query.select(employee.get(Employee_.id));
-        
+        return (CriteriaQuery<Number>) addWhereOrder(cb, query, employee, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    public CriteriaQuery<Number> createCountQuery(EntityManagerFactory emf) {
+        CriteriaBuilder cb = emf.getCriteriaBuilder();
+        CriteriaQuery<Number> query = cb.createQuery(Number.class);
+        Root<Employee> employee = query.from(Employee.class);
+        query.select(cb.count(employee.get(Employee_.id)));
+        return (CriteriaQuery<Number>) addWhereOrder(cb, query, employee, false);
+    }
+
+    private CriteriaQuery<?> addWhereOrder(CriteriaBuilder cb, CriteriaQuery<?> query, Root<Employee> employee, boolean order) {
         Predicate where = cb.conjunction();
 
         if (getFirstName() != null && !getFirstName().isEmpty()) {
@@ -108,25 +108,29 @@ public class EmployeeCriteria {
         }
 
         query.where(where);
-        query.orderBy(cb.asc(employee.get(Employee_.id)));
+
+        if (order) {
+            query.orderBy(cb.asc(employee.get(Employee_.id)));
+        }
 
         return query;
     }
 
     public EntityPaging<Employee> getPaging(EntityManagerFactory emf) {
-        Type type = EntityPaging.Type.valueOf(getPagingType());
+        if (getPagingType() != null) {
+            Type type = EntityPaging.Type.valueOf(getPagingType());
 
-        switch (type) {
-        case NONE:
-            return null;
-        case PAGE:
-            return new FirstMaxPaging(emf, createQuery(emf), getPageSize());
-        case PAGE_IN:
-            return new IdInPaging(emf, createIdQuery(emf), getPageSize());
-        case CURSOR:
-            return new StreamPaging<Employee>(emf, createQuery(emf), getPageSize());
+            switch (type) {
+            case NONE:
+                return null;
+            case PAGE:
+                return new FirstMaxPaging(emf, createQuery(emf), createCountQuery(emf), getPageSize());
+            case PAGE_IN:
+                return new IdInPaging(emf, createIdQuery(emf), getPageSize());
+            case CURSOR:
+                return new StreamPaging<Employee>(emf, createQuery(emf), getPageSize());
+            }
         }
-
         return null;
     }
 

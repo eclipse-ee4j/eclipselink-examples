@@ -12,6 +12,7 @@
  ******************************************************************************/
 package eclipselink.example.jpa.employee.test.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -23,11 +24,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import eclipselink.example.jpa.employee.model.Employee;
+import eclipselink.example.jpa.employee.model.SamplePopulation;
 import eclipselink.example.jpa.employee.services.Diagnostics;
 import eclipselink.example.jpa.employee.services.Diagnostics.SQLTrace;
 import eclipselink.example.jpa.employee.services.EmployeeCriteria;
 import eclipselink.example.jpa.employee.services.EntityPaging;
-import example.JavaSEExample;
 import example.PersistenceTesting;
 
 /**
@@ -39,7 +40,7 @@ import example.PersistenceTesting;
 public class StreamEmployeesTest {
 
     @Test
-    public void streamAll() {
+    public void streamAllNext() {
         EntityManager em = getEmf().createEntityManager();
         Diagnostics diagnostics = Diagnostics.getInstance(getEmf());
 
@@ -52,7 +53,7 @@ public class StreamEmployeesTest {
         criteria.setPageSize(5);
         criteria.setPagingType(EntityPaging.Type.CURSOR.name());
         EntityPaging<Employee> stream = criteria.getPaging(getEmf());
-        
+
         Assert.assertEquals(25, stream.size());
 
         SQLTrace end = diagnostics.stop();
@@ -71,25 +72,89 @@ public class StreamEmployeesTest {
             Assert.assertTrue(stream.hasNext());
             List<Employee> emps = stream.next();
 
-            //Assert.assertEquals(5, emps.size());
+            Assert.assertEquals(5, emps.size());
 
             for (Employee e : emps) {
-                Assert.assertEquals(currentId++, e.getId());
                 System.out.println("> " + e);
+                Assert.assertEquals(currentId++, e.getId());
             }
         }
 
         Assert.assertEquals(1, end.getEntries().size());
         Assert.assertFalse(stream.hasNext());
 
-        List<Employee> next = stream.next();
-        Assert.assertTrue(next.isEmpty());
+        try {
+            stream.next();
+        } catch (IllegalStateException e) {
+            return;
+        } finally {
+            em.close();
+        }
 
-        em.close();
+        Assert.fail("IllegalStateException not thrown on next()");
     }
 
-   /* @Test
-    public void streamPartial() {
+    @Test
+    public void streamAllNext10() {
+        EntityManager em = getEmf().createEntityManager();
+        Diagnostics diagnostics = Diagnostics.getInstance(getEmf());
+
+        SQLTrace start = diagnostics.start();
+        Assert.assertTrue(start.getEntries().isEmpty());
+
+        EmployeeCriteria criteria = new EmployeeCriteria();
+        criteria.setFirstName(null);
+        criteria.setLastName(null);
+        criteria.setPageSize(10);
+        criteria.setPagingType(EntityPaging.Type.CURSOR.name());
+        EntityPaging<Employee> stream = criteria.getPaging(getEmf());
+
+        Assert.assertEquals(25, stream.size());
+
+        SQLTrace end = diagnostics.stop();
+
+        Assert.assertNotNull(end);
+        Assert.assertSame(start, end);
+        Assert.assertFalse(end.getEntries().isEmpty());
+        Assert.assertEquals(1, end.getEntries().size());
+
+        Assert.assertEquals(3, stream.getNumPages());
+
+        // Verify the ids assuming they are sequentially assigned starting at 1.
+        int currentId = 1;
+
+        for (int index = 0; index < 3; index++) {
+            Assert.assertTrue(stream.hasNext());
+            List<Employee> emps = stream.next();
+
+            if (index < 2) {
+                Assert.assertEquals(10, emps.size());
+            } else {
+                Assert.assertEquals(5, emps.size());
+            }
+
+            for (Employee e : emps) {
+                System.out.println("> " + e);
+                Assert.assertEquals(currentId++, e.getId());
+            }
+        }
+
+        Assert.assertEquals(1, end.getEntries().size());
+        Assert.assertFalse(stream.hasNext());
+
+        try {
+            stream.next();
+        } catch (IllegalStateException e) {
+            return;
+        } finally {
+            em.close();
+        }
+
+        Assert.fail("IllegalStateException not thrown on next()");
+    }
+
+    @Test
+    public void streamAllPrevious() {
         EntityManager em = getEmf().createEntityManager();
         Diagnostics diagnostics = Diagnostics.getInstance(getEmf());
 
@@ -114,30 +179,136 @@ public class StreamEmployeesTest {
 
         Assert.assertEquals(5, stream.getNumPages());
 
-        // Verify the ids assuming they are sequentially assigned starting at 1.
-        int currentId = 1;
+        // skip to end
+        List<List<Employee>> pages = new ArrayList<List<Employee>>();
+        pages.add(stream.next());
+        Assert.assertEquals(1, stream.getCurrentPage());
+        pages.add(stream.next());
+        Assert.assertEquals(2, stream.getCurrentPage());
+        pages.add(stream.next());
+        Assert.assertEquals(3, stream.getCurrentPage());
+        pages.add(stream.next());
+        Assert.assertEquals(4, stream.getCurrentPage());
+        pages.add(stream.next());
+        Assert.assertEquals(5, stream.getCurrentPage());
 
-        for (int index = 0; index < 5; index++) {
-            Assert.assertTrue(stream.hasNext());
-            List<Object[]> emps = stream.next();
+        for (int index = 4; index > 0; index--) {
+            Assert.assertEquals(index + 1, stream.getCurrentPage());
+            Assert.assertTrue("No previous found at page: " + index + " stream at: " + stream.getCurrentPage(), stream.hasPrevious());
+
+            List<Employee> emps = stream.previous();
+
+            if (index == 1) {
+                Assert.assertFalse(stream.hasPrevious());
+            } else {
+                Assert.assertTrue("No previous found at page: " + index + " stream at: " + stream.getCurrentPage(), stream.hasPrevious());
+            }
 
             Assert.assertEquals(5, emps.size());
+            Assert.assertEquals(index, stream.getCurrentPage());
 
-            for (Object[] e : emps) {
-                Assert.assertEquals(currentId++, ((Number) e[0]).intValue());
-                System.out.println("> " + e[0] + ":: " + e[2] + ", " + e[1]);
+            List<Employee> nextPage = pages.get(index - 1);
+            for (int pi = 0; pi < 5; pi++) {
+                Employee emp = emps.get(pi);
+                Employee nextEmp = nextPage.get(pi);
+                Assert.assertSame(nextEmp, emp);
+                System.out.println(index + "> " + emp);
             }
         }
 
         Assert.assertEquals(1, end.getEntries().size());
-        Assert.assertFalse(stream.hasNext());
+        Assert.assertTrue(stream.hasNext());
+        Assert.assertFalse(stream.hasPrevious());
 
-        List<Object[]> next = stream.next();
-        Assert.assertTrue(next.isEmpty());
+        try {
+            stream.previous();
+        } catch (IllegalStateException e) {
+            return;
+        } finally {
+            em.close();
+        }
 
-        em.close();
+        Assert.fail("IllegalStateException not thrown on previous()");
     }
-*/
+
+    @Test
+    public void streamAllPreviousGet() {
+        EntityManager em = getEmf().createEntityManager();
+        Diagnostics diagnostics = Diagnostics.getInstance(getEmf());
+
+        SQLTrace start = diagnostics.start();
+        Assert.assertTrue(start.getEntries().isEmpty());
+
+        EmployeeCriteria criteria = new EmployeeCriteria();
+        criteria.setFirstName(null);
+        criteria.setLastName(null);
+        criteria.setPageSize(5);
+        criteria.setPagingType(EntityPaging.Type.CURSOR.name());
+        EntityPaging<Employee> stream = criteria.getPaging(getEmf());
+
+        Assert.assertEquals(25, stream.size());
+
+        SQLTrace end = diagnostics.stop();
+
+        Assert.assertNotNull(end);
+        Assert.assertSame(start, end);
+        Assert.assertFalse(end.getEntries().isEmpty());
+        Assert.assertEquals(1, end.getEntries().size());
+
+        Assert.assertEquals(5, stream.getNumPages());
+
+        // skip to end
+        List<List<Employee>> pages = new ArrayList<List<Employee>>();
+        pages.add(stream.next());
+        Assert.assertEquals(1, stream.getCurrentPage());
+        pages.add(stream.next());
+        Assert.assertEquals(2, stream.getCurrentPage());
+        pages.add(stream.next());
+        Assert.assertEquals(3, stream.getCurrentPage());
+        pages.add(stream.next());
+        Assert.assertEquals(4, stream.getCurrentPage());
+        pages.add(stream.next());
+        Assert.assertEquals(5, stream.getCurrentPage());
+
+        for (int index = 4; index > 0; index--) {
+            Assert.assertEquals(index + 1, stream.getCurrentPage());
+            Assert.assertTrue("No previous found at page: " + index + " stream at: " + stream.getCurrentPage(), stream.hasPrevious());
+
+            List<Employee> emps = stream.get(index);
+
+            if (index == 1) {
+                Assert.assertFalse(stream.hasPrevious());
+            } else {
+                Assert.assertTrue("No previous found at page: " + index + " stream at: " + stream.getCurrentPage(), stream.hasPrevious());
+            }
+
+            Assert.assertEquals(5, emps.size());
+            Assert.assertEquals(index, stream.getCurrentPage());
+
+            List<Employee> nextPage = pages.get(index - 1);
+            for (int pi = 0; pi < 5; pi++) {
+                Employee emp = emps.get(pi);
+                Employee nextEmp = nextPage.get(pi);
+                Assert.assertSame(nextEmp, emp);
+                System.out.println(index + "> " + emp);
+            }
+        }
+
+        Assert.assertEquals(1, end.getEntries().size());
+        Assert.assertTrue(stream.hasNext());
+        Assert.assertFalse(stream.hasPrevious());
+
+        try {
+            stream.previous();
+        } catch (IllegalStateException e) {
+            return;
+        } finally {
+            em.close();
+        }
+
+        Assert.fail("IllegalStateException not thrown on previous()");
+    }
+
     private static EntityManagerFactory emf;
 
     public static EntityManagerFactory getEmf() {
@@ -149,7 +320,11 @@ public class StreamEmployeesTest {
         emf = PersistenceTesting.createEMF(true);
 
         EntityManager em = emf.createEntityManager();
-        new JavaSEExample().createNewEmployees(em, 25);
+        new SamplePopulation().createNewEmployees(em, 25);
+
+        Number count = em.createNamedQuery("Employee.count", Number.class).getSingleResult();
+        Assert.assertEquals(25, count.intValue());
+
         em.close();
 
         emf.getCache().evictAll();

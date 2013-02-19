@@ -23,12 +23,12 @@ import example.PersistenceTesting;
 
 public class ConfigTest {
 
-  @Test
-  public void bootstrap() {
-      EntityManager em = getEmf().createEntityManager();
-      
-      em.close();
-  }
+    @Test
+    public void bootstrap() {
+        EntityManager em = getEmf().createEntityManager();
+        
+        em.close();
+    }
 
   private static EntityManagerFactory emf;
 

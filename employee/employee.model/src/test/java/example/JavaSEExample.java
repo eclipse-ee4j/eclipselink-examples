@@ -13,20 +13,19 @@
 package example;
 
 import java.util.List;
-import java.util.Random;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
 
 import eclipselink.example.jpa.employee.model.Employee;
-import eclipselink.example.jpa.employee.model.Gender;
+import eclipselink.example.jpa.employee.model.SamplePopulation;
 import eclipselink.example.jpa.employee.services.EmployeeCriteria;
 import eclipselink.example.jpa.employee.services.EntityPaging;
 
-
 /**
- * Examples illustrating the use of JPA with the employee domain eclipselink.example.jpa.employee.model.
+ * Examples illustrating the use of JPA with the employee domain
+ * eclipselink.example.jpa.employee.model.
  * 
  * @see test.JavaSEExampleTest
  * 
@@ -42,7 +41,7 @@ public class JavaSEExample {
         try {
             EntityManager em = emf.createEntityManager();
 
-            example.createNewEmployees(em, 10);
+            new SamplePopulation().createNewEmployees(em, 10);
             em.clear();
 
             example.queryAllEmployees(em);
@@ -56,16 +55,15 @@ public class JavaSEExample {
 
             example.deleteEmployee(em, 1);
             em.clear();
-            
+
             example.pagingIdIn(emf);
-            
+
             em.close();
 
         } finally {
             emf.close();
         }
     }
-
 
     public void queryAllEmployees(EntityManager em) {
         List<Employee> results = em.createQuery("SELECT e FROM Employee e", Employee.class).getResultList();
@@ -74,16 +72,6 @@ public class JavaSEExample {
         for (Employee emp : results) {
             System.out.println("\t> " + emp);
         }
-    }
-
-    public void createNewEmployees(EntityManager em, int quantity) {
-        System.out.println("\n\n --- Create New Employees + " + quantity + " ---");
-        em.getTransaction().begin();
-
-        for (int index = 0; index < quantity; index++) {
-             em.persist(createRandomEmployee());
-        }
-        em.getTransaction().commit();
     }
 
     public void queryEmployeeLikeAreaCode55(EntityManager em) {
@@ -122,36 +110,17 @@ public class JavaSEExample {
         em.getTransaction().rollback();
 
     }
-    
+
     public void pagingIdIn(EntityManagerFactory emf) {
         EmployeeCriteria criteria = new EmployeeCriteria();
         criteria.setFirstName(null);
         criteria.setLastName(null);
         criteria.setPagingType(EntityPaging.Type.PAGE.name());
-        
+
         EntityPaging<Employee> paging = criteria.getPaging(emf);
-        
+
         paging.get(1);
         paging.get(2);
     }
 
-    private static final String[] MALE_FIRST_NAMES = { "Jacob", "Et", "Michael", "Alexander", "William", "Joshua", "Daniel", "Jayden", "Noah", "Anthony" };
-    private static final String[] FEMALE_FIRST_NAMES = { "Isabella", "Emma", "Olivia", "Sophia", "Ava", "Emily", "Madison", "Abigail", "Chloe", "Mia" };
-    private static final String[] LAST_NAMES = { "Smith", "Johnson", "Williams", "Brown", "Jones", "Miller", "Davis", "Garcia", "Rodriguez", "Wilson" };
-
-    public Employee createRandomEmployee() {
-        Random r = new Random();
-
-        Employee emp = new Employee();
-        emp.setGender(Gender.values()[r.nextInt(2)]);
-        if (Gender.Male.equals(emp.getGender())) {
-            emp.setFirstName(MALE_FIRST_NAMES[r.nextInt(MALE_FIRST_NAMES.length)]);
-        } else {
-            emp.setFirstName(FEMALE_FIRST_NAMES[r.nextInt(FEMALE_FIRST_NAMES.length)]);
-        }
-        emp.setLastName(LAST_NAMES[r.nextInt(LAST_NAMES.length)]);
-        emp.addPhoneNumber("555", "111", "5552222");
-        
-        return emp;
-    }
 }

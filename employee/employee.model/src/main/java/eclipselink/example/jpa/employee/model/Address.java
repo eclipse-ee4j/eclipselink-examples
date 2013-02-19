@@ -22,7 +22,8 @@ import org.eclipse.persistence.annotations.FetchGroup;
 public class Address {
     @Id
     @Column(name = "ADDRESS_ID")
-    @GeneratedValue
+    @GeneratedValue(generator="ADDR_SEQ")
+    @SequenceGenerator(name="ADDR_SEQ")
     private int id;
 
     @Basic

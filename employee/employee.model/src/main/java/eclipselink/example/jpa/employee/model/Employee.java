@@ -39,6 +39,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.QueryHint;
 import javax.persistence.SecondaryTable;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Version;
 
 import org.eclipse.persistence.annotations.ConversionValue;
@@ -65,12 +66,12 @@ import org.eclipse.persistence.config.QueryHints;
 	 * Query used in {@link EmployeeIdInPaging}
 	 */
 	@NamedQuery(name = "Employee.idsIn", query = "SELECT e FROM Employee e WHERE e.id IN :IDS ORDER BY e.id", hints = { @QueryHint(name = QueryHints.QUERY_RESULTS_CACHE, value = HintValues.TRUE) })})
-@OptimisticLocking(cascade=true)
 public class Employee {
 
     @Id
     @Column(name = "EMP_ID")
-    @GeneratedValue
+    @GeneratedValue(generator="EMP_SEQ")
+    @SequenceGenerator(name="EMP_SEQ")
     private int id;
 
     @Column(name = "F_NAME")
@@ -105,13 +106,12 @@ public class Employee {
     @OneToMany(mappedBy = "manager")
     private List<Employee> managedEmployees = new ArrayList<Employee>();
 
-    @OneToMany(mappedBy = "owner", cascade = ALL)
+    @OneToMany(mappedBy = "owner", cascade = ALL, orphanRemoval=true)
     @PrivateOwned
     private List<PhoneNumber> phoneNumbers = new ArrayList<PhoneNumber>();
 
-    @OneToOne(cascade = ALL, fetch = LAZY)
+    @OneToOne(cascade = ALL, fetch = LAZY, orphanRemoval=true)
     @JoinColumn(name = "ADDR_ID")
-    @PrivateOwned
     private Address address;
 
     @Embedded

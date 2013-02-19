@@ -26,11 +26,8 @@
 					<h:outputText value="#{emp.firstName}" />
 				</h:column>
 				<h:column>
-					<h:commandLink value="Edit" action="#{employeeResults.edit(emp)}" />
-				</h:column>
-				<h:column>
-					<h:commandLink value="Delete"
-						action="#{employeeResults.delete(emp)}" />
+					<h:commandButton value="Edit" action="#{employeeResults.edit(emp)}"
+						class="button-small" />
 				</h:column>
 
 				<f:facet name="footer" rendered="#{employeeResults.hasPaging}">
@@ -38,7 +35,7 @@
 						<tr>
 							<td><h:commandButton value="Previous Page"
 									action="#{employeeResults.previous}"
-									rendered="#{employeeResults.hasPrevious}"  class="button-small" /></td>
+									rendered="#{employeeResults.hasPrevious}" class="button-small" /></td>
 							<td width="100%" align="center">Page <h:outputText
 									value="#{employeeResults.currentPage}" /> of <h:outputText
 									value="#{employeeResults.numPages}" /></td>

@@ -8,17 +8,16 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  *
  * Contributors:
- *  dclarke - initial
+ *  dclarke - Employee Demo 2.4
  ******************************************************************************/
-package eclipselink.example.jpa.employee.test.services;
+package test;
 
-import java.lang.reflect.Proxy;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.TypedQuery;
 
-import org.eclipse.persistence.logging.SessionLog;
-import org.eclipse.persistence.sessions.server.Server;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -30,55 +29,67 @@ import eclipselink.example.jpa.employee.services.Diagnostics;
 import eclipselink.example.jpa.employee.services.Diagnostics.SQLTrace;
 import example.PersistenceTesting;
 
-public class DiagnosticsTest {
+public class CascadeMergeTest {
 
     @Test
-    public void verify() {
+    public void test() {
         EntityManager em = getEmf().createEntityManager();
 
-        Server session = em.unwrap(Server.class);
-        SessionLog log = session.getSessionLog();
+        TypedQuery<Employee> query = em.createQuery("SELECT e FROM Employee e WHERE e.address IS NOT NULL", Employee.class);
 
-        Assert.assertNotNull(log);
-        Assert.assertTrue(Proxy.isProxyClass(log.getClass()));
-        Assert.assertTrue(Proxy.getInvocationHandler(log) instanceof Diagnostics);
+        List<Employee> emps = query.getResultList();
 
+        Employee emp = emps.get(0);
+
+        Assert.assertNotNull(emp);
+        Assert.assertNotNull(emp.getAddress());
+
+        em.detach(emp);
+        
         em.close();
-    }
 
-    @Test
-    public void singleFind() {
-        Diagnostics diagnostics = Diagnostics.getInstance(getEmf());
-        EntityManager em = getEmf().createEntityManager();
+        em = getEmf().createEntityManager();
+        emp.getAddress().setCity(emp.getAddress().getCity() + "+");
 
-        SQLTrace start = diagnostics.start();
-        Assert.assertEquals(0, start.getEntries().size());
-
-        em.find(Employee.class, 1);
-        SQLTrace trace = diagnostics.stop();
-
-        Assert.assertSame(trace, start);
-        Assert.assertNotNull(trace);
+        em.getTransaction().begin();
+        em.merge(emp);
+        
+        getDiagnostics().start();
+        em.flush();
+        SQLTrace trace = getDiagnostics().stop();
+        
         Assert.assertEquals(1, trace.getEntries().size());
-
+        Assert.assertTrue(trace.getEntries().get(0).getMessage().startsWith("UPDATE ADDRESS"));
+        
+        em.getTransaction().rollback();
         em.close();
     }
 
     private static EntityManagerFactory emf;
 
+    private static Diagnostics diagnostics;
+    
     public static EntityManagerFactory getEmf() {
         return emf;
+    }
+
+    public static Diagnostics getDiagnostics() {
+        return diagnostics;
     }
 
     @BeforeClass
     public static void createEMF() {
         emf = PersistenceTesting.createEMF(true);
-
+        diagnostics = Diagnostics.getInstance(emf);
+        
         EntityManager em = emf.createEntityManager();
-        new SamplePopulation().createNewEmployees(em, 25);
+        new SamplePopulation().createNewEmployees(em, 1);
+
+        Number count = em.createNamedQuery("Employee.count", Number.class).getSingleResult();
+        Assert.assertEquals(1, count.intValue());
+
         em.close();
 
-        Diagnostics.getInstance(emf);
         emf.getCache().evictAll();
     }
 

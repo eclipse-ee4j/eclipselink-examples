@@ -20,6 +20,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.context.Flash;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.LockModeType;
 import javax.persistence.OptimisticLockException;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.RollbackException;
@@ -100,7 +101,13 @@ public class EditEmployee extends BaseBean {
 
         try {
             em.getTransaction().begin();
+            if (getEmployee().getAddress() != null) {
+               // em.merge(getEmployee().getAddress());
+            }
             this.employee = em.merge(getEmployee());
+            // Ensure the Employee's lock value is incremented
+            em.lock(this.employee, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+            
             em.getTransaction().commit();
             if (isCreate()) {
                 em.refresh(getEmployee());
@@ -142,6 +149,7 @@ public class EditEmployee extends BaseBean {
             em.refresh(getEmployee());
             getEmployee().getAddress();
             getEmployee().getPhoneNumbers().size();
+            em.detach(employee);
         } finally {
             close(em);
         }

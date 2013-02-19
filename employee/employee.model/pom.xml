@@ -110,7 +110,7 @@
 							<systemProperties>
 								<property>
 									<name>javax.persistence.jdbc.url</name>
-									<value>jdbc:mysql://localhost:3306/employeedemo</value>
+									<value>jdbc:mysql://localhost:3306/employee</value>
 								</property>
 								<property>
 									<name>javax.persistence.jdbc.driver</name>
@@ -118,11 +118,11 @@
 								</property>
 								<property>
 									<name>javax.persistence.jdbc.user</name>
-									<value>employeedemo</value>
+									<value>root</value>
 								</property>
 								<property>
 									<name>javax.persistence.jdbc.password</name>
-									<value>employeedemo</value>
+									<value>password</value>
 								</property>
 							</systemProperties>
 						</configuration>

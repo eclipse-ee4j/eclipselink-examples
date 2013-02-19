@@ -23,11 +23,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import eclipselink.example.jpa.employee.model.Employee;
+import eclipselink.example.jpa.employee.model.SamplePopulation;
 import eclipselink.example.jpa.employee.services.Diagnostics;
 import eclipselink.example.jpa.employee.services.Diagnostics.SQLTrace;
 import eclipselink.example.jpa.employee.services.EmployeeCriteria;
 import eclipselink.example.jpa.employee.services.EntityPaging;
-import example.JavaSEExample;
 import example.PersistenceTesting;
 
 /**
@@ -203,7 +203,7 @@ public class PageEmployeesTest {
         emf = PersistenceTesting.createEMF(true);
 
         EntityManager em = emf.createEntityManager();
-        new JavaSEExample().createNewEmployees(em, 25);
+        new SamplePopulation().createNewEmployees(em, 25);
         em.close();
 
         emf.getCache().evictAll();
