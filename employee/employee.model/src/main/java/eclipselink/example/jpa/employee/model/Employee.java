@@ -61,7 +61,9 @@ import org.eclipse.persistence.config.QueryHints;
 @ObjectTypeConverter(name = "gender", objectType = Gender.class, dataType = String.class, conversionValues = { @ConversionValue(dataValue = "M", objectValue = "Male"), @ConversionValue(dataValue = "F", objectValue = "Female") })
 @NamedQueries({ 
 	@NamedQuery(name = "Employee.findAll", query = "SELECT e FROM Employee e ORDER BY e.id"),
+	@NamedQuery(name = "Employee.findByName", query = "SELECT e FROM Employee e WHERE e.firstName LIKE :firstName AND e.lastName LIKE :lastName"),
 	@NamedQuery(name = "Employee.count", query = "SELECT COUNT(e) FROM Employee e"),
+	@NamedQuery(name = "Employee.countByName", query = "SELECT COUNT(e) FROM Employee e WHERE e.firstName LIKE :firstName AND e.lastName LIKE :lastName"),
 	/**
 	 * Query used in {@link EmployeeIdInPaging}
 	 */

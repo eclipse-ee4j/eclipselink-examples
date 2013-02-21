@@ -78,20 +78,20 @@ textarea {
 
 #main-container {
 	padding: 10px;
-	padding-bottom: 10em; /* Height of the footer */
+	padding-bottom: 12em; /* Height of the footer */
 }
 
 #footer-container {
 	position: absolute;
 	bottom: 0;
 	width: 100%;
-	height: 10em; /* Height of the footer */
+	height: 12em; /* Height of the footer */
 	background: #330066;
 }
 
 #footer-container footer {
 	color: white;
-	padding: 20px 0 0 20px;
+	padding: 5px 0 0 20px;
 	position: fixed;
 }
 

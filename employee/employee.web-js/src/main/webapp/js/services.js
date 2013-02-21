@@ -19,18 +19,18 @@ var serverRootUrl = 'http://' + serverHostname;
 var resourceRootURL = serverRootUrl;
 var httpRootURL = serverRootUrl;
 if (serverPort) {
-	/* have to escape ":" because $resource interprets it as a parameter while
+	/* have to escape ':' because $resource interprets it as a parameter while
 	 * $http does not.
 	 */
-	resourceRootURL = resourceRootURL + "\\:" + serverPort;
-	httpRootURL = httpRootURL + ":" + serverPort;
+	resourceRootURL = resourceRootURL + '\\:' + serverPort;
+	httpRootURL = httpRootURL + ':' + serverPort;
 }
 
 var employeeServices = angular.module('employeeServices', ['ngResource']);
 
 employeeServices.factory('Employees', function($resource, $http) {
 	var resource = $resource(
-	resourceRootURL + '/employee/persistence/employee/query/Employee.findAll', {}, {
+	resourceRootURL + '/employee/persistence/employee/query/Employee.findByName;firstName=:firstName;lastName=:lastName', {}, {
 		getPage: {
 			method: 'GET',
 			params: {
@@ -48,8 +48,8 @@ employeeServices.factory('Employees', function($resource, $http) {
 	/*
 	 * Add method to resource to obtain total number of Employees.
 	 */
-	resource.count = function() {
-		return $http.get(httpRootURL + "/employee/persistence/employee/singleResultQuery/Employee.count");
+	resource.count = function(firstName, lastName) {
+		return $http.get(httpRootURL + '/employee/persistence/employee/singleResultQuery/Employee.countByName;firstName=' + firstName + ';lastName=' + lastName);
 	};
 	return resource;
 });
