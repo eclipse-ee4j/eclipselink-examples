@@ -72,8 +72,7 @@ public class Employee {
 
     @Id
     @Column(name = "EMP_ID")
-    @GeneratedValue(generator="EMP_SEQ")
-    @SequenceGenerator(name="EMP_SEQ")
+    @GeneratedValue
     private int id;
 
     @Column(name = "F_NAME")

@@ -55,9 +55,8 @@
 				<td>{{employee.id}}</td>
 				<td>{{employee.lastName}}</td>
 				<td>{{employee.firstName}}</td>
-				<td class='employee-action'><a
-					href='#/employee/edit/{{employee.id}}'>Edit</a></td>
-				<td class='employee-action'>Delete</td>
+				<td class='employee-action'><button class='button-small' ng-click='editEmployee(employee.id)'>Edit</button></td>
+				<td class='employee-action'><button class='button-small' ng-click='deleteEmployee(employee.id)'>Delete</button></td>
 			</tr>
 		</tbody>
 		<tfoot ng-show='pageResults'>

@@ -21,6 +21,9 @@ angular.module('employee', [ 'employeeServices' ]).config(
 				.when('/employee/edit/:id', {
 					templateUrl : 'employee/edit.html',
 					controller : EmployeeEditCtrl
+				}).when('/employee/delete/:id', {
+					templateUrl : 'employee/delete.html',
+					controller : EmployeeDeleteCtrl
 				}).when('/employee/create', {
 					templateUrl : 'employee/create.html',
 					controller : EmployeeCreateCtrl

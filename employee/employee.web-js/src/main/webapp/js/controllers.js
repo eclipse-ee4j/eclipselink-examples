@@ -13,18 +13,18 @@
 
 /* Controllers */
 
-function EmployeeListCtrl($scope, Employees) {
+function EmployeeListCtrl($scope, $location, Employee, Employees) {
 	$scope.firstName = '%';
 	$scope.lastName = '%';
 
 	function resetEmployees() {
 		$scope.employees = [];
 	}
-	
+
 	function resetFilter() {
 		$scope.query = null;
 	}
-	
+
 	$scope.search = function() {
 		if ($scope.pageResults) {
 			resetPaging();
@@ -45,26 +45,34 @@ function EmployeeListCtrl($scope, Employees) {
 		}
 	};
 
+	$scope.deleteEmployee = function(employeeId) {
+		$location.path("/employee/delete/" + employeeId);
+	};
+
+	$scope.editEmployee = function(employeeId) {
+		$location.path("/employee/edit/" + employeeId);
+	};
+
 	/* Paging Functionality */
-	
+
 	$scope.pageResults = false;
 	function resetPaging() {
 		$scope.pageNum = 1;
 		$scope.totalPages = 0;
 		$scope.pageSize = 10;
 		$scope.first = 0;
-		$scope.max = $scope.pageSize;		
+		$scope.max = $scope.pageSize;
 	}
 
 	/* Respond to toggling of paging. */
 	$scope.$watch('pageResults', function() {
 		resetEmployees();
 		resetFilter();
-        if ($scope.pageResults) {
-        	resetPaging();
-        }
+		if ($scope.pageResults) {
+			resetPaging();
+		}
 	});
-	
+
 	function fetchPage() {
 		$scope.employees = Employees.getPage({
 			firstName : $scope.firstName,
@@ -98,6 +106,23 @@ function EmployeeListCtrl($scope, Employees) {
 
 }
 
+function EmployeeDeleteCtrl($scope, $routeParams, $location, Employee) {
+	$scope.employee = Employee.get({
+		id : $routeParams.id
+	});
+
+	$scope.confirm = function() {
+		Employee.remove({}, {
+			id : $scope.employee.id
+		});
+		$location.path("/home");
+	};
+
+	$scope.cancel = function() {
+		$location.path("/home");
+	};
+}
+
 function EmployeeEditCtrl($scope, $routeParams, $location, Employee) {
 	$scope.employee = Employee.get({
 		id : $routeParams.id
@@ -116,11 +141,32 @@ function EmployeeEditCtrl($scope, $routeParams, $location, Employee) {
 
 function EmployeeCreateCtrl($scope, $location, Employee) {
 	$scope.employee = new Employee();
-	$scope.employee.gender = 'Male';
+	$scope.employee.gender = 'Female';
 
 	$scope.save = function() {
 		$scope.employee.$save();
-		$scope.cancel();
+		$location.path("/home");
+	};
+
+	$scope.addPhone = function() {
+		if ($scope.employee.phoneNumbers) {
+			$scope.employee.phoneNumbers.push({});
+		} else {
+			$scope.employee.phoneNumbers = [ {} ];
+		}
+	};
+
+	$scope.removePhone = function(index) {
+		var phoneNumbers = $scope.employee.phoneNumbers;
+		if (index == 0) {
+			phoneNumbers.shift();
+		} else if (index == phoneNumbers.length - 1) {
+			phoneNumbers.pop();
+		} else {
+			var front = phoneNumbers.slice(0, index);
+			var back = phoneNumbers.slice(index + 1, phoneNumbers.length);
+			$scope.employee.phoneNumbers = front.concat(back);
+		}
 	};
 
 	$scope.cancel = function() {
