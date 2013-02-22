@@ -45,11 +45,11 @@ function EmployeeListCtrl($scope, $location, Employee, Employees) {
 		}
 	};
 
-	$scope.deleteEmployee = function(employeeId) {
+	$scope.remove = function(employeeId) {
 		$location.path("/employee/delete/" + employeeId);
 	};
 
-	$scope.editEmployee = function(employeeId) {
+	$scope.edit = function(employeeId) {
 		$location.path("/employee/edit/" + employeeId);
 	};
 
@@ -130,13 +130,16 @@ function EmployeeEditCtrl($scope, $routeParams, $location, Employee) {
 
 	$scope.save = function() {
 		$scope.employee.$save();
-		$scope.cancel();
+		$location.path("/home");
+	};
+
+	$scope.remove = function() {
+		$location.path("/employee/delete/" + $scope.employee.id);
 	};
 
 	$scope.cancel = function() {
 		$location.path("/home");
 	};
-
 }
 
 function EmployeeCreateCtrl($scope, $location, Employee) {
