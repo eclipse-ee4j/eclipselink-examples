@@ -13,4 +13,26 @@
 	<packaging>war</packaging>
 	<name>Employee Web JavaScript App</name>
 
+	<dependencies>
+		<!-- EclipseLink JPA-RS Web Fragment -->
+		<dependency>
+			<groupId>${eclipselink.groupid}</groupId>
+			<artifactId>org.eclipse.persistence.jpars</artifactId>
+			<version>${eclipselink.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>eclipselink.example.jpa</groupId>
+			<artifactId>employee.model</artifactId>
+			<version>2.4.2-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-api</artifactId>
+			<version>6.0</version>
+			<scope>provided</scope>
+		</dependency>
+
+	</dependencies>
 </project>
