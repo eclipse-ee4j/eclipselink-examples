@@ -63,7 +63,6 @@
         <module>employee.model</module>
         <module>employee.web</module>
         <module>employee.web-js</module>
-        <module>employee.ear</module>
 	</modules>
 
 	<build>
