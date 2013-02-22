@@ -41,7 +41,7 @@ employeeServices.factory('Employees', function($resource, $http) {
 });
 
 employeeServices.factory('Employee', function($resource) {
-	return $resource('/persistence/employee/entity/Employee/:id', {}, {
+	return $resource('persistence/employee/entity/Employee/:id', {}, {
 		get: {
 			method: 'GET',
 			isArray: false
