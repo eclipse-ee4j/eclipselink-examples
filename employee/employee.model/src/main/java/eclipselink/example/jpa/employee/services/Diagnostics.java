@@ -18,6 +18,7 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ejb.Local;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
@@ -31,6 +32,7 @@ import org.eclipse.persistence.sessions.server.Server;
  * @author dclarke
  * @since EclipseLink 2.4.2
  */
+@Local
 public class Diagnostics implements InvocationHandler {
 
     /**
