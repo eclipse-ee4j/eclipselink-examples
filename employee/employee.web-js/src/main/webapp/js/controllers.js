@@ -123,10 +123,14 @@ function EmployeeDeleteCtrl($scope, $routeParams, $location, Employee) {
 	};
 }
 
-function EmployeeEditCtrl($scope, $routeParams, $location, Employee) {
+function EmployeeEditCtrl($scope, $routeParams, $location, Employee, EmployeePhones, EmployeeAddress) {
 	$scope.employee = Employee.get({
 		id : $routeParams.id
+	}, function() {
 	});
+	// replace links with actual data for editing
+	$scope.employee.address = EmployeeAddress.get({ id : $routeParams.id});
+	$scope.employee.phones = EmployeePhones.get({ id : $routeParams.id});
 
 	$scope.save = function() {
 		$scope.employee.$save();

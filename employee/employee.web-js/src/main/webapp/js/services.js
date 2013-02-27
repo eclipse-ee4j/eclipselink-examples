@@ -59,3 +59,11 @@ employeeServices.factory('Employee', function($resource) {
 		}
 	});
 });
+
+employeeServices.factory('EmployeePhones', function($resource) {
+	return $resource('persistence/employee/entity/Employee/:id/phoneNumbers', {}, {});
+});
+
+employeeServices.factory('EmployeeAddress', function($resource) {
+	return $resource('persistence/employee/entity/Employee/:id/address', {}, {});
+});
