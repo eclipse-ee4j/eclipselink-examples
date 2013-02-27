@@ -67,15 +67,15 @@
 					<tbody>
 						<tr>
 							<td><label>Street:</label></td>
-							<td><input type="text" ng-model='employee.address.street' /></td>
+							<td><input type="text" ng-model='address.street' /></td>
 						</tr>
 						<tr>
 							<td><label>City:</label></td>
-							<td><input type="text" ng-model='employee.address.city' /></td>
+							<td><input type="text" ng-model='address.city' /></td>
 						</tr>
 						<tr>
 							<td><label>Country</label></td>
-							<td><input type="text" ng-model='employee.address.country' /></td>
+							<td><input type="text" ng-model='address.country' /></td>
 						</tr>
 					</tbody>
 				</table>
@@ -85,7 +85,7 @@
 							<th colspan="3">Phone Numbers</th>
 							<th><button class='button-small' style='float: right;' ng-click='addPhone()'>Add</button></th>
 						</tr>
-						<tr ng-show='employee.phoneNumbers.length'>
+						<tr ng-show='phoneNumbers.length'>
 							<th scope="col">Type</th>
 							<th scope="col">Area Code</th>
 							<th scope="col">Number</th>
@@ -93,7 +93,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr ng-repeat='phoneNumber in employee.phoneNumbers'>
+						<tr ng-repeat='phoneNumber in phoneNumbers'>
 							<td><input type="text" ng-model='phoneNumber.type' /></td>
 							<td><input type="text" ng-model='phoneNumber.areaCode' /></td>
 							<td><input type="text" ng-model='phoneNumber.number' /></td>

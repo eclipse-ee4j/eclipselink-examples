@@ -127,12 +127,17 @@ function EmployeeEditCtrl($scope, $routeParams, $location, Employee, EmployeePho
 	$scope.employee = Employee.get({
 		id : $routeParams.id
 	}, function() {
+		// replace links with actual data for editing
+		// TODO: Figure out why assignment to $scope.employee doesn't work
+		$scope.address = EmployeeAddress.get({ id : $routeParams.id});
+		$scope.phoneNumbers = EmployeePhones.get({ id : $routeParams.id});
 	});
-	// replace links with actual data for editing
-	$scope.employee.address = EmployeeAddress.get({ id : $routeParams.id});
-	$scope.employee.phones = EmployeePhones.get({ id : $routeParams.id});
 
 	$scope.save = function() {
+		// Attach sub objects for pass by value update
+		// TODO: Figure out why assignment to $scope.employee doesn't work
+		$scope.employee._relationships.address = $scope.address;
+		$scope.employee.phoneNumbers = $scope.phoneNumbers;
 		$scope.employee.$save();
 		$location.path("/home");
 	};
@@ -145,6 +150,8 @@ function EmployeeEditCtrl($scope, $routeParams, $location, Employee, EmployeePho
 		$location.path("/home");
 	};
 }
+
+
 
 function EmployeeCreateCtrl($scope, $location, Employee) {
 	$scope.employee = new Employee();

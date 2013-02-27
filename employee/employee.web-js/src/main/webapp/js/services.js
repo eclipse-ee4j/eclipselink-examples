@@ -61,7 +61,12 @@ employeeServices.factory('Employee', function($resource) {
 });
 
 employeeServices.factory('EmployeePhones', function($resource) {
-	return $resource('persistence/employee/entity/Employee/:id/phoneNumbers', {}, {});
+	return $resource('persistence/employee/entity/Employee/:id/phoneNumbers', {}, {
+		get: {
+			method: 'GET',
+			isArray: true
+		}
+	});
 });
 
 employeeServices.factory('EmployeeAddress', function($resource) {
