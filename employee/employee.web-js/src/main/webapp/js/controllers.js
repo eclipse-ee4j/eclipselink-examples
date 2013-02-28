@@ -123,12 +123,12 @@ function EmployeeDeleteCtrl($scope, $routeParams, $location, Employee) {
 	};
 }
 
-
 function EmployeeCommon($scope, $location) {
 
 	$scope.save = function() {
 		// Attach sub objects for pass by value update
-		// TODO: Figure out why assignment to $scope.employee properties doesn't work
+		// TODO: Figure out why assignment to $scope.employee properties doesn't
+		// work
 		$scope.employee.address = $scope.address;
 		$scope.employee.phoneNumbers = $scope.phoneNumbers;
 		$scope.employee.$save();
@@ -142,11 +142,11 @@ function EmployeeCommon($scope, $location) {
 	$scope.cancel = function() {
 		$location.path("/home");
 	};
-	
+
 	$scope.addAddress = function() {
 		$scope.address = {};
 	};
-	
+
 	$scope.removeAddress = function() {
 		delete $scope.address;
 	};
@@ -174,34 +174,39 @@ function EmployeeCommon($scope, $location) {
 
 }
 
-function EmployeeEditCtrl($scope, $routeParams, $location, Employee, EmployeePhones, EmployeeAddress) {
+function EmployeeEditCtrl($scope, $routeParams, $location, $resource, Employee,
+		EmployeePhones, EmployeeAddress) {
 
 	var that = EmployeeCommon($scope, $location);
-	
+
 	$scope.removeEnabled = true;
-	
+
 	$scope.employee = Employee.get({
 		id : $routeParams.id
 	}, function() {
 		// replace links with actual data for editing
-		// TODO: Figure out why assignment to $scope.employee properties doesn't work
-		var address = EmployeeAddress.get({ id : $routeParams.id}, function() {
-			// Address may not exist so only assign on success
+		// TODO: Figure out why assignment to $scope.employee properties
+		// doesn't work
+
+		EmployeePhones.get($scope.employee, function(phones) {
+			$scope.phoneNumbers = phones;
+		});
+
+		EmployeeAddress.get($scope.employee, function(address) {
 			$scope.address = address;
 		});
-		$scope.phoneNumbers = EmployeePhones.get({ id : $routeParams.id});
 	});
-	
+
 	return that;
 }
 
 function EmployeeCreateCtrl($scope, $location, Employee) {
-	
+
 	var that = EmployeeCommon($scope, $location);
 
 	$scope.employee = new Employee();
 	$scope.employee.gender = 'Female';
-	
+
 	return that;
 
 }
