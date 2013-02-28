@@ -13,12 +13,12 @@
  ******************************************************************************/
  -->
 
-<div ng-controller=EmployeeEditCtrl>
+<div>
 	<article>
 		<header>
 			<div align="right">
 				<button ng-click='save()' class='button-small'>Save</button>
-				<button ng-click='remove()' class='button-small'>Delete</button>
+				<button ng-show='removeEnabled' ng-click='remove()' class='button-small'>Delete</button>
 				<button ng-click='cancel()' class='button-small'>Cancel</button>
 			</div>
 			<div align="center">
@@ -52,19 +52,19 @@
 							<td><label>Salary: $</label></td>
 							<td><input type="text" ng-model='employee.salary' /></td>
 						</tr>
-						<tr>
-							<td><label>Version</label></td>
-							<td><label>{{employee.version}}</label></td>
-						</tr>
 					</tbody>
 				</table>
 				<table class="table-design">
 					<thead>
 						<tr>
-							<th colspan="2">Address</th>
+							<th>Address</th>
+							<th>
+								<button class='button-small' ng-hide='address' style='float: right;' ng-click='addAddress()'>Add</button>
+								<button class='button-small' ng-show='address' style='float: right;' ng-click='removeAddress()'>Remove</button>
+							</th>
 						</tr>
 					</thead>
-					<tbody>
+					<tbody ng-show='address'>
 						<tr>
 							<td><label>Street:</label></td>
 							<td><input type="text" ng-model='address.street' /></td>
