@@ -11,7 +11,7 @@
  *     gonural - initial JPA-RS Booking Employee
  * 
  ******************************************************************************/
-package eclipselink.examples.jpars.booking.model;
+package eclipselink.example.jpars.booking.model;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -166,5 +166,4 @@ public class Address {
     public void setPostalCode(String postalCode) {
         this.postalCode = postalCode;
     }
-
 }

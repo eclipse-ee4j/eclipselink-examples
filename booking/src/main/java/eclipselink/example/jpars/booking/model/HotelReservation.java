@@ -11,7 +11,7 @@
  *     gonural - initial JPA-RS Booking Employee
  * 
  ******************************************************************************/
-package eclipselink.examples.jpars.booking.model;
+package eclipselink.example.jpars.booking.model;
 
 import java.util.Calendar;
 
