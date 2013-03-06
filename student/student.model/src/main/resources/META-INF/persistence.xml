@@ -12,7 +12,6 @@
 			<property name="javax.persistence.nonJtaDataSource" value="jdbc/JPARSStudentDS" />
 			<property name="eclipselink.logging.level" value="FINEST" />
 			<property name="eclipselink.logging.parameters" value="true" />
-			<!-- property name="eclipselink.ddl-generation" value="drop-and-create-tables" /-->
 		</properties>
 	</persistence-unit>
 </persistence>
