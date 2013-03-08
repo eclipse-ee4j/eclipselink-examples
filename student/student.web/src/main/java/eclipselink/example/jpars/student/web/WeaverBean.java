@@ -16,6 +16,11 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
+
+/**
+ * Forces weaving of persistence units
+ *
+ */
 @Startup
 @Singleton
 public class WeaverBean {
