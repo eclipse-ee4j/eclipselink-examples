@@ -123,12 +123,14 @@ function EmployeeDeleteCtrl($scope, $routeParams, $location, Employee) {
 	};
 }
 
-function EmployeeEditCtrl($scope, $routeParams, $location, Employee) {
-	$scope.employee = Employee.get({
-		id : $routeParams.id
-	});
+function EmployeeCommon($scope, $location) {
 
 	$scope.save = function() {
+		// Attach sub objects for pass by value update
+		// TODO: Figure out why assignment to $scope.employee properties doesn't
+		// work
+		$scope.employee.address = $scope.address;
+		$scope.employee.phoneNumbers = $scope.phoneNumbers;
 		$scope.employee.$save();
 		$location.path("/home");
 	};
@@ -140,27 +142,25 @@ function EmployeeEditCtrl($scope, $routeParams, $location, Employee) {
 	$scope.cancel = function() {
 		$location.path("/home");
 	};
-}
 
-function EmployeeCreateCtrl($scope, $location, Employee) {
-	$scope.employee = new Employee();
-	$scope.employee.gender = 'Female';
+	$scope.addAddress = function() {
+		$scope.address = {};
+	};
 
-	$scope.save = function() {
-		$scope.employee.$save();
-		$location.path("/home");
+	$scope.removeAddress = function() {
+		delete $scope.address;
 	};
 
 	$scope.addPhone = function() {
-		if ($scope.employee.phoneNumbers) {
-			$scope.employee.phoneNumbers.push({});
+		if ($scope.phoneNumbers) {
+			$scope.phoneNumbers.push({});
 		} else {
-			$scope.employee.phoneNumbers = [ {} ];
+			$scope.phoneNumbers = [ {} ];
 		}
 	};
 
 	$scope.removePhone = function(index) {
-		var phoneNumbers = $scope.employee.phoneNumbers;
+		var phoneNumbers = $scope.phoneNumbers;
 		if (index == 0) {
 			phoneNumbers.shift();
 		} else if (index == phoneNumbers.length - 1) {
@@ -168,11 +168,45 @@ function EmployeeCreateCtrl($scope, $location, Employee) {
 		} else {
 			var front = phoneNumbers.slice(0, index);
 			var back = phoneNumbers.slice(index + 1, phoneNumbers.length);
-			$scope.employee.phoneNumbers = front.concat(back);
+			$scope.phoneNumbers = front.concat(back);
 		}
 	};
 
-	$scope.cancel = function() {
-		$location.path("/home");
-	};
+}
+
+function EmployeeEditCtrl($scope, $routeParams, $location, $resource, Employee,
+		EmployeePhones, EmployeeAddress) {
+
+	var that = EmployeeCommon($scope, $location);
+
+	$scope.removeEnabled = true;
+
+	$scope.employee = Employee.get({
+		id : $routeParams.id
+	}, function() {
+		// replace links with actual data for editing
+		// TODO: Figure out why assignment to $scope.employee properties
+		// doesn't work
+
+		EmployeePhones.get($scope.employee, function(phones) {
+			$scope.phoneNumbers = phones;
+		});
+
+		EmployeeAddress.get($scope.employee, function(address) {
+			$scope.address = address;
+		});
+	});
+
+	return that;
+}
+
+function EmployeeCreateCtrl($scope, $location, Employee) {
+
+	var that = EmployeeCommon($scope, $location);
+
+	$scope.employee = new Employee();
+	$scope.employee.gender = 'Female';
+
+	return that;
+
 }
