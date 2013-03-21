@@ -6,6 +6,6 @@
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="java-output-path" value="/Employee Example - web - js/target/classes"/>
-        <property name="context-root" value="employee-js"/>
+        <property name="context-root" value="employee.web-js"/>
     </wb-module>
 </project-modules>
