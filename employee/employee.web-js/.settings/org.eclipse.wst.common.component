@@ -1,9 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project-modules id="moduleCoreId" project-version="1.5.0">
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
     <wb-module deploy-name="Employee Example - web - js">
         <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
         <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
         <dependent-module archiveName="employee.model-2.4.2-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/Employee Example - model/Employee Example - model">
             <dependency-type>uses</dependency-type>
         </dependent-module>
