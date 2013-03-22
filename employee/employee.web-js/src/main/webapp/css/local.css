@@ -1,3 +1,36 @@
-.employee-action {
-	text-align: center;
+
+.aside {
+  padding: 10px;
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 200;
+  color: inherit;
+  background-color: #eeeeee;
+  -webkit-border-radius: 6px;
+     -moz-border-radius: 6px;
+          border-radius: 6px;
 }
+.frame {
+  padding: 10px;
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 200;
+  border-color: black;
+  border-width: 5px;
+  -webkit-border-radius: 6px;
+     -moz-border-radius: 6px;
+          border-radius: 6px;
+}
+
+.form-h3 {
+	border-bottom: 1px solid #eeeeee;
+	padding-bottom: 0px;
+}
+.form-h4 {
+	border-bottom: 1px solid #eeeeee;
+	padding-bottom: 10px;
+}
+.button-group {
+	float: right;
+}
+
