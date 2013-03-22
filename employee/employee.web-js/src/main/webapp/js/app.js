@@ -34,8 +34,6 @@ angular.module('employee', [ 'employeeServices' ]).config(
 					templateUrl : 'partials/home.html'
 				}).when('/about', {
 					templateUrl : 'partials/about.html'
-				}).when('/admin', {
-					templateUrl : 'partials/admin.html'
 				}).otherwise({
 					redirectTo : '/home'
 				});

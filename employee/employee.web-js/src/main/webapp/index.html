@@ -1,8 +1,11 @@
-<!doctype html>
-<html lang='en' ng-app='employee'>
+<!DOCTYPE html>
+<html lang="en" ng-app='employee'>
 <head>
 <meta charset='utf-8'>
 <title>EclipseLink Employee Example</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="">
+<meta name="author" content="Shaun.Smith@oracle.com">
 <script
 	src='http://ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular.js'></script>
 <script
@@ -12,58 +15,85 @@
 <script src='js/directives.js'></script>
 <script src='js/filters.js'></script>
 <script src='js/services.js'></script>
-<style type='text/css' media='all'>
-@import url('css/main.css');
-@import url('css/normalize.css');
-@import url('css/custom.css');
-@import url('css/local.css');
+<link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
+<style type="text/css">
+body {
+	padding-top: 60px;
+	padding-bottom: 40px;
+}
+
+.sidebar-nav {
+	padding: 9px 0;
+}
+
+@media ( max-width : 980px) { /* Enable use of floated navbar text */
+	.navbar-text.pull-right {
+		float: none;
+		padding-left: 5px;
+		padding-right: 5px;
+	}
+}
+
+.aside {
+  padding: 10px;
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 200;
+  color: inherit;
+  background-color: #eeeeee;
+  -webkit-border-radius: 6px;
+     -moz-border-radius: 6px;
+          border-radius: 6px;
+}
+.frame {
+  padding: 10px;
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 200;
+  border-color: black;
+  border-width: 5px;
+  -webkit-border-radius: 6px;
+     -moz-border-radius: 6px;
+          border-radius: 6px;
+}
+
+h3 {
+	border-bottom: 1px solid #eeeeee;
+	padding-bottom: 0px;
+}
+h4 {
+	border-bottom: 1px solid #eeeeee;
+	padding-bottom: 10px;
+}
+.button-group {
+	float: right;
+}
 </style>
+
 </head>
 <body>
-	<div id="body-container">
-		<div id='header-container'>
-			<header class='wrapper clearfix'>
-				<h1 class='title'>EclipseLink Employee Example</h1>
-				<nav>
-					<form>
-						<ul>
-							<li><a href='#/home'>Home</a></li>
-							<li><a href='#/about'>About</a></li>
-							<li><a href='#/admin'>Admin</a></li>
-						</ul>
-					</form>
-				</nav>
-			</header>
-		</div>
-
-		<div id='main-container'>
-			<div class='main wrapper clearfix'>
-
-				<article>
-					<header>
-						<div ng-view></div>
-					</header>
-				</article>
-
-				<aside>
-					<img src='resources/images/eclipselink-logo.png' alt='EclipseLink'
-						title='EclipseLink Employee Example' />
-					<div class='commentary'>
-						<h3>Inside EclipseLink</h3>
-						<p>Over here we'll give some insight into what features of
-							EclipseLink are in use and provide diagnostic and informational
-							links.</p>
-					</div>
-				</aside>
-
+	<div class="navbar navbar-inverse navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container-fluid">
+				<button type="button" class="btn btn-navbar" data-toggle="collapse"
+					data-target=".nav-collapse">
+					<span class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="brand" href="http://www.eclipse.org/eclipselink">EclipseLink</a>
+				<div class="nav-collapse collapse">
+					<ul class="nav">
+						<li class="active"><a href="#/home">Home</a></li>
+						<li><a href="#/about">About</a></li>
+					</ul>
+				</div>
 			</div>
-			<!-- #main -->
-		</div>
-		<!-- #main-container -->
-
-		<div id='footer-container'>
-			<footer class='wrapper'></footer>
 		</div>
 	</div>
+
+	<div class="container-fluid">
+		<div ng-view></div>
+	</div>
+
 </body>
 </html>
