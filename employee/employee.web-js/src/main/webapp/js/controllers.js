@@ -28,20 +28,35 @@ function EmployeeListCtrl($scope, $location, Employee, Employees) {
 	$scope.search = function() {
 		if ($scope.pageResults) {
 			resetPaging();
-			Employees.count($scope.firstName, $scope.lastName).then(
-					function(response) {
-						$scope.count = response.data.COUNT;
-						$scope.totalPages = Math.floor($scope.count
-								/ $scope.pageSize)
-								+ ($scope.count % $scope.pageSize > 0 ? 1 : 0);
-						fetchPage();
-					});
+			Employees
+					.count($scope.firstName, $scope.lastName)
+					.then(
+							function(response) {
+								$scope.count = response.data.COUNT;
+								$scope.totalPages = Math.floor($scope.count
+										/ $scope.pageSize)
+										+ ($scope.count % $scope.pageSize > 0 ? 1
+												: 0);
+								fetchPage();
+							},
+							function(response) {
+								$scope.error = 'Error retrieving number of resources. Server response code '
+										+ response.status;
+							});
 
 		} else {
-			$scope.employees = Employees.getAll({
-				firstName : $scope.firstName,
-				lastName : $scope.lastName
-			});
+			$scope.employees = Employees
+					.getAll(
+							{
+								firstName : $scope.firstName,
+								lastName : $scope.lastName
+							},
+							function() {
+							},
+							function(response) {
+								$scope.error = 'Error retrieving resources. Server response code '
+										+ response.status;
+							});
 		}
 	};
 
@@ -109,18 +124,24 @@ function EmployeeListCtrl($scope, $location, Employee, Employees) {
 function EmployeeDeleteCtrl($scope, $routeParams, $location, Employee) {
 	$scope.employee = Employee.get({
 		id : $routeParams.id
+	}, function() {
+		// success
+	}, function(response) {
+		$scope.error = 'Resource not found.  Server response code ' + response.status;
 	});
 
 	$scope.confirm = function() {
 		Employee.remove({}, {
 			id : $scope.employee.id
+		}, function() {
+			$location.path("/home");
+		}, function(response) {
+			$scope.error = 'Error deleting resource. Server response code '
+					+ response.status;
 		});
-		$location.path("/home");
+
 	};
 
-	$scope.cancel = function() {
-		$location.path("/home");
-	};
 }
 
 function EmployeeCommon($scope, $location) {
@@ -131,16 +152,17 @@ function EmployeeCommon($scope, $location) {
 		// work
 		$scope.employee.address = $scope.address;
 		$scope.employee.phoneNumbers = $scope.phoneNumbers;
-		$scope.employee.$save();
-		$location.path("/home");
+		$scope.employee.$save(function() {
+			$location.path("/home");
+		}, function(response) {
+			$scope.error = 'Error saving resource. Server response code '
+					+ response.status;
+		});
+
 	};
 
 	$scope.remove = function() {
 		$location.path("/employee/delete/" + $scope.employee.id);
-	};
-
-	$scope.cancel = function() {
-		$location.path("/home");
 	};
 
 	$scope.addAddress = function() {
@@ -195,6 +217,9 @@ function EmployeeEditCtrl($scope, $routeParams, $location, $resource, Employee,
 		EmployeeAddress.get($scope.employee, function(address) {
 			$scope.address = address;
 		});
+	}, function(response) {
+		$scope.error = 'Error retrieving resource. Server response code '
+				+ response.status;
 	});
 
 	return that;
