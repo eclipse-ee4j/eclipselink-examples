@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>eclipselink.example.polyglot</groupId>
+	<artifactId>parent</artifactId>
+	<version>2.4.2-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<name>Polyglot Example</name>
+
+	<scm>
+		<connection>git://git.eclipse.org/gitroot/eclipselink/examples.git</connection>
+		<url>http://git.eclipse.org/c/eclipselink/examples.git/</url>
+	</scm>
+
+	<licenses>
+		<license>
+			<name>EPL: Eclipse Public License</name>
+			<url>http://www.eclipse.org/legal/epl-v10.html</url>
+		</license>
+		<license>
+			<name>EDL: Eclipse Distribution License</name>
+			<url>http://www.eclipse.org/org/documents/edl-v10.php</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Shaun Smith</name>
+			<organization>Oracle</organization>
+			<email>shaun.smith@oracle.com</email>
+			<url>onpersistence.blogspot.com</url>
+		</developer>
+		<developer>
+			<name>James Sutherland</name>
+			<organization>Oracle</organization>
+			<email>james.sutherland@oracle.com</email>
+			<url>http://java-persistence-performance.blogspot.ca/</url>
+		</developer>
+	</developers>
+
+	<properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+ 		<eclipselink.groupid>org.eclipse.persistence</eclipselink.groupid>
+		<eclipselink.version>2.4.2-SNAPSHOT</eclipselink.version>
+	</properties>
+
+	<repositories>
+		<repository>
+			<id>Java.Net</id>
+			<url>http://download.java.net/maven/2/</url>
+		</repository>
+		<repository>
+			<id>EclipseLink</id>
+			<url>http://download.eclipse.org/rt/eclipselink/maven.repo</url>
+		</repository>
+	</repositories>
+	
+	<modules>
+        <module>nosql-pu</module>
+        <module>relational-pu</module>
+        <module>composite-pu</module>
+        <module>client</module>
+ 	</modules>
+
+	<build>
+		<defaultGoal>install</defaultGoal>
+        
+        <plugins>
+            <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+        </plugins>
+	</build>
+    
+</project>

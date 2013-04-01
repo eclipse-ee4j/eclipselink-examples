@@ -1,0 +1,24 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+  <artifactId>composite-pu</artifactId>
+ 	<name>Composite Persistence Unit</name>
+	<parent>
+		<relativePath>..\pom.xml</relativePath>
+		<groupId>eclipselink.example.polyglot</groupId>
+		<artifactId>parent</artifactId>
+		<version>2.4.2-SNAPSHOT</version>
+	</parent>
+	<dependencies>
+		<dependency>
+			<groupId>eclipselink.example.polyglot</groupId>
+			<artifactId>nosql-pu</artifactId>
+			<version>${eclipselink.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>eclipselink.example.polyglot</groupId>
+			<artifactId>relational-pu</artifactId>
+			<version>${eclipselink.version}</version>
+		</dependency>
+	</dependencies>
+</project>

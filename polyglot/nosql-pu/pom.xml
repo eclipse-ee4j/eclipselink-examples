@@ -1,0 +1,39 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+  <artifactId>nosql-pu</artifactId>
+	<name>NoSQL Persistence Unit</name>
+	<parent>
+		<relativePath>..\pom.xml</relativePath>
+		<groupId>eclipselink.example.polyglot</groupId>
+		<artifactId>parent</artifactId>
+		<version>2.4.2-SNAPSHOT</version>
+	</parent>
+	<dependencies>
+		<dependency>
+			<groupId>${eclipselink.groupid}</groupId>
+			<artifactId>javax.persistence</artifactId>
+			<version>2.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>${eclipselink.groupid}</groupId>
+			<artifactId>org.eclipse.persistence.nosql</artifactId>
+			<version>${eclipselink.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>eclipselink.example.polyglot</groupId>
+			<artifactId>relational-pu</artifactId>
+			<version>${eclipselink.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongo-java-driver</artifactId>
+			<version>2.9.2</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.resource</groupId>
+			<artifactId>connector</artifactId>
+			<version>1.0</version>
+		</dependency>
+	</dependencies>
+</project>
