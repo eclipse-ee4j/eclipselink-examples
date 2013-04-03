@@ -73,7 +73,7 @@
 							<value>target/derby.log</value>
 						</property>
 					</systemProperties>
-					<argLine>"-javaagent:${user.home}/.m2/repository/org/eclipse/persistence/eclipselink/${eclipselink.version}/eclipselink-${eclipselink.version}.jar"</argLine>
+					<argLine>"-javaagent:${settings.localRepository}/org/eclipse/persistence/eclipselink/${eclipselink.version}/eclipselink-${eclipselink.version}.jar"</argLine>
 				</configuration>
 			</plugin>
 

@@ -35,24 +35,11 @@
 		</dependency>
 
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.11</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.derby</groupId>
-			<artifactId>derby</artifactId>
-			<version>10.9.1.0</version>
-			<scope>test</scope>
-		</dependency>
-		
-		<dependency>
 			<groupId>eclipselink.example.jpa</groupId>
 			<artifactId>employee.model</artifactId>
 			<version>2.4.2-SNAPSHOT</version>
 		</dependency>
+
 		<dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-api</artifactId>
@@ -63,34 +50,6 @@
 
 	<build>
 		<defaultGoal>package</defaultGoal>
-
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.5.1</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.12.4</version>
-				<configuration>
-					<systemProperties>
-						<property>
-							<name>derby.stream.error.file</name>
-							<value>target/derby.log</value>
-						</property>
-					</systemProperties>
-					<argLine>"-javaagent:${user.home}/.m2/repository/org/eclipse/persistence/eclipselink/${eclipselink.version}/eclipselink-${eclipselink.version}.jar"</argLine>
-				</configuration>
-			</plugin>
-
-		</plugins>
 	</build>
 
 </project>
