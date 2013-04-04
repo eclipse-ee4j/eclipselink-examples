@@ -35,7 +35,7 @@ import relational.model.Discount;
 
 /**
  * Order, stored as a root JSON object, nesting its order lines in the same document.
- * @author James Sutherland, Shaun Smith
+ * @author James Sutherland
  */
 @Entity
 @NoSql(dataFormat=DataFormatType.MAPPED)

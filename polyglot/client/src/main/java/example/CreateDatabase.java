@@ -27,7 +27,7 @@ public class CreateDatabase {
 		properties.put("eclipselink.ddl-generation.output-mode", "database");
 		properties.put("eclipselink.logging.level", "FINE");
 		EntityManagerFactory emf = Persistence.createEntityManagerFactory(
-				"RelationalPU", properties);
+				"relational-pu", properties);
 		// Creating an EntityManager will trigger database login
 		// and schema generation (because of the properties passed above)
 		EntityManager em = emf.createEntityManager();
