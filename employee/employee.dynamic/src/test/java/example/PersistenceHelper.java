@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010-2012 Oracle. All rights reserved.
+ * Copyright (c) 2010-2013 Oracle. All rights reserved.
  * This program and the accompanying materials are made available under the 
  * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0 
  * which accompanies this distribution. 
@@ -8,23 +8,29 @@
  * http://www.eclipse.org/org/documents/edl-v10.php.
  *
  * Contributors:
- *  dclarke - TODO
+ *  dclarke - example
  ******************************************************************************/
 package example;
 
 import static org.eclipse.persistence.jaxb.MarshallerProperties.MEDIA_TYPE;
 import static org.eclipse.persistence.jaxb.UnmarshallerProperties.JSON_INCLUDE_ROOT;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import org.eclipse.persistence.config.PersistenceUnitProperties;
+import org.eclipse.persistence.dynamic.DynamicClassLoader;
 import org.eclipse.persistence.internal.queries.ReportItem;
 import org.eclipse.persistence.jaxb.JAXBContextFactory;
 import org.eclipse.persistence.oxm.MediaType;
@@ -33,26 +39,48 @@ import org.eclipse.persistence.queries.DatabaseQuery;
 import org.eclipse.persistence.queries.ReportQuery;
 import org.eclipse.persistence.sessions.server.Server;
 
-public class MOXyHelper {
+/**
+ * Simple helper responsible for creation of JPA and MOXy contexts.
+ * 
+ * @author dclarke
+ */
+public class PersistenceHelper {
+
+    public static EntityManagerFactory createEntityManagerFactory(DynamicClassLoader dcl, String persistenceUnit) {
+        Map<String, Object> props = new HashMap<String, Object>();
+
+        // Ensure the persistence.xml provided data source are ignored for Java
+        // SE testing
+        props.put(PersistenceUnitProperties.NON_JTA_DATASOURCE, "");
+        props.put(PersistenceUnitProperties.JTA_DATASOURCE, "");
+
+        // Configure the use of embedded derby for the tests allowing system
+        // properties of the same name to override
+        props.put(PersistenceUnitProperties.JDBC_DRIVER, "org.apache.derby.jdbc.EmbeddedDriver");
+        props.put(PersistenceUnitProperties.JDBC_URL, "jdbc:derby:target/derby/mysports;create=true");
+        props.put(PersistenceUnitProperties.JDBC_USER, "app");
+        props.put(PersistenceUnitProperties.JDBC_PASSWORD, "app");
+        props.put(PersistenceUnitProperties.CLASSLOADER, dcl);
+        props.put(PersistenceUnitProperties.WEAVING, "static");
+        return Persistence.createEntityManagerFactory(persistenceUnit, props);
+    }
 
     private static JAXBContext context;
 
     public static JAXBContext getContext(EntityManager em) throws JAXBException {
         if (context == null) {
-            Set<Class> classes = new HashSet<Class>();
+            Set<Class<?>> classes = new HashSet<Class<?>>();
 
             Server serverSession = em.unwrap(Server.class);
-            
-            //classes.addAll(serverSession.getDescriptors().keySet());
-            
-            for (List<DatabaseQuery> queryList: serverSession.getQueries().values()) {
-                for (DatabaseQuery query: queryList) {
+
+            for (List<DatabaseQuery> queryList : serverSession.getQueries().values()) {
+                for (DatabaseQuery query : queryList) {
                     if (query.isReportQuery()) {
                         ReportQuery rq = (ReportQuery) query;
-                        for (ReportItem item: rq.getItems()) {
-                           if (item.isConstructorItem()) {
-                               classes.add(((ConstructorReportItem) item).getResultType());
-                           }
+                        for (ReportItem item : rq.getItems()) {
+                            if (item.isConstructorItem()) {
+                                classes.add(((ConstructorReportItem) item).getResultType());
+                            }
                         }
                     }
                 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 1198, 2012 Oracle. All rights reserved.
+ * Copyright (c) 1198, 2013 Oracle. All rights reserved.
  * This program and the accompanying materials are made available under the 
  * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0 
  * which accompanies this distribution. 
@@ -110,7 +110,7 @@ public class Queries {
     
     public List<?> findEmployeeSummaries(EntityManager em) throws JAXBException {
         List<?> results = em.createNamedQuery("Employee.findSummary").getResultList();
-        Marshaller marshaller = MOXyHelper.createMarshaller(em, MediaType.APPLICATION_JSON);
+        Marshaller marshaller = PersistenceHelper.createMarshaller(em, MediaType.APPLICATION_JSON);
         
         for (Object result: results) {
             marshaller.marshal(result, System.out);

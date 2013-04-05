@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 1198, 2012 Oracle. All rights reserved.
+ * Copyright (c) 1198, 2013 Oracle. All rights reserved.
  * This program and the accompanying materials are made available under the 
  * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0 
  * which accompanies this distribution. 
@@ -17,27 +17,17 @@
  * lists or the bug database.
  ******************************************************************************/
 package example;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 
-/*******************************************************************************
- * This program and the accompanying materials are made available under the 
- * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0 
- * which accompanies this distribution. 
- * The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
- * and the Eclipse Distribution License is available at 
- * http://www.eclipse.org/org/documents/edl-v10.php.
- *
- * Contributors:
- *     dclarke - Dynamic Persistence INCUBATION - Enhancement 200045
- *               http://wiki.eclipse.org/EclipseLink/Development/JPA/Dynamic
- *     
- * This code is being developed under INCUBATION and is not currently included 
- * in the automated EclipseLink build. The API in this code may change, or 
- * may never be included in the product. Please provide feedback through mailing 
- * lists or the bug database.
- ******************************************************************************/
-import java.util.*;
-
-import javax.persistence.*;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
 
 import junit.framework.Assert;
 
@@ -108,14 +98,13 @@ public class Samples {
         return descriptor.getJavaClass();
     }
 
-    @SuppressWarnings("unchecked")
     private DynamicEntity addPhoneNumber(DynamicEntity employee, String type, String areaCode, String number) {
         DynamicEntity phone = newInstance("PhoneNumber");
         phone.set("type", type);
         phone.set("areaCode", areaCode);
         phone.set("number", number);
         phone.set("owner", employee);
-        employee.<Collection> get("phoneNumbers").add(phone);
+        employee.<Collection<DynamicEntity>> get("phoneNumbers").add(phone);
         return phone;
     }
 
@@ -560,21 +549,19 @@ public class Samples {
         return smallProject;
     }
 
-    @SuppressWarnings("unchecked")
     private void addManagedEmployees(int managerIndex, int[] employeeIndeces) {
         DynamicEntity manager = this.employees[managerIndex];
 
-        if (manager.<Collection> get("managedEmployees").isEmpty()) {
+        if (manager.<Collection<DynamicEntity>> get("managedEmployees").isEmpty()) {
             for (int index = 0; index < employeeIndeces.length; index++) {
-                manager.<Collection> get("managedEmployees").add(this.employees[employeeIndeces[index]]);
+                manager.<Collection<DynamicEntity>> get("managedEmployees").add(this.employees[employeeIndeces[index]]);
             }
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void addProjects(int empIndex, int[] smallProjIndeces, int[] largeProjIndeces) {
         DynamicEntity employee = this.employees[empIndex];
-        Collection<DynamicEntity> projects = employee.<Collection> get("projects");
+        Collection<DynamicEntity> projects = employee.<Collection<DynamicEntity>> get("projects");
 
         for (int index = 0; index < smallProjIndeces.length; index++) {
             projects.add(this.smallProjects[smallProjIndeces[index]]);
