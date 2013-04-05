@@ -32,8 +32,7 @@ import org.eclipse.persistence.dynamic.DynamicType;
 import org.eclipse.persistence.jpa.dynamic.JPADynamicHelper;
 import org.eclipse.persistence.tools.schemaframework.SchemaManager;
 
-import example.utils.ExamplePropertiesLoader;
-
+@SuppressWarnings("restriction")
 public class Main {
 
     public static void main(String[] args) throws Exception {
@@ -118,10 +117,21 @@ public class Main {
     }
 
     public static EntityManagerFactory createEntityManagerFactory(DynamicClassLoader dcl, String persistenceUnit) {
-        Map<String, Object> properties = new HashMap<String, Object>();
-        ExamplePropertiesLoader.loadProperties(properties);
-        properties.put(PersistenceUnitProperties.CLASSLOADER, dcl);
-        properties.put(PersistenceUnitProperties.WEAVING, "static");
-        return Persistence.createEntityManagerFactory(persistenceUnit, properties);
+        Map<String, Object> props = new HashMap<String, Object>();
+
+        // Ensure the persistence.xml provided data source are ignored for Java
+        // SE testing
+        props.put(PersistenceUnitProperties.NON_JTA_DATASOURCE, "");
+        props.put(PersistenceUnitProperties.JTA_DATASOURCE, "");
+
+        // Configure the use of embedded derby for the tests allowing system
+        // properties of the same name to override
+        props.put(PersistenceUnitProperties.JDBC_DRIVER, "org.apache.derby.jdbc.EmbeddedDriver");
+        props.put(PersistenceUnitProperties.JDBC_URL, "jdbc:derby:target/derby/mysports;create=true");
+        props.put(PersistenceUnitProperties.JDBC_USER, "app");
+        props.put(PersistenceUnitProperties.JDBC_PASSWORD, "app");
+        props.put(PersistenceUnitProperties.CLASSLOADER, dcl);
+        props.put(PersistenceUnitProperties.WEAVING, "static");
+        return Persistence.createEntityManagerFactory(persistenceUnit, props);
     }
 }
