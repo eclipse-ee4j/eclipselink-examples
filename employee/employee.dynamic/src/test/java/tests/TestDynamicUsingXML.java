@@ -18,12 +18,15 @@
  ******************************************************************************/
 package tests;
 
+import static example.PersistenceHelper.EMPLOYEE_XML_PU;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.xml.bind.JAXBException;
 
 import org.eclipse.persistence.dynamic.DynamicClassLoader;
 import org.eclipse.persistence.dynamic.DynamicType;
+import org.eclipse.persistence.dynamic.ReflectiveDynamicClassLoader;
 import org.eclipse.persistence.jpa.dynamic.JPADynamicHelper;
 import org.junit.Test;
 
@@ -31,7 +34,6 @@ import example.PersistenceHelper;
 import example.Queries;
 import example.Samples;
 import example.Transactions;
-import static example.PersistenceHelper.EMPLOYEE_XML_PU;
 
 /**
  * 
@@ -43,7 +45,7 @@ public class TestDynamicUsingXML {
     @Test
     public void runDynamicJPATest() throws JAXBException {
         // Create an entity manager factory with a dynamic class loader.
-        DynamicClassLoader dcl = new DynamicClassLoader(Thread.currentThread().getContextClassLoader());
+        DynamicClassLoader dcl = new ReflectiveDynamicClassLoader(Thread.currentThread().getContextClassLoader());
         EntityManagerFactory emf = PersistenceHelper.createEntityManagerFactory(dcl, EMPLOYEE_XML_PU, true);
 
         EntityManager em = emf.createEntityManager();
