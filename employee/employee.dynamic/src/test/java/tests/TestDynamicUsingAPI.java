@@ -16,9 +16,10 @@
  * may never be included in the product. Please provide feedback through mailing 
  * lists or the bug database.
  ******************************************************************************/
-package example;
+package tests;
 
 import javax.persistence.EntityManager;
+import static example.PersistenceHelper.EMPLOYEE_API_PU;
 import javax.persistence.EntityManagerFactory;
 
 import org.eclipse.persistence.dynamic.DynamicClassLoader;
@@ -26,6 +27,12 @@ import org.eclipse.persistence.dynamic.DynamicType;
 import org.eclipse.persistence.jpa.dynamic.JPADynamicHelper;
 import org.eclipse.persistence.tools.schemaframework.SchemaManager;
 import org.junit.Test;
+
+import example.EmployeeDynamicMappings;
+import example.PersistenceHelper;
+import example.Queries;
+import example.Samples;
+import example.Transactions;
 
 public class TestDynamicUsingAPI {
 
@@ -36,7 +43,7 @@ public class TestDynamicUsingAPI {
         DynamicType[] types = EmployeeDynamicMappings.createTypes(dcl, "example.jpa.dynamic.model.employee");
 
         // Create an entity manager factory.
-        EntityManagerFactory emf = PersistenceHelper.createEntityManagerFactory(dcl, "employee-api");
+        EntityManagerFactory emf = PersistenceHelper.createEntityManagerFactory(dcl, EMPLOYEE_API_PU, true);
 
         // Create JPA Dynamic Helper (with the emf above) and after the types
         // have been created and add the types through the helper.

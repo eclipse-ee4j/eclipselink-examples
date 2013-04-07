@@ -18,11 +18,9 @@
  ******************************************************************************/
 package example;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -43,21 +41,14 @@ import org.eclipse.persistence.queries.ReportQuery;
  * @author dclarke
  * @since EclipseLink - Dynamic Incubator (1.1.0-branch)
  */
-@SuppressWarnings("deprecation")
 public class Samples {
     private EntityManagerFactory emf;
     public DynamicEntity[] employees;
-    public DynamicEntity[] smallProjects;
-    public DynamicEntity[] largeProjects;
 
     public Samples(EntityManagerFactory emf) {
         this.emf = emf;
 
         this.employees = new DynamicEntity[] { basicEmployeeExample1(), basicEmployeeExample2(), basicEmployeeExample3(), basicEmployeeExample4(), basicEmployeeExample5(), basicEmployeeExample6(), basicEmployeeExample7(), basicEmployeeExample8(), basicEmployeeExample9(), basicEmployeeExample10(), basicEmployeeExample11(), basicEmployeeExample12() };
-
-        this.smallProjects = new DynamicEntity[] { basicSmallProjectExample1(), basicSmallProjectExample2(), basicSmallProjectExample3(), basicSmallProjectExample4(), basicSmallProjectExample5(), basicSmallProjectExample7(), basicSmallProjectExample8(), basicSmallProjectExample9(), basicSmallProjectExample10() };
-
-        this.largeProjects = new DynamicEntity[] { basicLargeProjectExample1(), basicLargeProjectExample2(), basicLargeProjectExample3(), basicLargeProjectExample4(), basicLargeProjectExample5() };
 
         // Setup management hierarchy
         addManagedEmployees(0, new int[] { 2, 3, 4 });
@@ -72,20 +63,6 @@ public class Samples {
         addManagedEmployees(9, new int[] { 7, 8, 10, 11 });
         addManagedEmployees(10, new int[] { 6 });
         addManagedEmployees(11, new int[] { 1 });
-
-        // Setup Employee-Project associations
-        addProjects(0, new int[] { 0, 1, 2 }, new int[] {});
-        addProjects(1, new int[] { 3, 4, 0 }, new int[] {});
-        addProjects(2, new int[] { 3 }, new int[] { 3, 4 });
-        addProjects(4, new int[] { 3, 1 }, new int[] { 2, 4 });
-        addProjects(5, new int[] {}, new int[] { 1 });
-        addProjects(6, new int[] {}, new int[] { 1 });
-
-        // Setup LargeProject leads
-        this.largeProjects[0].set("teamLeader", this.employees[1]);
-        this.largeProjects[3].set("teamLeader", this.employees[2]);
-        this.largeProjects[4].set("teamLeader", this.employees[2]);
-
     }
 
     private DynamicEntity newInstance(String entityAlias) {
@@ -108,13 +85,6 @@ public class Samples {
         return phone;
     }
 
-    private void setPeriod(DynamicEntity employee, Date startDate, Date endDate) {
-        DynamicEntity period = newInstance("EmploymentPeriod");
-        period.set("startDate", startDate);
-        period.set("endDate", endDate);
-        employee.set("period", period);
-    }
-
     public DynamicEntity basicEmployeeExample1() {
         DynamicEntity employee = newInstance("Employee");
 
@@ -122,8 +92,6 @@ public class Samples {
         employee.set("lastName", "Smith");
         employee.set("gender", "Male");
         employee.set("salary", 35000);
-
-        setPeriod(employee, new Date(1993, 0, 1), new Date(1996, 0, 1));
 
         DynamicEntity address = newInstance("Address");
         address.set("city", "Toronto");
@@ -147,8 +115,6 @@ public class Samples {
         employee.set("lastName", "May");
         employee.set("gender", "Female");
 
-        setPeriod(employee, new Date(1991, 10, 111), null);
-
         DynamicEntity address = newInstance("Address");
         address.set("city", "Calgary");
         address.set("postalCode", "J5J2B5");
@@ -170,8 +136,6 @@ public class Samples {
         employee.set("firstName", "Sarah-Lou");
         employee.set("lastName", "Smitty");
         employee.set("gender", "Female");
-
-        setPeriod(employee, new Date(1993, 0, 1), new Date(1996, 0, 1));
 
         DynamicEntity address = newInstance("Address");
         address.set("city", "Arnprior");
@@ -196,8 +160,6 @@ public class Samples {
         employee.set("lastName", "Jefferson");
         employee.set("gender", "Male");
 
-        setPeriod(employee, new Date(1995, 0, 12), new Date(2001, 11, 31));
-
         DynamicEntity address = newInstance("Address");
         address.set("city", "Yellowknife");
         address.set("postalCode", "Y5J2N5");
@@ -220,8 +182,6 @@ public class Samples {
         employee.set("lastName", "Way");
         employee.set("gender", "Male");
         employee.set("salary", 53000);
-
-        setPeriod(employee, new Date(1991, 10, 11), null);
 
         DynamicEntity address = newInstance("Address");
         address.set("city", "Ottawa");
@@ -247,8 +207,6 @@ public class Samples {
         employee.set("gender", "Male");
         employee.set("salary", 43000);
 
-        setPeriod(employee, new Date(1995, 0, 1), new Date(2001, 11, 31));
-
         DynamicEntity address = newInstance("Address");
         address.set("city", "Montreal");
         address.set("postalCode", "Q2S5Z5");
@@ -272,8 +230,6 @@ public class Samples {
         employee.set("lastName", "Smith");
         employee.set("gender", "Male");
         employee.set("salary", 49631);
-
-        setPeriod(employee, new Date(2001, 11, 31), new Date(1995, 0, 1));
 
         DynamicEntity address = newInstance("Address");
         address.set("city", "Vancouver");
@@ -300,8 +256,6 @@ public class Samples {
         employee.set("gender", "Female");
         employee.set("salary", 87000);
 
-        setPeriod(employee, new Date(2001, 6, 31), new Date(1995, 4, 1));
-
         DynamicEntity address = newInstance("Address");
         address.set("city", "Prince Rupert");
         address.set("postalCode", "K3K5D5");
@@ -326,8 +280,6 @@ public class Samples {
         employee.set("gender", "Male");
         employee.set("salary", 54300);
 
-        setPeriod(employee, new Date(2001, 11, 31), new Date(1995, 0, 12));
-
         DynamicEntity address = newInstance("Address");
         address.set("city", "Perth");
         address.set("postalCode", "Y3Q2N9");
@@ -351,8 +303,6 @@ public class Samples {
         employee.set("gender", "Female");
         employee.set("salary", 31000);
 
-        setPeriod(employee, new Date(1996, 0, 1), new Date(1993, 0, 1));
-
         DynamicEntity address = newInstance("Address");
         address.set("city", "Metcalfe");
         address.set("postalCode", "Y4F7V6");
@@ -373,8 +323,6 @@ public class Samples {
         employee.set("lastName", "Jones");
         employee.set("gender", "Male");
         employee.set("salary", 500000);
-
-        setPeriod(employee, new Date(2001, 11, 31), new Date(1995, 0, 1));
 
         DynamicEntity address = newInstance("Address");
         address.set("city", "Victoria");
@@ -398,8 +346,6 @@ public class Samples {
         employee.set("gender", "Female");
         employee.set("salary", 500001);
 
-        setPeriod(employee, new Date(2001, 11, 31), new Date(1995, 0, 1));
-
         DynamicEntity address = newInstance("Address");
         address.set("city", "Smith Falls");
         address.set("postalCode", "C6C6C6");
@@ -414,141 +360,6 @@ public class Samples {
         return employee;
     }
 
-    private void setCalendar(DynamicEntity entity, String name, int year, int month, int day, int hour, int minute, int seconds) {
-        Calendar cal = entity.<Calendar> get(name);
-
-        if (cal == null) {
-            cal = Calendar.getInstance();
-            entity.set(name, cal);
-        }
-        cal.set(year, month, day, hour, minute, seconds);
-    }
-
-    public DynamicEntity basicLargeProjectExample1() {
-        DynamicEntity largeProject = newInstance("LargeProject");
-
-        largeProject.set("name", "Sales Reporting");
-        largeProject.set("description", "A reporting application to report on the corporations database through TopLink.");
-        largeProject.set("budget", (double) 5000);
-        setCalendar(largeProject, "milestone", 1991, 10, 11, 12, 0, 0);
-
-        return largeProject;
-    }
-
-    public DynamicEntity basicLargeProjectExample2() {
-        DynamicEntity largeProject = newInstance("LargeProject");
-
-        largeProject.set("name", "Light Reporter");
-        largeProject.set("description", "A lightweight application to report on the corporations database through TopLink.");
-        largeProject.set("budget", 100.98);
-        setCalendar(largeProject, "milestone", 1999, 11, 25, 11, 40, 44);
-
-        return largeProject;
-    }
-
-    public DynamicEntity basicLargeProjectExample3() {
-        DynamicEntity largeProject = newInstance("LargeProject");
-
-        largeProject.set("name", "TOPEmployee Management");
-        largeProject.set("description", "A management application to report on the corporations database through TopLink.");
-        largeProject.set("budget", 4000.98);
-        setCalendar(largeProject, "milestone", 1997, 10, 12, 1, 0, 0);
-
-        return largeProject;
-    }
-
-    public DynamicEntity basicLargeProjectExample4() {
-        DynamicEntity largeProject = newInstance("LargeProject");
-
-        largeProject.set("name", "Enterprise System");
-        largeProject.set("description", "A enterprise wide application to report on the corporations database through TopLink.");
-        largeProject.set("budget", 40.98);
-        setCalendar(largeProject, "milestone", 1996, 8, 6, 6, 40, 44);
-
-        return largeProject;
-    }
-
-    public DynamicEntity basicLargeProjectExample5() {
-        DynamicEntity largeProject = newInstance("LargeProject");
-
-        largeProject.set("name", "Problem Reporting System");
-        largeProject.set("description", "A PRS application to report on the corporations database through TopLink.");
-        largeProject.set("budget", 101.98);
-        setCalendar(largeProject, "milestone", 1997, 9, 6, 1, 40, 44);
-
-        return largeProject;
-    }
-
-    public DynamicEntity basicSmallProjectExample1() {
-        DynamicEntity smallProject = newInstance("SmallProject");
-        smallProject.set("name", "Enterprise");
-        smallProject.set("description", "A enterprise wide application to report on the corporations database through TopLink.");
-        return smallProject;
-    }
-
-    public DynamicEntity basicSmallProjectExample10() {
-        DynamicEntity smallProject = newInstance("SmallProject");
-        smallProject.set("name", "Staff Query Tool");
-        smallProject.set("description", "A tool to help staff query various things.");
-        return smallProject;
-    }
-
-    public DynamicEntity basicSmallProjectExample2() {
-        DynamicEntity smallProject = newInstance("SmallProject");
-        smallProject.set("name", "Sales Reporter");
-        smallProject.set("description", "A reporting application using JDK to report on the corporations database through TopLink.");
-        return smallProject;
-    }
-
-    public DynamicEntity basicSmallProjectExample3() {
-        DynamicEntity smallProject = newInstance("SmallProject");
-        smallProject.set("name", "TOP-Employee Manager");
-        smallProject.set("description", "A management application to report on the corporations database through TopLink.");
-        return smallProject;
-    }
-
-    public DynamicEntity basicSmallProjectExample4() {
-        DynamicEntity smallProject = newInstance("SmallProject");
-        smallProject.set("name", "Problem Reporter");
-        smallProject.set("description", "A PRS application to report on the corporations database through TopLink.");
-        return smallProject;
-    }
-
-    public DynamicEntity basicSmallProjectExample5() {
-        DynamicEntity smallProject = newInstance("SmallProject");
-        smallProject.set("name", "Feather Reporter");
-        smallProject.set("description", "An extremely lightweight application to report on the corporations database through TopLink.");
-        return smallProject;
-    }
-
-    public DynamicEntity basicSmallProjectExample6() {
-        DynamicEntity smallProject = newInstance("SmallProject");
-        smallProject.set("name", "Makework");
-        smallProject.set("description", "A makework project.");
-        return smallProject;
-    }
-
-    public DynamicEntity basicSmallProjectExample7() {
-        DynamicEntity smallProject = newInstance("SmallProject");
-        smallProject.set("name", "Marketing Query Tool");
-        smallProject.set("description", "A tool to help marketing query various things.");
-        return smallProject;
-    }
-
-    public DynamicEntity basicSmallProjectExample8() {
-        DynamicEntity smallProject = newInstance("SmallProject");
-        smallProject.set("name", "Shipping Query Tool");
-        smallProject.set("description", "A tool to help shipping query various things.");
-        return smallProject;
-    }
-
-    public DynamicEntity basicSmallProjectExample9() {
-        DynamicEntity smallProject = newInstance("SmallProject");
-        smallProject.set("name", "Accounting Query Tool");
-        smallProject.set("description", "A tool to help accounting query various things.");
-        return smallProject;
-    }
-
     private void addManagedEmployees(int managerIndex, int[] employeeIndeces) {
         DynamicEntity manager = this.employees[managerIndex];
 
@@ -556,19 +367,6 @@ public class Samples {
             for (int index = 0; index < employeeIndeces.length; index++) {
                 manager.<Collection<DynamicEntity>> get("managedEmployees").add(this.employees[employeeIndeces[index]]);
             }
-        }
-    }
-
-    private void addProjects(int empIndex, int[] smallProjIndeces, int[] largeProjIndeces) {
-        DynamicEntity employee = this.employees[empIndex];
-        Collection<DynamicEntity> projects = employee.<Collection<DynamicEntity>> get("projects");
-
-        for (int index = 0; index < smallProjIndeces.length; index++) {
-            projects.add(this.smallProjects[smallProjIndeces[index]]);
-        }
-
-        for (int index = 0; index < largeProjIndeces.length; index++) {
-            projects.add(this.largeProjects[largeProjIndeces[index]]);
         }
     }
 
@@ -585,16 +383,9 @@ public class Samples {
         assertCount(em, "Employee", 0);
         assertCount(em, "Address", 0);
         assertCount(em, "PhoneNumber", 0);
-        assertCount(em, "Project", 0);
 
         for (int index = 0; index < this.employees.length; index++) {
             em.persist(this.employees[index]);
-        }
-        for (int index = 0; index < this.smallProjects.length; index++) {
-            em.persist(this.smallProjects[index]);
-        }
-        for (int index = 0; index < this.largeProjects.length; index++) {
-            em.persist(this.largeProjects[index]);
         }
 
         em.flush();
@@ -604,7 +395,6 @@ public class Samples {
     public void verifyCounts(EntityManager em) {
         assertCount(em, "Employee", this.employees.length);
         assertCount(em, "Address", this.employees.length);
-        assertCount(em, "Project", this.smallProjects.length + this.largeProjects.length);
     }
 
     /**

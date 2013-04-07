@@ -45,14 +45,23 @@ import org.eclipse.persistence.sessions.server.Server;
  * @author dclarke
  */
 public class PersistenceHelper {
+    
+    public static final String EMPLOYEE_XML_PU = "employee-xml";
 
-    public static EntityManagerFactory createEntityManagerFactory(DynamicClassLoader dcl, String persistenceUnit) {
+    public static final String EMPLOYEE_API_PU = "employee-api";
+
+    public static EntityManagerFactory createEntityManagerFactory(DynamicClassLoader dcl, String persistenceUnit, boolean createTables) {
         Map<String, Object> props = new HashMap<String, Object>();
 
         // Ensure the persistence.xml provided data source are ignored for Java
         // SE testing
         props.put(PersistenceUnitProperties.NON_JTA_DATASOURCE, "");
         props.put(PersistenceUnitProperties.JTA_DATASOURCE, "");
+        
+        if (createTables) {
+            props.put(PersistenceUnitProperties.DDL_GENERATION, PersistenceUnitProperties.DROP_AND_CREATE);
+            props.put(PersistenceUnitProperties.DDL_GENERATION_MODE, PersistenceUnitProperties.DDL_DATABASE_GENERATION);
+        }
 
         // Configure the use of embedded derby for the tests allowing system
         // properties of the same name to override

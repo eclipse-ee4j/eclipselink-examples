@@ -12,17 +12,14 @@
 	</object-type-converter>
 
 	<named-query name="Employee.findAll">
-		<query>SELECT e FROM Employee e ORDER BY e.lastName, e.firstName</query>
+		<query>SELECT e FROM Employee e ORDER BY e.lastName, e.firstName
+		</query>
 		<hint name="eclipselink.query-results-cache" value="True" />
 	</named-query>
 
 	<named-query name="Employee.findMin">
-		<query>SELECT e FROM Employee e WHERE e.id IN (SELECT MIN(ee.id) FROM
-			Employee ee)</query>
-	</named-query>
-
-	<named-query name="Employee.findSummary">
-		<query>SELECT new example.jpa.dynamic.model.employee.EmpSummary(e.id, e.firstName, e.lastName, a.city) FROM Employee e JOIN e.address a</query>
+		<query>SELECT e FROM Employee e WHERE e.id IN (SELECT MIN(ee.id) FROM Employee ee)
+		</query>
 	</named-query>
 
 	<entity class="Address" access="VIRTUAL">
@@ -120,77 +117,13 @@
 				<private-owned />
 			</one-to-one>
 
-			<many-to-many name="projects" target-entity="Project"
-				attribute-type="java.util.List">
-				<join-table name="PROJ_EMP">
-					<join-column name="EMP_ID" />
-					<inverse-join-column name="PROJ_ID" />
-				</join-table>
-			</many-to-many>
-
 			<element-collection name="responsibilities"
 				attribute-type="java.util.List" target-class="String">
 				<column name="RESPON_DESC" />
 				<collection-table name="RESPONS" />
 			</element-collection>
 
-			<embedded name="period" attribute-type="EmploymentPeriod" />
-
 		</attributes>
 	</entity>
-
-	<entity class="Project" access="VIRTUAL">
-		<inheritance strategy="JOINED" />
-		<discriminator-column name="PROJ_TYPE"
-			discriminator-type="CHAR" />
-		<attributes>
-			<id name="id" attribute-type="Integer">
-				<column name="PROJ_ID" />
-				<generated-value strategy="SEQUENCE" generator="project-generator" />
-				<sequence-generator name="project-generator"
-					sequence-name="PROJ_SEQ" />
-			</id>
-			<basic name="description" attribute-type="String">
-				<column name="DESCRIP" />
-			</basic>
-			<basic name="name" attribute-type="String">
-				<column name="PROJ_NAME" />
-			</basic>
-			<version name="version" attribute-type="Long" />
-			<many-to-one name="teamLeader" fetch="EAGER"
-				target-entity="Employee">
-				<join-column name="LEADER_ID" />
-			</many-to-one>
-		</attributes>
-	</entity>
-
-	<entity class="SmallProject" parent-class="Project" access="VIRTUAL">
-		<table name="PROJECT" />
-		<discriminator-value>S</discriminator-value>
-	</entity>
-
-	<entity class="LargeProject" parent-class="Project" access="VIRTUAL">
-		<table name="LPROJECT" />
-		<discriminator-value>L</discriminator-value>
-		<attributes>
-			<basic name="budget" attribute-type="Double" />
-			<basic name="milestone" attribute-type="java.util.Calendar">
-				<temporal>TIMESTAMP</temporal>
-			</basic>
-		</attributes>
-	</entity>
-
-	<embeddable class="EmploymentPeriod" access="VIRTUAL">
-		<attributes>
-			<basic name="startDate" attribute-type="java.util.Date">
-				<column name="START_DATE" />
-				<temporal>DATE</temporal>
-			</basic>
-			<basic name="endDate" attribute-type="java.util.Date">
-				<column name="END_DATE" />
-				<temporal>DATE</temporal>
-			</basic>
-		</attributes>
-	</embeddable>
 
 </entity-mappings>

@@ -18,10 +18,6 @@
  ******************************************************************************/
 package example;
 
-import java.util.Calendar;
-import java.util.Date;
-
-import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.dynamic.DynamicClassLoader;
 import org.eclipse.persistence.dynamic.DynamicType;
 import org.eclipse.persistence.jpa.dynamic.JPADynamicTypeBuilder;
@@ -54,7 +50,7 @@ public class EmployeeDynamicMappings {
     /**
      * Configure using dynamic API.
      */
-    private static void configureEmployee(JPADynamicTypeBuilder employee, JPADynamicTypeBuilder address, JPADynamicTypeBuilder phone, JPADynamicTypeBuilder period, JPADynamicTypeBuilder project) {
+    private static void configureEmployee(JPADynamicTypeBuilder employee, JPADynamicTypeBuilder address, JPADynamicTypeBuilder phone) {
         employee.setPrimaryKeyFields("EMP_ID");
 
         employee.addDirectMapping("id", int.class, "D_EMPLOYEE.EMP_ID");
@@ -73,34 +69,11 @@ public class EmployeeDynamicMappings {
         phoneMapping.setCascadeAll(true);
         phoneMapping.setIsPrivateOwned(true);
 
-        employee.addAggregateObjectMapping("period", period.getType(), true);
         employee.addOneToManyMapping("managedEmployees", employee.getType(), "MANAGER_ID");
 
         employee.addDirectCollectionMapping("responsibilities", "D_RESPONS", "RESPON_DESC", String.class, "EMP_ID");
 
         employee.configureSequencing("EMP_SEQ", "EMP_ID");
-    }
-
-    /**
-     * Configure using dynamic API.
-     */
-    private static void configureLargeProject(JPADynamicTypeBuilder largeProject, JPADynamicTypeBuilder project) {
-        largeProject.setPrimaryKeyFields("PROJ_ID");
-
-        ClassDescriptor descriptor = largeProject.getType().getDescriptor();
-        descriptor.getInheritancePolicy().setClassIndicatorFieldName("PROJ_TYPE");
-        descriptor.getInheritancePolicy().setParentClass(project.getType().getJavaClass());
-
-        largeProject.addDirectMapping("budget", double.class, "BUDGET");
-        largeProject.addDirectMapping("milestone", Calendar.class, "MILESTONE");
-    }
-
-    /**
-     * Configure using dynamic API.
-     */
-    private static void configurePeriod(JPADynamicTypeBuilder period) {
-        period.addDirectMapping("startDate", Date.class, "START_DATE");
-        period.addDirectMapping("endDate", Date.class, "END_DATE");
     }
 
     /**
@@ -117,37 +90,6 @@ public class EmployeeDynamicMappings {
         phone.addOneToOneMapping("owner", employee.getType(), "EMP_ID");
     }
 
-    /**
-     * Configure using dynamic API.
-     */
-    private static void configureProject(JPADynamicTypeBuilder project, JPADynamicTypeBuilder smallProject, JPADynamicTypeBuilder largeProject, JPADynamicTypeBuilder employee) {
-        project.setPrimaryKeyFields("PROJ_ID");
-
-        project.addDirectMapping("id", int.class, "PROJ_ID");
-        project.addDirectMapping("name", String.class, "NAME");
-        project.addDirectMapping("description", String.class, "DESCRIP");
-
-        project.addOneToOneMapping("teamLeader", employee.getType(), "EMP_ID");
-
-        ClassDescriptor descriptor = project.getType().getDescriptor();
-
-        descriptor.getInheritancePolicy().setClassIndicatorFieldName("PROJ_TYPE");
-        descriptor.getInheritancePolicy().addClassIndicator(smallProject.getType().getJavaClass(), "S");
-        descriptor.getInheritancePolicy().addClassIndicator(largeProject.getType().getJavaClass(), "L");
-        descriptor.getInheritancePolicy().addClassIndicator(project.getType().getJavaClass(), "P");
-
-        project.configureSequencing("PROJ_SEQ", "PROJ_ID");
-    }
-
-    /**
-     * Configure using dynamic API.
-     */
-    private static void configureSmallProject(JPADynamicTypeBuilder smallProject, JPADynamicTypeBuilder project) {
-        smallProject.setPrimaryKeyFields("PROJ_ID");
-
-        ClassDescriptor descriptor = smallProject.getType().getDescriptor();
-        descriptor.getInheritancePolicy().setParentClass(project.getType().getJavaClass());
-    }
 
     /**
      * Create the types using the dynamic API.
@@ -158,32 +100,16 @@ public class EmployeeDynamicMappings {
         Class<?> employeeClass = dcl.createDynamicClass(packagePrefix + "Employee");
         Class<?> addressClass = dcl.createDynamicClass(packagePrefix + "Address");
         Class<?> phoneClass = dcl.createDynamicClass(packagePrefix + "PhoneNumber");
-        Class<?> periodClass = dcl.createDynamicClass(packagePrefix + "EmploymentPeriod");
-        Class<?> projectClass = dcl.createDynamicClass(packagePrefix + "Project");
-        Class<?> smallProjectClass = dcl.createDynamicClass(packagePrefix + "SmallProject", projectClass);
-        Class<?> largeProjectClass = dcl.createDynamicClass(packagePrefix + "LargeProject", projectClass);
 
         JPADynamicTypeBuilder employee = new JPADynamicTypeBuilder(employeeClass, null, "D_EMPLOYEE", "D_SALARY");
         JPADynamicTypeBuilder address = new JPADynamicTypeBuilder(addressClass, null, "D_ADDRESS");
         JPADynamicTypeBuilder phone = new JPADynamicTypeBuilder(phoneClass, null, "D_PHONE");
-        JPADynamicTypeBuilder period = new JPADynamicTypeBuilder(periodClass, null);
-        JPADynamicTypeBuilder project = new JPADynamicTypeBuilder(projectClass, null, "D_PROJECT");
-        JPADynamicTypeBuilder smallProject = new JPADynamicTypeBuilder(smallProjectClass, project.getType(), "D_PROJECT");
-        JPADynamicTypeBuilder largeProject = new JPADynamicTypeBuilder(largeProjectClass, project.getType(), "D_LPROJECT");
 
         configureAddress(address);
-        configureEmployee(employee, address, phone, period, project);
+        configureEmployee(employee, address, phone);
         configurePhone(phone, employee);
-        configurePeriod(period);
-        configureProject(project, smallProject, largeProject, employee);
-        configureSmallProject(smallProject, project);
-        configureLargeProject(largeProject, project);
 
-        // Must be done here since it requires the PK configurations on Employee
-        // and Project
-        employee.addManyToManyMapping("projects", project.getType(), "D_PROJ_EMP");
-
-        DynamicType[] types = new DynamicType[] { employee.getType(), address.getType(), phone.getType(), period.getType(), project.getType(), smallProject.getType(), largeProject.getType() };
+        DynamicType[] types = new DynamicType[] { employee.getType(), address.getType(), phone.getType() };
         return types;
     }
 }
