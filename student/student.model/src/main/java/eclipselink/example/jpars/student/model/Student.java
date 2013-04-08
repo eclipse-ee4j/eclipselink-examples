@@ -22,6 +22,7 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.ManyToMany;
 
 @NamedQueries({ @NamedQuery(name = "Student.findAll", query = "SELECT s FROM Student s ORDER BY s.id") })
 @Entity
@@ -33,6 +34,8 @@ public class Student implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
+    
+    @ManyToMany
     private Collection<Course> courses;
 
     /**
