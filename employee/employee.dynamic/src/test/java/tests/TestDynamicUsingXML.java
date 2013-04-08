@@ -22,12 +22,17 @@ import static example.PersistenceHelper.EMPLOYEE_XML_PU;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.validation.ConstraintViolationException;
 import javax.xml.bind.JAXBException;
 
 import org.eclipse.persistence.dynamic.DynamicClassLoader;
+import org.eclipse.persistence.dynamic.DynamicEntity;
 import org.eclipse.persistence.dynamic.DynamicType;
 import org.eclipse.persistence.dynamic.ReflectiveDynamicClassLoader;
 import org.eclipse.persistence.jpa.dynamic.JPADynamicHelper;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import example.PersistenceHelper;
@@ -42,17 +47,11 @@ import example.Transactions;
  */
 public class TestDynamicUsingXML {
 
+    private static EntityManagerFactory emf;
+
     @Test
     public void runDynamicJPATest() throws JAXBException {
-        // Create an entity manager factory with a dynamic class loader.
-        DynamicClassLoader dcl = new ReflectiveDynamicClassLoader(Thread.currentThread().getContextClassLoader());
-        EntityManagerFactory emf = PersistenceHelper.createEntityManagerFactory(dcl, EMPLOYEE_XML_PU, true);
-
         EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        new Samples(emf).persistAll(em);
-        em.getTransaction().commit();
-        em.clear();
 
         // Lookup types
         JPADynamicHelper helper = new JPADynamicHelper(emf);
@@ -65,15 +64,55 @@ public class TestDynamicUsingXML {
         queries.findEmployee(em, empType, minEmpId);
         queries.findEmployeesUsingGenderIn(em);
 
-        //queries.findEmployeeSummaries(em);
-
         // Example transactions
         Transactions txn = new Transactions();
 
         txn.createUsingPersist(em);
 
         em.close();
-        emf.close();
     }
 
+    @Test
+    public void validateFirstName() {
+        EntityManager em = emf.createEntityManager();
+
+        // Lookup types
+        JPADynamicHelper helper = new JPADynamicHelper(emf);
+        DynamicType empType = helper.getType("Employee");
+
+        // Run Queries
+        Queries queries = new Queries();
+
+        int minEmpId = queries.minimumEmployeeId(em);
+        DynamicEntity emp = queries.findEmployee(em, empType, minEmpId);
+
+        em.getTransaction().begin();
+        emp.set("firstName", null);
+
+        try {
+            em.flush();
+        } catch (ConstraintViolationException e) {
+            return;
+        }
+
+        Assert.fail("ConstraintViolationException not thrown");
+    }
+
+    @BeforeClass
+    public static void setup() throws JAXBException {
+        // Create an entity manager factory with a dynamic class loader.
+        DynamicClassLoader dcl = new ReflectiveDynamicClassLoader(Thread.currentThread().getContextClassLoader());
+        emf = PersistenceHelper.createEntityManagerFactory(dcl, EMPLOYEE_XML_PU, true);
+
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+        new Samples(emf).persistAll(em);
+        em.getTransaction().commit();
+        em.clear();
+    }
+
+    @AfterClass
+    public static void close() {
+        emf.close();
+    }
 }
