@@ -7,5 +7,14 @@
 		<getter name="firstName" ignore-annotations="true">
 			<constraint annotation="javax.validation.constraints.NotNull" />
 		</getter>
+		<getter name="lastName" ignore-annotations="true">
+			<constraint annotation="javax.validation.constraints.NotNull" />
+		</getter>
+		<getter name="gender" ignore-annotations="true">
+			<constraint annotation="javax.validation.constraints.NotNull" />
+		</getter>
+		<getter name="address" ignore-annotations="true">
+			<constraint annotation="javax.validation.constraints.NotNull" />
+		</getter>
 	</bean>
 </constraint-mappings>

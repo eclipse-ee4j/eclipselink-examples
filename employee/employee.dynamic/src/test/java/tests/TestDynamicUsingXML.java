@@ -22,6 +22,7 @@ import static example.PersistenceHelper.EMPLOYEE_XML_PU;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.xml.bind.JAXBException;
 
@@ -40,17 +41,12 @@ import example.Queries;
 import example.Samples;
 import example.Transactions;
 
-/**
- * 
- * @author dclarke
- * 
- */
 public class TestDynamicUsingXML {
 
     private static EntityManagerFactory emf;
 
     @Test
-    public void runDynamicJPATest() throws JAXBException {
+    public void queries() throws JAXBException {
         EntityManager em = emf.createEntityManager();
 
         // Lookup types
@@ -64,7 +60,13 @@ public class TestDynamicUsingXML {
         queries.findEmployee(em, empType, minEmpId);
         queries.findEmployeesUsingGenderIn(em);
 
-        // Example transactions
+        em.close();
+    }
+
+    @Test
+    public void transactions() throws JAXBException {
+        EntityManager em = emf.createEntityManager();
+
         Transactions txn = new Transactions();
 
         txn.createUsingPersist(em);
@@ -73,7 +75,7 @@ public class TestDynamicUsingXML {
     }
 
     @Test
-    public void validateFirstName() {
+    public void validation() {
         EntityManager em = emf.createEntityManager();
 
         // Lookup types
@@ -88,10 +90,16 @@ public class TestDynamicUsingXML {
 
         em.getTransaction().begin();
         emp.set("firstName", null);
+        emp.set("lastName", null);
+        emp.set("gender", null);
 
         try {
             em.flush();
         } catch (ConstraintViolationException e) {
+            System.out.println("ConstraintException: " + e.getMessage());
+            for (ConstraintViolation<?> cv : e.getConstraintViolations()) {
+                System.out.println("\t>> " + cv.getPropertyPath() + "::" + cv.getMessage());
+            }
             return;
         }
 
