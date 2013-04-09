@@ -30,7 +30,7 @@ public class Course implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    @ManyToMany(targetEntity = Student.class, mappedBy = "courses")
+    @ManyToMany(mappedBy = "courses")
     private Collection<Student> students;
 
     /**
