@@ -1,0 +1,86 @@
+<!-- 
+/*******************************************************************************
+ * Copyright (c) 2010-2013 Oracle. All rights reserved.
+ * This program and the accompanying materials are made available under the 
+ * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0 
+ * which accompanies this distribution. 
+ * The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
+ * and the Eclipse Distribution License is available at 
+ * http://www.eclipse.org/org/documents/edl-v10.php.
+ *
+ * Contributors:
+ *  shsmith - EclipseLink 2.4
+ ******************************************************************************/
+ -->
+
+<div class="row-fluid">
+	<div class="span6 offset1">
+		<div class="row-fluid" ng-show="error">
+			<h3 class="form-h3">Delete Employee?</h3>
+			<div class="alert alert-error">{{error}}</div>
+			<a href='#/home' class='btn'>Ok</a>
+		</div>
+		<div ng-hide="error">
+			<div class="row-fluid">
+				<h3 class="form-h3">
+					Delete Employee?
+					<div class="button-group">
+						<button class='btn' ng-click='confirm()'>Ok</button>
+						<a href='#/home' class='btn'>Cancel</a>
+					</div>
+				</h3>
+			</div>
+			<div class="row-fluid">
+				<form class="form-horizontal span12">
+					<div class="control-group">
+						<label class="control-label">Id</label>
+						<div class="controls">
+							<input type="text" ng-model='employee.id' disabled />
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">First Name</label>
+						<div class="controls">
+							<input type="text" ng-model='employee.firstName' disabled />
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">Last Name</label>
+						<div class="controls">
+							<input type="text" ng-model='employee.lastName' disabled />
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">Gender</label>
+						<div class="controls">
+							<select ng-model="employee.gender" disabled>
+								<option value="Female">Female</option>
+								<option value="Male">Male</option>
+							</select>
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">Salary</label>
+						<div class="controls">
+							<div class="input-prepend">
+								<span class="add-on">$</span> <input type="text"
+									ng-model='employee.salary' disabled />
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="span4 offset1">
+		<div class="aside">
+			<img src='resources/images/eclipselink-logo.png' alt='EclipseLink'
+				title='EclipseLink Employee Example' />
+			<div class='commentary'>
+				<h3>Deleting Resources</h3>
+				<p>Resources (JPA Entities) are deleted using an HTTP DELETE
+					call with the URI of the specified resource.</p>
+			</div>
+		</div>
+	</div>
+</div>

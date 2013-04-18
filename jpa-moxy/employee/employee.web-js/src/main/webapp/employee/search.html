@@ -1,0 +1,126 @@
+<!-- 
+/*******************************************************************************
+ * Copyright (c) 2010-2013 Oracle. All rights reserved.
+ * This program and the accompanying materials are made available under the 
+ * terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0 
+ * which accompanies this distribution. 
+ * The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
+ * and the Eclipse Distribution License is available at 
+ * http://www.eclipse.org/org/documents/edl-v10.php.
+ *
+ * Contributors:
+ *  shsmith - EclipseLink 2.4
+ ******************************************************************************/
+ -->
+<div class="row-fluid">
+	<div class="span6 offset1">
+
+		<div class="row-fluid">
+			<div class="span12">
+				<h2>Employee Search</h2>
+			</div>
+		</div>
+
+		<div class="row-fluid" ng-show="error">
+			<div class="alert alert-error">{{error}}</div>
+			<a href='#/home' class='btn'>Ok</a>
+		</div>
+		<div ng-hide="error">
+			<div class="row-fluid">
+				<div class="span5 row">
+					<label>First Name</label> <input class="span12" type='text'
+						ng-model='firstName' />
+				</div>
+				<div class="span5 row">
+					<label>Last Name</label> <input class="span12" type='text'
+						ng-model='lastName' />
+				</div>
+			</div>
+
+			<div class="row-fluid">
+				<div class="span12 row">
+					<label class='checkbox'>Page Results <input type='checkbox'
+						ng-model='pageResults'></label>
+
+				</div>
+			</div>
+			<div class="row-fluid">
+				<div class="span12 row ">
+					<button class='btn' ng-click='search()' class='menu-button'>Search</button>
+				</div>
+			</div>
+
+			<div class="row-fluid" ng-show='employees.length'>
+				<div class="span10">
+					<h4>Search Results</h4>
+					<table class='table'>
+						<thead>
+							<tr ng-hide='pageResults' class="form-search">
+								<td colspan='4'><label>Filter <input type="text"
+										class="input-medium search-query" ng-model='query' /></label></td>
+							</tr>
+							<tr>
+								<td>ID</td>
+								<td>Last Name</td>
+								<td>First Name</td>
+								<td colspan='2'></td>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat='employee in employees | filter:query'>
+								<td>{{employee.id}}</td>
+								<td>{{employee.lastName}}</td>
+								<td>{{employee.firstName}}</td>
+								<td class='employee-action'><button class='btn'
+										ng-click='edit(employee.id)'>Edit</button>
+									<button class='btn' ng-click='remove(employee.id)'>Delete</button></td>
+							</tr>
+						</tbody>
+						<tfoot ng-show='pageResults'>
+							<tr>
+								<td colspan='5'>
+									<table width='100%'>
+										<tr>
+											<td>
+												<button ng-show='prevAvailable' class='btn' type='button'
+													ng-click='pagePrevious()'>Previous</button>
+											</td>
+											<td align='center' width='100%' colspan='3'><span
+												id='employees-pages'>Page {{pageNum}} of
+													{{totalPages}}</span></td>
+											<td>
+												<button ng-show='nextAvailable' class='btn' type='button'
+													ng-click='pageNext()'>Next</button>
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="span4">
+		<div class="aside">
+			<img src='resources/images/eclipselink-logo.png' alt='EclipseLink'
+				title='EclipseLink Employee Example' />
+			<div class='commentary'>
+				<h3>Querying Resources</h3>
+				<p>This page executes a predefined JPA named query that finds
+					all Employees with a specified first and last name using a JPQL
+					LIKE operator to support inexact matches.</p>
+				<p>
+					Paging is implemented using the EclipseLink
+					<code>eclipselink.jdbc.first-result</code>
+					and
+					<code>eclipselink.jdbc.max-rows</code>
+					query hints which can be attached to a named query invocation.
+				</p>
+			</div>
+		</div>
+	</div>
+</div>
+
+
