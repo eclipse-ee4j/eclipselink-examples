@@ -1,0 +1,10 @@
+eclipse.preferences.version=1
+org.eclipse.jpt.core.platform=eclipselink2_4
+org.eclipse.jpt.jpa.core.discoverAnnotatedClasses=false
+problem.EMBEDDED_ID_CLASS_SHOULD_NOT_CONTAIN_RELATIONSHIP_MAPPINGS=error
+problem.MAPPING_INVALID_MAPPED_BY=warning
+problem.MAPS_ID_VALUE_INVALID=error
+problem.PROJECT_INACTIVE_CONNECTION=info
+problem.PROJECT_INVALID_CONNECTION=info
+problem.TYPE_MAPPING_ID_CLASS_ATTRIBUTE_TYPE_DOES_NOT_AGREE=warning
+workspace_preferences_overriden=true

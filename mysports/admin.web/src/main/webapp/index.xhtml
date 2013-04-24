@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+<ui:composition template="/WEB-INF/template.xhtml">
+	<ui:define name="title">My Sports Admin</ui:define>
+	<ui:define name="body">
+		<div align="center">
+			<h:form>
+
+				<table width="100%" cellpadding="25">
+					<tr>
+
+						<td width="50%" align="left">
+							<h2>Leagues</h2> <h:dataTable var="league"
+								value="#{leagueRepository.sharedLeagues}" border="1" width="100%"
+								class="pretty">
+								<f:facet name="header">
+								Shared Deployments (SaaS)
+								</f:facet>
+								<h:column>
+									<f:facet name="header">League</f:facet>
+									<h:commandLink value="#{league.id}" action="#{viewLeague.view}">
+										<f:param name="league-id" value="#{league.id}" />
+									</h:commandLink>
+								</h:column>
+								<h:column>
+									<f:facet name="header">Name</f:facet>
+									<h:outputText value="#{league.name}" />
+								</h:column>
+								<h:column>
+									<f:facet name="header">Data Isolation</f:facet>
+									<h:outputText value="#{league.dataIsolation}" />
+								</h:column>
+								<f:facet name="footer">
+									<div align="right">
+									<h:commandButton action="#{viewLeague.create}" value="Create"/>
+									</div>
+								</f:facet>
+							</h:dataTable>
+							<p /> 
+							<h3>REST Operations</h3>
+							<ul>
+								<li><h:outputLink
+										onclick="window.open('/MySportsAdmin/rest/league', 'popupWindowName', 'dependent=yes, menubar=no, toolbar=no'); return false;"
+										value="#">
+										<h:outputText value="Shared Leagues" />
+									</h:outputLink></li>
+							</ul>
+						</td>
+					</tr>
+				</table>
+
+
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>
+</html>

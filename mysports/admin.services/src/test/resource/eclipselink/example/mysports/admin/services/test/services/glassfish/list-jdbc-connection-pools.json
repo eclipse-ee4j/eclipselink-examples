@@ -1,0 +1,36 @@
+{
+  "message": "",
+  "command": "list-jdbc-connection-pools AdminCommand",
+  "exit_code": "SUCCESS",
+  "extraProperties": {
+    "methods": [
+      {
+        "name": "GET"
+      },
+      {
+        "messageParameters": {
+          "targetName": {
+            "acceptableValues": "",
+            "optional": "true",
+            "type": "string",
+            "defaultValue": "server"
+          }
+        }
+      }
+    ]
+  },
+  "children": [
+    {
+      "message": "__TimerPool",
+      "properties": {}
+    },
+    {
+      "message": "DerbyPool",
+      "properties": {}
+    },
+    {
+      "message": "mysports",
+      "properties": {}
+    }
+  ]
+}

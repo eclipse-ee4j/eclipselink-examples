@@ -1,0 +1,36 @@
+{
+  "message": "",
+  "command": "list-jdbc-resources AdminCommand",
+  "exit_code": "SUCCESS",
+  "extraProperties": {
+    "methods": [
+      {
+        "name": "GET"
+      },
+      {
+        "messageParameters": {
+          "targetName": {
+            "acceptableValues": "",
+            "optional": "true",
+            "type": "string",
+            "defaultValue": "server"
+          }
+        }
+      }
+    ]
+  },
+  "children": [
+    {
+      "message": "jdbc/__TimerPool",
+      "properties": {}
+    },
+    {
+      "message": "jdbc/__default",
+      "properties": {}
+    },
+    {
+      "message": "jdbc/MySports",
+      "properties": {}
+    }
+  ]
+}

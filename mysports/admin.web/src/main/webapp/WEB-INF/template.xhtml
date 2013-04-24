@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+		"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fmt="http://java.sun.com/jstl/fmt">
+<head>
+<title><ui:insert name="title" /></title>
+
+<style type="text/css" media="all">
+@import "#{request.contextPath}/default.css";
+</style>
+</head>
+<body>
+	<f:view>
+		<div class="message-box">
+			<div class="header">
+				<div align="right">
+					<img src="#{request.contextPath}/images/mysports.png"></img>
+				</div>
+				<h1>
+					<ui:insert name="title" />
+				</h1>
+			</div>
+			<div class="body">
+				<table width="100%">
+					<tr>
+						<td height="400"><ui:insert name="body" /></td>
+					</tr>
+				</table>
+				<hr />
+				<div align="center">
+					<a href="http://www.eclipse.org/eclipselink"><h:graphicImage
+							url="#{request.contextPath}/images/eclipselink.png" alt="EclipseLink" /> </a>
+				</div>
+			</div>
+		</div>
+	</f:view>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<xml-bindings version="2.3"
+	xmlns="http://www.eclipse.org/eclipselink/xsds/persistence/oxm"
+	package-name="eclipselink.example.mysports.application.admin" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.eclipse.org/eclipselink/xsds/persistence/oxm http://www.eclipse.org/eclipselink/xsds/eclipselink_oxm_2_3.xsd">
+	<java-types>
+		<java-type name="HostedLeagues" xml-accessor-type="FIELD">
+			<xml-root-element name="hostedLeagues"/>
+			<java-attributes>
+				<xml-element java-attribute="leagues" name="league" />
+			</java-attributes>
+		</java-type>
+		<java-type name="League" xml-accessor-type="FIELD">
+			<xml-root-element />
+			<java-attributes>
+				<xml-attribute java-attribute="id" />
+				<xml-attribute java-attribute="version" />
+				<xml-element java-attribute="name" />
+				<xml-element java-attribute="colourScheme" name="scheme"/>
+				<xml-element java-attribute="logoUrl" name="logo"/>
+				<xml-element java-attribute="datasource" name="data-source"/>
+				<xml-element java-attribute="uri" xml-path="link/@href"/>
+			</java-attributes>
+		</java-type>
+	</java-types>
+</xml-bindings>
