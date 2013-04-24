@@ -55,7 +55,7 @@
 		</repository>
 		<repository>
 			<id>EclipseLink</id>
-			<url>http://download.eclipse.org/rt/eclipselink/maven.repo</url>
+			<url>https://oss.sonatype.org/content/groups/staging</url>
 		</repository>
 	</repositories>
 	
