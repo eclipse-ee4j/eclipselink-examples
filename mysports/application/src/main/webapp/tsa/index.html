@@ -1,0 +1,59 @@
+<!--
+ Copyright 2012, Oracle and or its affiliates. All Rights Reserved.
+ @author irfan.ahmed@oracle.com
+-->
+<!DOCTYPE html>
+<html>
+<head>
+<title>My Sports</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="mysports.css" rel="stylesheet" />
+
+<!-- DOJO deployed locally on the server -->
+<link href="/dojo/1.7.2/dijit/themes/claro/claro.css" rel="stylesheet" />
+<script src="/dojo/1.7.2/dojo/dojo.js"></script>
+
+<script src="mysports.js"></script>
+<script>
+	djConfig = {
+		isDebug : false,
+		parseOnLoad : true
+	}
+</script>
+<script>
+	dojo.addOnLoad(function() {
+		console.debug("Dojo Loaded: ", dojo.version);
+		mysports = {
+			server : new mysports.Server({
+				rootUrl : '/MySports/persistence/mysports-', league : "OSL"
+			}),
+			navPanel : new mysports.NavPanel()
+		}
+		mysports.navPanel.init();
+
+	});
+</script>
+</head>
+<body class="claro">
+	<div class="mainContainer">
+		<div class="masthead">
+			<table>
+				<tr>
+					<td align="left"><img id="leagueLogo" /></td>
+					<td width="100%" align="center" valign="top"></td>
+					<td align="right" valign="top"><img src="../images/mysports.png"></td>
+				</tr>
+			</table>
+			&nbsp;
+		</div>
+
+		<div class="navigation">
+			<div id="tree"></div>
+		</div>
+		<div class="content">
+
+			<div id="playersTableDiv"></div>
+		</div>
+	</div>
+</body>
+</html>

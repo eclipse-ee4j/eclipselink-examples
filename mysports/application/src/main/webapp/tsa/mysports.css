@@ -1,0 +1,92 @@
+/* 
+    Document   : demo
+    Created on : 7 Jun, 2012, 2:04:42 AM
+    Author     : irfan.ahmed@oracle.com
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+body {
+    font-size: 12px;
+    color: #333;
+    font-family: Ubuntu, Tahoma, Helvetica,Verdana,Arial,sans-serif;
+}
+
+.mainContainer {
+}
+
+.mainContainer .navigation {
+    position: absolute;
+    top: 200px;
+    left: 0;
+    width: 250px;
+    bottom: 0;
+}
+
+.mainContainer .content {
+    position: absolute;
+    left: 251px;
+    right: 0;
+    top: 150px;
+    bottom: 0;
+    background-color: #fdfdfd;
+}
+
+#playersTableDiv {
+    border: 1px solid #CCCCCC;
+    border-radius: 4px 4px 4px 4px;
+    margin: 20px;
+    padding: 5px;
+    background: #f0f0f0;
+}
+
+#playersTableDiv table {
+    width: 100%;
+    font-size: 11px;
+    background: #fff;
+}
+
+#playersTableDiv table th, #playersTableDiv table td {
+    border-color: #CCCCCC;
+    padding: 2px 5px;
+}
+
+#playersTableDiv table th {
+    color: #666666;
+    text-transform: uppercase;
+}
+
+#playersTableDiv table td {
+    
+}
+
+#playersTableDiv table caption {
+    font-size: 13px;
+    font-weight: bold;
+    padding: 0 0 4px 1px;
+    text-align: left;
+}
+
+.masthead {
+    height: 200px;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+#popupbox {
+	margin: 0;
+	margin-left: 40%;
+	margin-right: 40%;
+	margin-top: 50px;
+	padding-top: 10px;
+	width: 20%;
+	height: 250px;
+	position: absolute;
+	background: #FBFBF0;
+	border: solid #000000 2px;
+	z-index: 9;
+	font-family: arial;
+	visibility: hidden;
+}

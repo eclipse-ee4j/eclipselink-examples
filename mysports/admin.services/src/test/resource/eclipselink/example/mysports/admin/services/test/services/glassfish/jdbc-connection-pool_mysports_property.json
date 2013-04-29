@@ -1,0 +1,29 @@
+{
+  "message": "",
+  "command": "property",
+  "exit_code": "SUCCESS",
+  "extraProperties": {
+    "properties": [
+      {
+        "name": "User",
+        "value": "root"
+      },
+      {
+        "name": "ServerName",
+        "value": "localhost"
+      },
+      {
+        "name": "Port",
+        "value": "3306"
+      },
+      {
+        "name": "DatabaseName",
+        "value": "mysports"
+      },
+      {
+        "name": "Password",
+        "value": "password"
+      }
+    ]
+  }
+}

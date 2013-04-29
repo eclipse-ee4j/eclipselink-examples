@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+
+<ui:composition template="/WEB-INF/template.xhtml">
+	<ui:define name="title">My Sports Admin: Hosted League</ui:define>
+	<ui:define name="body">
+		<h:form>
+			<h:commandLink value="Home" action="index?faces-redirect=true" />
+			<p />
+			<table width="100%">
+				<tr>
+					<td width="50%" align="center"><h:panelGrid width="500"
+							columns="2" border="1" styleClass="pretty">
+							<f:facet name="header">
+								League Info
+								</f:facet>
+							<h:outputLabel value="League Id:" />
+							<h:panelGroup>
+								<h:inputText value="#{viewLeague.league.id}"
+									rendered="#{!viewLeague.idReadOnly}" />
+								<h:outputText value="#{viewLeague.league.id}"
+									rendered="#{viewLeague.idReadOnly}" />
+							</h:panelGroup>
+							<h:outputLabel value="Name:" />
+							<h:inputText value="#{viewLeague.league.name}" size="50" />
+							<h:outputLabel value="Logo:" />
+							<h:panelGroup>
+								<div align="center">
+									<h:graphicImage url="#{viewLeague.league.logoUrl}"></h:graphicImage>
+								</div>
+					URL: <h:inputText value="#{viewLeague.league.logoUrl}" />
+								<h:commandButton value="Update" />
+							</h:panelGroup>
+							<h:outputLabel value="Colour Scheme:" />
+							<h:selectOneMenu value="#{viewLeague.league.colourScheme}">
+								<f:selectItems value="#{viewLeague.colourSchemes}" />
+							</h:selectOneMenu>
+							<h:outputLabel value="Shared Deployment" />
+							<h:selectBooleanCheckbox value="#{viewLeague.league.shared}" />
+
+
+							<h:outputLabel value="Data Isolation:" />
+							<h:selectOneRadio layout="pageDirection"
+								value="#{viewLeague.league.dataIsolation}">
+								<f:selectItems value="#{viewLeague.dataIsolations}" var="di"
+									itemLabel="#{di}" itemValue="#{di}" />
+							</h:selectOneRadio>
+							<h:outputLabel value="Data Source:" />
+							<h:selectOneMenu value="#{viewLeague.datasourceName}">
+								<f:selectItems value="#{datasourceRepository.datasources}"
+									var="ds" itemLabel="#{ds.name}" itemValue="#{ds.name}" />
+							</h:selectOneMenu>
+						</h:panelGrid>
+
+
+
+						<p /> <h:dataTable width="500" styleClass="pretty"
+							value="#{viewLeague.playerExtensions}" var="ext">
+							<f:facet name="header">
+								Player Extensions
+							</f:facet>
+							<h:column>
+								<f:facet name="header">Column</f:facet>
+								<h:outputLabel value="#{ext.column}" />
+							</h:column>
+							<h:column>
+								<f:facet name="header">Type</f:facet>
+								<h:outputLabel value="#{ext.javaType}" />
+							</h:column>
+							<h:column>
+								<f:facet name="header">Name</f:facet>
+								<h:inputText value="#{ext.name}" rendered="#{ext.writeable}" />
+								<h:outputLabel value="#{ext.name}" rendered="#{!ext.writeable}" />
+							</h:column>
+						</h:dataTable>
+						<p /></td>
+
+					<td width="50%" valign="top"><h:commandButton value="Apply"
+							action="#{viewLeague.apply}" /> <h:commandButton value="Cancel"
+							action="#{viewLeague.cancel}" /> <h:commandButton value="Delete"
+							action="#{viewLeague.delete}" />
+
+						<h2>
+							<h:outputLabel value="REST Operations" />
+						</h2>
+						<ul>
+							<li><h:outputLink
+									onclick="window.open('/MySportsAdmin/rest/league/#{viewLeague.league.id}.css', 'popupWindowName', 'dependent=yes, menubar=no, toolbar=no'); return false;"
+									value="#">
+									<h:outputText value="CSS" />
+								</h:outputLink></li>
+							<li><h:outputLink
+									onclick="window.open('/MySportsAdmin/rest/league/#{viewLeague.league.id}/orm', 'popupWindowName', 'dependent=yes, menubar=no, toolbar=no'); return false;"
+									value="#">
+									<h:outputText
+										value="Object-Relational
+										Overrides and Extensions" />
+								</h:outputLink></li>
+							<li><h:outputLink
+									onclick="window.open('/MySportsAdmin#{viewLeague.league.logoUrl}', 'popupWindowName', 'dependent=yes, menubar=no, toolbar=no'); return false;"
+									value="#">
+									<h:outputText value="Logo: #{viewLeague.league.logoUrl}" />
+								</h:outputLink></li>
+						</ul></td>
+				</tr>
+			</table>
+
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

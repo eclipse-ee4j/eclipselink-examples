@@ -1,0 +1,93 @@
+body {
+	background-color: #D8DCE0;
+	font-family: Tahoma;
+	font-size: 14px;
+}
+
+div.message-box>div.header>h1 {
+	font-family: Tahoma;
+	color: #fff;
+	font-size: 18px;
+}
+
+h1 {
+	color: #3C5F87;
+	font-family: Tahoma;
+	font-size: 18px;
+}
+
+div.message-box {
+	padding: 0;
+	margin: 40px;
+	width: 90%;
+}
+
+div.message-box>div.header {
+	background-color: #3C5F87;
+	-moz-border-radius: 5px 5px 0 0;
+	-webkit-border-radius: 5px 5px 0 0;
+	padding: 10px 20px;
+	position: relative;
+}
+
+div.message-box>div.header>a {
+	position: absolute;
+	right: 20px;
+	background: url(images/mysports.png) no-repeat;
+	display: block;
+}
+
+div.message-box>div.body {
+	padding: 10px 20px;
+	background-color: #fff;
+	-moz-border-radius: 0 0 5px 5px;
+	-webkit-border-radius: 0 0 5px 5px;
+}
+
+table.borders {
+	border: 1% solid #BDB76B;
+}
+
+TR {
+	text-align: left;
+	vertical-align: top;
+}
+
+TH {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11pt;
+	color: #000000;
+	font-weight: bold;
+}
+
+TD {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11pt;
+	color: #000000;
+}
+
+table.pretty {
+	background: whitesmoke;
+	border-collapse: collapse;
+}
+
+table.pretty th,table.pretty td {
+	border: 1px silver solid;
+	padding: 0.2em;
+	font-size: 10pt;
+}
+
+table.pretty th {
+	background: #3C5F87;
+	text-align: left;
+	color: white;
+}
+
+table.pretty caption {
+	margin-left: inherit;
+	margin-right: inherit;
+}
+
+table.accent {
+	background: brown;
+}

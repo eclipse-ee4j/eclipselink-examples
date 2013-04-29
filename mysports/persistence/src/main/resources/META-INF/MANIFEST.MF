@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Specification-Title: EclipseLink MT Provider
+Specification-Vendor: Eclipse.org - EclipseLink Project
+Specification-Version: 2.4
+Implementation-Title: org.eclipse.persistence
+Implementation-Vendor: Eclipse.org - EclipseLink Project
+Implementation-Version: 2.4
+Release-Designation: EclipseLink 2.4
+Premain-Class: eclipselink.example.mysports.persistence.TenantPerEMFWeavingAgent
+
+

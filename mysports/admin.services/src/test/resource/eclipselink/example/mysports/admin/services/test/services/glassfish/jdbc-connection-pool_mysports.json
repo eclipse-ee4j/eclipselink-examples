@@ -1,0 +1,304 @@
+{
+  "message": "",
+  "command": "jdbc-connection-pool",
+  "exit_code": "SUCCESS",
+  "extraProperties": {
+    "commands": [],
+    "methods": [
+      {
+        "name": "GET"
+      },
+      {},
+      {
+        "name": "POST",
+        "messageParameters": {
+          "allowNonComponentCallers": {
+            "optional": "true",
+            "type": "boolean",
+            "defaultValue": "false",
+            "key": "false"
+          },
+          "associateWithThread": {
+            "optional": "true",
+            "type": "boolean",
+            "defaultValue": "false",
+            "key": "false"
+          },
+          "connectionCreationRetryAttempts": {
+            "optional": "true",
+            "type": "string",
+            "defaultValue": "0",
+            "key": "false"
+          },
+          "connectionCreationRetryIntervalInSeconds": {
+            "optional": "true",
+            "type": "string",
+            "defaultValue": "10",
+            "key": "false"
+          },
+          "connectionLeakReclaim": {
+            "optional": "true",
+            "type": "boolean",
+            "defaultValue": "false",
+            "key": "false"
+          },
+          "connectionLeakTimeoutInSeconds": {
+            "optional": "true",
+            "type": "string",
+            "defaultValue": "0",
+            "key": "false"
+          },
+          "connectionValidationMethod": {
+            "optional": "true",
+            "type": "string",
+            "defaultValue": "table",
+            "key": "false"
+          },
+          "datasourceClassname": {
+            "optional": "true",
+            "type": "string",
+            "key": "false"
+          },
+          "description": {
+            "optional": "true",
+            "type": "string",
+            "key": "false"
+          },
+          "driverClassname": {
+            "optional": "true",
+            "type": "string",
+            "key": "false"
+          },
+          "failAllConnections": {
+            "optional": "true",
+            "type": "boolean",
+            "defaultValue": "false",
+            "key": "false"
+          },
+          "idleTimeoutInSeconds": {
+            "optional": "true",
+            "type": "string",
+            "defaultValue": "300",
+            "key": "false"
+          },
+          "initSql": {
+            "optional": "true",
+            "type": "string",
+            "key": "false"
+          },
+          "isConnectionValidationRequired": {
+            "optional": "true",
+            "type": "boolean",
+            "defaultValue": "false",
+            "key": "false"
+          },
+          "isIsolationLevelGuaranteed": {
+            "optional": "true",
+            "type": "boolean",
+            "defaultValue": "true",
+            "key": "false"
+          },
+          "lazyConnectionAssociation": {
+            "optional": "true",
+            "type": "boolean",
+            "defaultValue": "false",
+            "key": "false"
+          },
+          "lazyConnectionEnlistment": {
+            "optional": "true",
+            "type": "boolean",
+            "defaultValue": "false",
+            "key": "false"
+          },
+          "matchConnections": {
+            "optional": "true",
+            "type": "boolean",
+            "defaultValue": "false",
+            "key": "false"
+          },
+          "maxConnectionUsageCount": {
+            "optional": "true",
+            "type": "string",
+            "defaultValue": "0",
+            "key": "false"
+          },
+          "maxPoolSize": {
+            "optional": "true",
+            "type": "string",
+            "defaultValue": "32",
+            "key": "false"
+          },
+          "maxWaitTimeInMillis": {
+            "optional": "true",
+            "type": "string",
+            "defaultValue": "60000",
+            "key": "false"
+          },
+          "name": {
+            "optional": "true",
+            "type": "string",
+            "key": "true"
+          },
+          "nonTransactionalConnections": {
+            "optional": "true",
+            "type": "boolean",
+            "defaultValue": "false",
+            "key": "false"
+          },
+          "objectType": {
+            "optional": "true",
+            "type": "string",
+            "defaultValue": "user",
+            "key": "false"
+          },
+          "ping": {
+            "optional": "true",
+            "type": "boolean",
+            "defaultValue": "false",
+            "key": "false"
+          },
+          "poolResizeQuantity": {
+            "optional": "true",
+            "type": "string",
+            "defaultValue": "2",
+            "key": "false"
+          },
+          "pooling": {
+            "optional": "true",
+            "type": "boolean",
+            "defaultValue": "true",
+            "key": "false"
+          },
+          "resType": {
+            "optional": "true",
+            "type": "string",
+            "key": "false"
+          },
+          "sqlTraceListeners": {
+            "optional": "true",
+            "type": "string",
+            "key": "false"
+          },
+          "statementCacheSize": {
+            "optional": "true",
+            "type": "string",
+            "defaultValue": "0",
+            "key": "false"
+          },
+          "statementLeakReclaim": {
+            "optional": "true",
+            "type": "boolean",
+            "defaultValue": "false",
+            "key": "false"
+          },
+          "statementLeakTimeoutInSeconds": {
+            "optional": "true",
+            "type": "string",
+            "defaultValue": "0",
+            "key": "false"
+          },
+          "statementTimeoutInSeconds": {
+            "optional": "true",
+            "type": "int",
+            "defaultValue": "-1",
+            "key": "false"
+          },
+          "steadyPoolSize": {
+            "optional": "true",
+            "type": "string",
+            "defaultValue": "8",
+            "key": "false"
+          },
+          "transactionIsolationLevel": {
+            "optional": "true",
+            "type": "string",
+            "key": "false"
+          },
+          "validateAtmostOncePeriodInSeconds": {
+            "optional": "true",
+            "type": "string",
+            "defaultValue": "0",
+            "key": "false"
+          },
+          "validationClassname": {
+            "optional": "true",
+            "type": "string",
+            "key": "false"
+          },
+          "validationTableName": {
+            "optional": "true",
+            "type": "string",
+            "key": "false"
+          },
+          "wrapJdbcObjects": {
+            "optional": "true",
+            "type": "boolean",
+            "defaultValue": "true",
+            "key": "false"
+          }
+        }
+      },
+      {
+        "name": "DELETE",
+        "messageParameters": {
+          "cascade": {
+            "acceptableValues": "",
+            "optional": "true",
+            "type": "boolean",
+            "defaultValue": "false"
+          },
+          "target": {
+            "acceptableValues": "",
+            "optional": "true",
+            "type": "string",
+            "defaultValue": ""
+          }
+        }
+      }
+    ],
+    "entity": {
+      "allowNonComponentCallers": "false",
+      "associateWithThread": "false",
+      "connectionCreationRetryAttempts": "0",
+      "connectionCreationRetryIntervalInSeconds": "10",
+      "connectionLeakReclaim": "false",
+      "connectionLeakTimeoutInSeconds": "0",
+      "connectionValidationMethod": "table",
+      "datasourceClassname": "com.mysql.jdbc.jdbc2.optional.MysqlDataSource",
+      "description": "",
+      "driverClassname": "",
+      "failAllConnections": "false",
+      "idleTimeoutInSeconds": "300",
+      "initSql": null,
+      "isConnectionValidationRequired": "false",
+      "isIsolationLevelGuaranteed": "true",
+      "lazyConnectionAssociation": "false",
+      "lazyConnectionEnlistment": "false",
+      "matchConnections": "false",
+      "maxConnectionUsageCount": "0",
+      "maxPoolSize": "32",
+      "maxWaitTimeInMillis": "60000",
+      "name": "mysports",
+      "nonTransactionalConnections": "false",
+      "objectType": "user",
+      "ping": "false",
+      "poolResizeQuantity": "2",
+      "pooling": "true",
+      "resType": "javax.sql.DataSource",
+      "sqlTraceListeners": null,
+      "statementCacheSize": "0",
+      "statementLeakReclaim": "false",
+      "statementLeakTimeoutInSeconds": "0",
+      "statementTimeoutInSeconds": "-1",
+      "steadyPoolSize": "8",
+      "transactionIsolationLevel": null,
+      "validateAtmostOncePeriodInSeconds": "0",
+      "validationClassname": null,
+      "validationTableName": null,
+      "wrapJdbcObjects": "true"
+    },
+    "childResources": {
+      "property": "http://localhost:4848/management/domain/resources/jdbc-connection-pool/mysports/property"
+    }
+  }
+}
