@@ -5,10 +5,11 @@
 		<class>relational.model.Product</class>
 		<class>relational.model.Discount</class>
 		<properties>
-			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/polyglot"/>
-			<property name="javax.persistence.jdbc.user" value="polyglot"/>
-			<property name="javax.persistence.jdbc.password" value="polyglot"/>
-			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+			<property name="javax.persistence.jdbc.url" value="jdbc:derby:target/derby/test;create=true" />
+			<property name="javax.persistence.jdbc.user" value="app" />
+			<property name="javax.persistence.jdbc.password" value="app" />
+			<property name="javax.persistence.jdbc.driver" value="org.apache.derby.jdbc.EmbeddedDriver" />
+            
 			<property name="eclipselink.jdbc.read-connections.min" value="1"/>
 			<property name="eclipselink.jdbc.write-connections.min" value="1"/>
 			<property name="eclipselink.logging.level" value="FINE"/>
