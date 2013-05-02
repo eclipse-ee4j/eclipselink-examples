@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dbws-builder xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<properties>
+		<property name="projectName">emp</property>
+		... database properties
+	</properties>
+	<table catalogPattern="%" tableNamePattern="EMP" />
+</dbws-builder>

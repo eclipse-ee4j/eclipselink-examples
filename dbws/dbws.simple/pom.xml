@@ -1,21 +1,154 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>eclipselink.example.dbws</groupId>
-  <artifactId>dbws.simple</artifactId>
-  <packaging>war</packaging>
-  <version>2.4.2-SNAPSHOT</version>
-  <name>dbws.simple Maven Webapp</name>
-  <url>http://maven.apache.org</url>
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-  <build>
-    <finalName>dbws.simple</finalName>
-  </build>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>eclipselink.example.dbws</groupId>
+	<artifactId>dbws.simple</artifactId>
+	<packaging>war</packaging>
+	<version>2.4.2-SNAPSHOT</version>
+
+	<name>EclipseLink Simple DBWS Example</name>
+	<url>http://wiki.eclipse.org/EclipseLink/Examples/DBWS</url>
+
+	<scm>
+		<connection>git://git.eclipse.org/gitroot/eclipselink/examples.git</connection>
+		<url>http://git.eclipse.org/c/eclipselink/examples.git/</url>
+	</scm>
+
+	<licenses>
+		<license>
+			<name>EPL: Eclipse Public License</name>
+			<url>http://www.eclipse.org/legal/epl-v10.html</url>
+		</license>
+		<license>
+			<name>EDL: Eclipse Distribution License</name>
+			<url>http://www.eclipse.org/org/documents/edl-v10.php</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Doug Clarke</name>
+			<organization>Oracle</organization>
+			<email>douglas.clarke@oracle.com</email>
+			<url>java-persistence.blogspot.com</url>
+		</developer>
+		<developer>
+			<name>Dave McCann</name>
+			<organization>Oracle</organization>
+			<email>david.nccann@oracle.com</email>
+		</developer>
+	</developers>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<eclipselink.groupid>org.eclipse.persistence</eclipselink.groupid>
+		<eclipselink.artifactid>eclipselink</eclipselink.artifactid>
+		<eclipselink.version>2.4.2-SNAPSHOT</eclipselink.version>
+	</properties>
+
+	<repositories>
+		<repository>
+			<id>Java.Net</id>
+			<url>http://download.java.net/maven/2/</url>
+		</repository>
+		<repository>
+			<id>EclipseLink</id>
+			<url>http://download.eclipse.org/rt/eclipselink/maven.repo</url>
+		</repository>
+	</repositories>
+
+	<dependencies>
+		<dependency>
+			<groupId>${eclipselink.groupid}</groupId>
+			<artifactId>${eclipselink.artifactid}</artifactId>
+			<version>${eclipselink.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>commonj.sdo</artifactId>
+					<groupId>commonj.sdo</groupId>
+				</exclusion>
+			</exclusions>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-api</artifactId>
+			<version>6.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.24</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>oracleddlparser</artifactId>
+			<version>2.4.2-RC1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>dbws.builder</artifactId>
+			<version>2.4.2-RC1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>javax.wsdl</artifactId>
+			<version>1.6.2</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+
+		<finalName>dbws.simple</finalName>
+		<defaultGoal>package</defaultGoal>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.5.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>generateDTOs</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<classpathScope>test</classpathScope>
+							<mainClass>org.eclipse.persistence.tools.dbws.DBWSBuilder</mainClass>
+							<arguments>
+								<argument>-builderFile ${project.basedir}/src/main/resources/dbws-builder.xml</argument>
+								<argument>-stageDir ${project.basedir}/target/dbws</argument>
+								<argument>-packageAs eclipse</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+	</build>
 </project>

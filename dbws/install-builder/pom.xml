@@ -1,0 +1,58 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.oracle.toplink</groupId>
+	<artifactId>maven-install</artifactId>
+	<version>12.1.2</version>
+	<packaging>pom</packaging>
+
+	<properties>
+		<oracle.version>${project.version}-0-0</oracle.version>
+	</properties>
+
+	<build>
+		<defaultGoal>com.oracle.maven:oracle-maven-sync:push</defaultGoal>
+
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+				<version>2.3.1</version>
+				<configuration>
+					<pomFile>${oracleHome}/oracle_common/plugins/maven/com/oracle/maven/oracle-maven-sync/${project.version}/oracle-maven-sync.${project.version}.pom</pomFile>
+					<file>${oracleHome}/oracle_common/plugins/maven/com/oracle/maven/oracle-maven-sync/${project.version}/oracle-maven-sync.${project.version}.jar</file>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>com.oracle.maven</groupId>
+				<artifactId>oracle-maven-sync</artifactId>
+				<version>${oracle.version}</version>
+				<configuration>
+					<oracleHome>${oracleHome}</oracleHome>
+					<testOnly>false</testOnly>
+					<failOnError>false</failOnError>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.4.1</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>${settings.localRepository}/org/eclipse/persistence/</directory>
+							<includes>
+								<include>**/*</include>
+							</includes>
+							<followSymlinks>false</followSymlinks>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+</project>
