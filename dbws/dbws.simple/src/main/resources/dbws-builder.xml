@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dbws-builder xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-	<properties>
-		<property name="projectName">emp</property>
-		... database properties
-	</properties>
-	<table catalogPattern="%" tableNamePattern="EMP" />
+    <properties>
+        <property name="projectName">simpletable</property>
+        <property name="logLevel"></property>
+        <property name="username"></property>
+        <property name="password"></property>
+        <property name="url"></property>
+        <property name="driver"></property>
+        <property name="platformClassname"></property>
+        <property name="dataSource"></property>
+        <property name="wsdlLocationURI"></property>
+    </properties>
+    <table catalogPattern="%" tableNamePattern="SIMPLETABLE"/>
 </dbws-builder>
