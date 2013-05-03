@@ -2,7 +2,12 @@
 <dbws-builder xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 	<properties>
 		<property name="projectName">emp</property>
-		... database properties
+		<property name="logLevel">off</property>
+		<property name="driver">com.mysql.jdbc.Driver</property>
+		<property name="url">jdbc:mysql://localhost:3306/mysql</property>
+		<property name="username">root</property>
+		<property name="password">password</property>
 	</properties>
-	<table catalogPattern="%" tableNamePattern="EMP" />
+	<table schema="mysql" tableNamePattern="D_PERSON" />
+	<table schema="mysql" tableNamePattern="D_ADDRESS" />
 </dbws-builder>

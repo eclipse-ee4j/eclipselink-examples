@@ -129,9 +129,10 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.1.1</version>
 				<executions>
 					<execution>
-						<id>generateDTOs</id>
+						<id>dbws-builder</id>
 						<phase>generate-sources</phase>
 						<goals>
 							<goal>java</goal>
@@ -140,9 +141,12 @@
 							<classpathScope>test</classpathScope>
 							<mainClass>org.eclipse.persistence.tools.dbws.DBWSBuilder</mainClass>
 							<arguments>
-								<argument>-builderFile ${project.basedir}/src/main/resources/dbws-builder.xml</argument>
-								<argument>-stageDir ${project.basedir}/target/dbws</argument>
-								<argument>-packageAs eclipse</argument>
+								<argument>-builderFile</argument>
+								<argument>${project.basedir}/src/main/resources/dbws-builder.xml</argument>
+								<argument>-stageDir</argument>
+								<argument>${project.basedir}/target</argument>
+								<argument>-packageAs</argument>
+								<argument>eclipse</argument>
 							</arguments>
 						</configuration>
 					</execution>

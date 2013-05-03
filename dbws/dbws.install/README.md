@@ -24,3 +24,10 @@ After this fas completed successfully other projects can reference these artifac
 			<artifactId>javax.wsdl</artifactId>
 			<version>1.6.2</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>javax.servlet</artifactId>
+			<version>2.4.0</version>
+		</dependency>
+		
