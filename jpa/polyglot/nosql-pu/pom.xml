@@ -32,8 +32,8 @@
 		</dependency>
 		<dependency>
 			<groupId>javax.resource</groupId>
-			<artifactId>connector</artifactId>
-			<version>1.0</version>
+			<artifactId>connector-api</artifactId>
+			<version>1.5</version>
 		</dependency>
 	</dependencies>
 </project>
