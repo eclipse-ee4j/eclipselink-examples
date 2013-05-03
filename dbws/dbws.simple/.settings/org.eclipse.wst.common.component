@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
     <wb-module deploy-name="dbws.simple">
-        <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
-        <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-        <property name="context-root" value="dbws.simple"/>
+        <dependent-module archiveName="dbws.maven-2.4.2-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/dbws.maven/dbws.maven">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="java-output-path" value="/dbws.simple/target/classes"/>
+        <property name="context-root" value="employee.web"/>
     </wb-module>
 </project-modules>

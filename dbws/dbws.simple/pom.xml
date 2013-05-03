@@ -82,31 +82,40 @@
 			<groupId>javax</groupId>
 			<artifactId>javaee-api</artifactId>
 			<version>6.0</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>5.1.24</version>
-			<scope>test</scope>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>oracleddlparser</artifactId>
 			<version>2.4.2-RC1</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>dbws.builder</artifactId>
 			<version>2.4.2-RC1</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>javax.wsdl</artifactId>
 			<version>1.6.2</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>eclipselink.example.dbws</groupId>
+			<artifactId>dbws.maven</artifactId>
+			<version>2.4.2-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 
@@ -142,11 +151,11 @@
 							<mainClass>org.eclipse.persistence.tools.dbws.DBWSBuilder</mainClass>
 							<arguments>
 								<argument>-builderFile</argument>
-								<argument>${project.basedir}/src/main/resources/dbws-builder.xml</argument>
+								<argument>${project.basedir}/src/main/dbws-builder.xml</argument>
 								<argument>-stageDir</argument>
-								<argument>${project.basedir}/target</argument>
+								<argument>${project.basedir}/target/</argument>
 								<argument>-packageAs</argument>
-								<argument>eclipse</argument>
+								<argument>maven</argument>
 							</arguments>
 						</configuration>
 					</execution>
