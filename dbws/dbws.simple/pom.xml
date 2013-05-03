@@ -64,7 +64,7 @@
 			<version>${eclipselink.version}</version>
 			<exclusions>
 				<exclusion>
-			<groupId>${eclipselink.groupid}</groupId>
+					<groupId>${eclipselink.groupid}</groupId>
 					<artifactId>commonj.sdo</artifactId>
 				</exclusion>
 			</exclusions>
@@ -98,7 +98,7 @@
 			<version>2.4.0</version>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>dbws.builder</artifactId>
@@ -110,14 +110,21 @@
 			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>javax.wsdl</artifactId>
 			<version>1.6.2</version>
-			<scope>test</scope>
+			<scope>provided</scope>
 		</dependency>
 		
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>javax.servlet</artifactId>
+			<version>2.4.0</version>
+			<scope>provided</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>eclipselink.example.dbws</groupId>
 			<artifactId>dbws.maven</artifactId>
 			<version>2.4.2-SNAPSHOT</version>
-			<scope>test</scope>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 
