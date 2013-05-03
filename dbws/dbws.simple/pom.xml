@@ -64,8 +64,8 @@
 			<version>${eclipselink.version}</version>
 			<exclusions>
 				<exclusion>
+			<groupId>${eclipselink.groupid}</groupId>
 					<artifactId>commonj.sdo</artifactId>
-					<groupId>commonj.sdo</groupId>
 				</exclusion>
 			</exclusions>
 			<scope>provided</scope>
@@ -79,44 +79,45 @@
 		</dependency>
 
 		<dependency>
-			<groupId>javax</groupId>
-			<artifactId>javaee-api</artifactId>
-			<version>6.0</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>5.1.24</version>
-			<scope>provided</scope>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>oracleddlparser</artifactId>
-			<version>2.4.2-RC1</version>
-			<scope>provided</scope>
+			<version>${eclipselink.version}</version>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>javax.servlet</artifactId>
+			<version>2.4.0</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>dbws.builder</artifactId>
-			<version>2.4.2-RC1</version>
-			<scope>provided</scope>
+			<version>${eclipselink.version}</version>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>javax.wsdl</artifactId>
 			<version>1.6.2</version>
-			<scope>provided</scope>
+			<scope>test</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>eclipselink.example.dbws</groupId>
 			<artifactId>dbws.maven</artifactId>
 			<version>2.4.2-SNAPSHOT</version>
-			<scope>provided</scope>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
@@ -161,16 +162,6 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
-				</configuration>
 			</plugin>
 
 		</plugins>
