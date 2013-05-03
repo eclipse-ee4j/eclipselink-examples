@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="empService" targetNamespace="urn:empService" xmlns:ns1="urn:emp" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="urn:empService" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types>
+    <xsd:schema elementFormDefault="qualified" targetNamespace="urn:empService" xmlns:tns="urn:empService" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><xsd:import namespace="urn:emp" schemaLocation="eclipselink-dbws-schema.xsd"/></xsd:schema>
+  </wsdl:types>
+  <wsdl:portType name="empService_Interface">
+  </wsdl:portType>
+  <wsdl:binding name="empService_SOAP_HTTP" type="tns:empService_Interface">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+  </wsdl:binding>
+  <wsdl:service name="empService">
+    <wsdl:port name="empServicePort" binding="tns:empService_SOAP_HTTP">
+      <soap:address location="REPLACE_WITH_ENDPOINT_ADDRESS"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

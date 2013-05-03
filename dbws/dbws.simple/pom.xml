@@ -116,6 +116,7 @@
 			<groupId>eclipselink.example.dbws</groupId>
 			<artifactId>dbws.maven</artifactId>
 			<version>2.4.2-SNAPSHOT</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 
@@ -151,15 +152,25 @@
 							<mainClass>org.eclipse.persistence.tools.dbws.DBWSBuilder</mainClass>
 							<arguments>
 								<argument>-builderFile</argument>
-								<argument>${project.basedir}/src/main/dbws-builder.xml</argument>
+								<argument>${project.basedir}/dbws-builder.xml</argument>
 								<argument>-stageDir</argument>
-								<argument>${project.basedir}/target/</argument>
+								<argument>${project.basedir}/src/main/</argument>
 								<argument>-packageAs</argument>
 								<argument>maven</argument>
 							</arguments>
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
 			</plugin>
 
 		</plugins>

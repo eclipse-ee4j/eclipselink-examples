@@ -18,8 +18,8 @@ public class MavenPackager extends IDEPackager {
 
     public MavenPackager() {
         super(null, "maven", noArchive);
-        srcDirname = "dbws-src";
-        publicHTMLDirname = "dbws-web";
+        srcDirname = "java";
+        publicHTMLDirname = "webapp";
     }
 
 }
