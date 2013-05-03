@@ -1,0 +1,145 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>eclipselink.example.moxy</groupId>
+	<artifactId>twitter</artifactId>
+	<version>2.4.2-SNAPSHOT</version>
+
+	<name>EclipseLink MOXy Twitter Example</name>
+	<url>http://wiki.eclipse.org/EclipseLink/Examples/MOXy</url>
+
+	<scm>
+		<connection>git://git.eclipse.org/gitroot/eclipselink/examples.git</connection>
+		<url>http://git.eclipse.org/c/eclipselink/examples.git/</url>
+	</scm>
+
+	<licenses>
+		<license>
+			<name>EPL: Eclipse Public License</name>
+			<url>http://www.eclipse.org/legal/epl-v10.html</url>
+		</license>
+		<license>
+			<name>EDL: Eclipse Distribution License</name>
+			<url>http://www.eclipse.org/org/documents/edl-v10.php</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Blaise Doughan</name>
+			<organization>Oracle</organization>
+			<email>blaise.doughan@oracle.com</email>
+			<url>http://blog.bdoughan.com/</url>
+		</developer>
+		<developer>
+			<name>Rick Barkhouse</name>
+			<organization>Oracle</organization>
+			<email>rick.barkhouse@oracle.com</email>
+		</developer>
+	</developers>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<eclipselink.groupid>org.eclipse.persistence</eclipselink.groupid>
+		<eclipselink.artifactid>eclipselink</eclipselink.artifactid>
+		<eclipselink.version>2.4.2-SNAPSHOT</eclipselink.version>
+	</properties>
+
+	<repositories>
+		<repository>
+			<id>Java.net</id>
+			<url>http://download.java.net/maven/2/</url>
+		</repository>
+		<repository>
+			<id>EclipseLink</id>
+			<url>http://download.eclipse.org/rt/eclipselink/maven.repo</url>
+		</repository>
+	</repositories>
+
+	<dependencies>
+		<dependency>
+			<groupId>${eclipselink.groupid}</groupId>
+			<artifactId>${eclipselink.artifactid}</artifactId>
+			<version>${eclipselink.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>commonj.sdo</artifactId>
+					<groupId>commonj.sdo</groupId>
+				</exclusion>
+			</exclusions>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-api</artifactId>
+			<version>6.0</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<defaultGoal>install</defaultGoal>
+
+		<!-- ensure jaxb.properties copied to target/classes -->
+		<resources>
+			<resource>
+				<directory>src/main/java</directory>
+				<excludes>
+					<exclude>**/*.java</exclude>
+				</excludes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
+
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2.1</version>
+				<executions>
+					<execution>
+                        <phase>install</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<classpathScope>test</classpathScope>
+					<mainClass>eclipselink.example.moxy.twitter.Main</mainClass>
+					<systemProperties>
+                        <systemProperty>
+                            <key>java.net.useSystemProxies</key>
+                            <value>true</value>
+                        </systemProperty>
+                        <!-- 
+						<systemProperty>
+							<key>proxySet</key>
+							<value>true</value>
+						</systemProperty>
+						<systemProperty>
+							<key>proxyHost</key>
+							<value>www.proxy.com</value>
+						</systemProperty>
+						<systemProperty>
+							<key>proxyPort</key>
+							<value>80</value>
+						</systemProperty>
+                        -->
+					</systemProperties>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
