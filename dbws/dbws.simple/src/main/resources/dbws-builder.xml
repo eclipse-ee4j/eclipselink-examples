@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<dbws-builder xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<dbws-builder version="1.2">
 	<properties>
 		<property name="projectName">emp</property>
 		<property name="logLevel">off</property>
@@ -8,6 +8,5 @@
 		<property name="username">root</property>
 		<property name="password">password</property>
 	</properties>
-	<table schema="mysql" tableNamePattern="D_PERSON" />
-	<table schema="mysql" tableNamePattern="D_ADDRESS" />
+	<table schemaPattern="%" tableNamePattern="%" catalogPattern="%" />
 </dbws-builder>
