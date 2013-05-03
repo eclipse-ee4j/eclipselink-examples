@@ -1,4 +1,4 @@
-<h1>EclipseLink MySports Example Application</h1>
+<h1>EclipseLink MOXy Twitter Example</h1>
 
 <p>This example application demonstrates how to read JSON data into objects mapped with EclipseLink JAXB.</p>
 
