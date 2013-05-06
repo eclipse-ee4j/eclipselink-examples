@@ -112,7 +112,7 @@
 			<version>1.6.2</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>javax.servlet</artifactId>
@@ -162,7 +162,7 @@
 								<argument>-builderFile</argument>
 								<argument>${project.basedir}/dbws-builder.xml</argument>
 								<argument>-stageDir</argument>
-								<argument>${project.basedir}/src/main/</argument>
+								<argument>${project.basedir}/target/generated-src</argument>
 								<argument>-packageAs</argument>
 								<argument>maven</argument>
 							</arguments>
@@ -171,6 +171,26 @@
 				</executions>
 			</plugin>
 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<includes>
+						<include>${project.basedir}/target/generated-src/java/**/*.java</include>
+					</includes>
+				</configuration>
+			</plugin>
 		</plugins>
+
+		<resources>
+			<resource>
+				<directory>${project.basedir}/target/generated-src/java/</directory>
+			</resource>
+			<resource>
+				<directory>${project.basedir}/target/generated-src/webapp/</directory>
+			</resource>
+		</resources>
+
+
 	</build>
 </project>

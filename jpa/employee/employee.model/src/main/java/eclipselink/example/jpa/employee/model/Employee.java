@@ -94,6 +94,7 @@ public class Employee {
 
     @Version
     private Long version;
+    
     @ManyToMany
     @JoinTable(joinColumns = @JoinColumn(name = "EMP_ID"), inverseJoinColumns = @JoinColumn(name = "PROJ_ID"), name = "PROJ_EMP")
     private List<Project> projects = new ArrayList<Project>();
