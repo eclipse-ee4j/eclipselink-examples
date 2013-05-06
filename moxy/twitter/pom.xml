@@ -108,7 +108,7 @@
 				<version>1.2.1</version>
 				<executions>
 					<execution>
-                        <phase>install</phase>
+						<phase>install</phase>
 						<goals>
 							<goal>java</goal>
 						</goals>
@@ -118,27 +118,27 @@
 					<classpathScope>test</classpathScope>
 					<mainClass>eclipselink.example.moxy.twitter.Main</mainClass>
 					<systemProperties>
-                        <systemProperty>
-                            <key>java.net.useSystemProxies</key>
-                            <value>true</value>
-                        </systemProperty>
-                        <!-- 
 						<systemProperty>
-							<key>proxySet</key>
+							<key>java.net.useSystemProxies</key>
 							<value>true</value>
 						</systemProperty>
-						<systemProperty>
-							<key>proxyHost</key>
-							<value>www.proxy.com</value>
-						</systemProperty>
-						<systemProperty>
-							<key>proxyPort</key>
-							<value>80</value>
-						</systemProperty>
-                        -->
+						<!-- <systemProperty> <key>proxySet</key> <value>true</value> </systemProperty> 
+							<systemProperty> <key>proxyHost</key> <value>www.proxy.com</value> </systemProperty> 
+							<systemProperty> <key>proxyPort</key> <value>80</value> </systemProperty> -->
 					</systemProperties>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.5.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+
 		</plugins>
 	</build>
 
