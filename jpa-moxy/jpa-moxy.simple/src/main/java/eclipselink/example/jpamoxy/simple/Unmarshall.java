@@ -1,4 +1,4 @@
-package eclipselink.example.jpamoxy.roundtrip;
+package eclipselink.example.jpamoxy.simple;
 
 import java.io.File;
 
@@ -11,7 +11,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 
-import eclipselink.example.jpamoxy.roundtrip.model.Customer;
+import eclipselink.example.jpamoxy.simple.model.Customer;
 
 
 public class Unmarshall {

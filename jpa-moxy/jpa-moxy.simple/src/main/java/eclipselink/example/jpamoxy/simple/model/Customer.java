@@ -1,4 +1,4 @@
-package eclipselink.example.jpamoxy.roundtrip.model;
+package eclipselink.example.jpamoxy.simple.model;
 
 import static javax.persistence.CascadeType.*;
 
