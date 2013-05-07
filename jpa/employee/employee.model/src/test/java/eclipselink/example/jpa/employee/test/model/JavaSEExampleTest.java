@@ -10,7 +10,7 @@
  * Contributors:
  *  dclarke - Employee Demo 2.4
  ******************************************************************************/
-package test;
+package eclipselink.example.jpa.employee.test.model;
 
 import org.junit.Test;
 

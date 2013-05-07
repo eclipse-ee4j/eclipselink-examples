@@ -28,7 +28,7 @@ import eclipselink.example.jpa.employee.services.Diagnostics;
 import eclipselink.example.jpa.employee.services.Diagnostics.SQLTrace;
 import eclipselink.example.jpa.employee.services.EmployeeCriteria;
 import eclipselink.example.jpa.employee.services.EntityPaging;
-import example.PersistenceTesting;
+import eclipselink.example.jpa.employee.test.PersistenceTesting;
 
 /**
  * TODO

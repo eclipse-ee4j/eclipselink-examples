@@ -10,7 +10,7 @@
  * Contributors:
  *  dclarke - Employee Demo 2.4
  ******************************************************************************/
-package test;
+package eclipselink.example.jpa.employee.test.model;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -19,7 +19,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import example.PersistenceTesting;
+import eclipselink.example.jpa.employee.test.PersistenceTesting;
 
 public class ConfigTest {
 
