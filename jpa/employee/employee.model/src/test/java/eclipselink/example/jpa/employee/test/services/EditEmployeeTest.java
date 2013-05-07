@@ -26,7 +26,7 @@ import org.junit.Test;
 import eclipselink.example.jpa.employee.model.SamplePopulation;
 import eclipselink.example.jpa.employee.services.EditEmployee;
 import eclipselink.example.jpa.employee.services.EditEmployeeBean;
-import example.PersistenceTesting;
+import eclipselink.example.jpa.employee.test.PersistenceTesting;
 
 /**
  * TODO

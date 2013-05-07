@@ -10,7 +10,7 @@
  * Contributors:
  *  dclarke - Employee Demo 2.4.2
  ******************************************************************************/
-package example;
+package eclipselink.example.jpa.employee.test;
 
 import java.util.HashMap;
 import java.util.Map;

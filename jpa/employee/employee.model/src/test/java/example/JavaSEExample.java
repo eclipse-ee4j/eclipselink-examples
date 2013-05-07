@@ -22,12 +22,13 @@ import eclipselink.example.jpa.employee.model.Employee;
 import eclipselink.example.jpa.employee.model.SamplePopulation;
 import eclipselink.example.jpa.employee.services.EmployeeCriteria;
 import eclipselink.example.jpa.employee.services.EntityPaging;
+import eclipselink.example.jpa.employee.test.PersistenceTesting;
 
 /**
  * Examples illustrating the use of JPA with the employee domain
  * eclipselink.example.jpa.employee.model.
  * 
- * @see test.JavaSEExampleTest
+ * @see eclipselink.example.jpa.employee.test.model.JavaSEExampleTest
  * 
  * @author dclarke
  * @since EclipseLink 2.4

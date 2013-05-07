@@ -28,7 +28,7 @@ import eclipselink.example.jpa.employee.model.Employee;
 import eclipselink.example.jpa.employee.model.SamplePopulation;
 import eclipselink.example.jpa.employee.services.Diagnostics;
 import eclipselink.example.jpa.employee.services.Diagnostics.SQLTrace;
-import example.PersistenceTesting;
+import eclipselink.example.jpa.employee.test.PersistenceTesting;
 
 public class DiagnosticsTest {
 

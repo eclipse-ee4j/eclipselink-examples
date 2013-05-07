@@ -5,7 +5,7 @@ In order to use EclipseLink's DBWS Builder in a maven project you must first ins
 This pom.xml and its config.properties file simplifies this. Simply edit the config.properties file to match the version 
 and install location of the EclipseLink release and execute mvn.
 
-After this fas completed successfully other projects can reference these artifacts using:
+After this has completed successfully other projects can reference these artifacts using:
 
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>

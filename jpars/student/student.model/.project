@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>StudentModel</name>
+	<name>jpars.student.model</name>
 	<comment>EclipseLink JPARS Student Example</comment>
 	<projects>
 	</projects>

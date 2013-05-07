@@ -84,6 +84,13 @@
 			<version>5.1.24</version>
 			<scope>test</scope>
 		</dependency>
+        
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc6</artifactId>
+            <version>11.2.0</version>
+            <scope>test</scope>
+        </dependency>
 
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
@@ -143,6 +150,26 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>create-empty-directory</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <mkdir dir="${project.basedir}/target/generated-src/java" />
+                                <mkdir dir="${project.basedir}/target/generated-src/webapp" />
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -170,16 +197,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<includes>
-						<include>${project.basedir}/target/generated-src/java/**/*.java</include>
-					</includes>
-				</configuration>
-			</plugin>
 		</plugins>
 
 		<resources>
@@ -190,7 +207,6 @@
 				<directory>${project.basedir}/target/generated-src/webapp/</directory>
 			</resource>
 		</resources>
-
 
 	</build>
 </project>

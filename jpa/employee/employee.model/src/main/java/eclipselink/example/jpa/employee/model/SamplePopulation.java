@@ -20,7 +20,7 @@ import javax.persistence.EntityManager;
  * Examples illustrating the use of JPA with the employee domain
  * eclipselink.example.jpa.employee.model.
  * 
- * @see test.JavaSEExampleTest
+ * @see eclipselink.example.jpa.employee.test.model.JavaSEExampleTest
  * 
  * @author dclarke
  * @since EclipseLink 2.4
