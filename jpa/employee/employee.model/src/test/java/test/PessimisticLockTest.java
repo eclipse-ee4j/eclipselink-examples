@@ -16,8 +16,16 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.LockModeType;
 
+import org.eclipse.persistence.descriptors.ClassDescriptor;
+import org.eclipse.persistence.jpa.JpaHelper;
+import org.eclipse.persistence.queries.ReadObjectQuery;
+import org.eclipse.persistence.queries.ReportQuery;
+import org.eclipse.persistence.sessions.UnitOfWork;
+import org.eclipse.persistence.sessions.server.ClientSession;
+import org.eclipse.persistence.sessions.server.Server;
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -47,19 +55,170 @@ public class PessimisticLockTest {
         Assert.assertNotNull(addr);
         Assert.assertNull(addr.getCity());
         Assert.assertEquals(em.getLockMode(addr), LockModeType.PESSIMISTIC_WRITE);
-        
+
         addr.setCity("Ottawa");
 
         Assert.assertNotNull(addr.getCity());
-        
+
         em.lock(addr, LockModeType.PESSIMISTIC_WRITE);
-        
+
         Assert.assertEquals(em.getLockMode(addr), LockModeType.PESSIMISTIC_WRITE);
         Assert.assertNotNull(addr.getCity());
 
         em.getTransaction().rollback();
 
         em.close();
+    }
+
+    @Test
+    public void testRefreshIfNewerTXN() {
+        EntityManager em = getEmf().createEntityManager();
+
+        int id = em.createQuery("SELECT a.id FROM Address a", Number.class).getSingleResult().intValue();
+
+        em.getTransaction().begin();
+
+        Address addr = em.find(Address.class, id);
+
+        Assert.assertNotNull(addr);
+        Assert.assertNull(addr.getCity());
+
+        addr.setCity("Ottawa");
+
+        Assert.assertNotNull(addr.getCity());
+
+        em.refresh(addr);
+
+        Assert.assertNotNull(addr.getCity());
+
+        em.getTransaction().rollback();
+
+        em.close();
+    }
+
+    @Test
+    public void testRefreshIfNewer() {
+        EntityManager em = getEmf().createEntityManager();
+
+        int id = em.createQuery("SELECT a.id FROM Address a", Number.class).getSingleResult().intValue();
+
+        Address addr = em.find(Address.class, id);
+
+        Assert.assertNotNull(addr);
+        Assert.assertNull(addr.getCity());
+
+        addr.setCity("Ottawa");
+
+        Assert.assertNotNull(addr.getCity());
+
+        em.refresh(addr);
+
+        Assert.assertNotNull(addr.getCity());
+
+        em.close();
+    }
+
+    @Test
+    public void testRefreshIfNewerNativeServer() {
+        Server session = JpaHelper.getServerSession(getEmf());
+
+        ReportQuery idQuery = new ReportQuery();
+        idQuery.setReferenceClass(Address.class);
+        idQuery.addAttribute("id");
+        idQuery.setShouldReturnSingleAttribute(true);
+        idQuery.setShouldReturnSingleValue(true);
+
+        int id = ((Number) session.executeQuery(idQuery)).intValue();
+
+        ReadObjectQuery addrQuery = new ReadObjectQuery();
+        addrQuery.setReferenceClass(Address.class);
+        addrQuery.setSelectionCriteria(addrQuery.getExpressionBuilder().get("id").equal(id));
+
+        Address addr = (Address) session.executeQuery(addrQuery);
+
+        Assert.assertNotNull(addr);
+        Assert.assertNull(addr.getCity());
+
+        addr.setCity("Ottawa");
+
+        Assert.assertNotNull(addr.getCity());
+
+        session.refreshObject(addr);
+
+        Assert.assertNotNull(addr.getCity());
+
+    }
+
+    @Test
+    public void testRefreshIfNewerNativeClientSession() {
+        Server session = JpaHelper.getServerSession(getEmf());
+        ClientSession cs = session.acquireClientSession();
+
+        ReportQuery idQuery = new ReportQuery();
+        idQuery.setReferenceClass(Address.class);
+        idQuery.addAttribute("id");
+        idQuery.setShouldReturnSingleAttribute(true);
+        idQuery.setShouldReturnSingleValue(true);
+
+        int id = ((Number) cs.executeQuery(idQuery)).intValue();
+
+        ReadObjectQuery addrQuery = new ReadObjectQuery();
+        addrQuery.setReferenceClass(Address.class);
+        addrQuery.setSelectionCriteria(addrQuery.getExpressionBuilder().get("id").equal(id));
+
+        Address addr = (Address) cs.executeQuery(addrQuery);
+
+        Assert.assertNotNull(addr);
+        Assert.assertNull(addr.getCity());
+
+        addr.setCity("Ottawa");
+
+        Assert.assertNotNull(addr.getCity());
+
+        cs.refreshObject(addr);
+
+        Assert.assertNotNull(addr.getCity());
+
+    }
+
+    @Test
+    public void testRefreshIfNewerNativeUOW() {
+        Server session = JpaHelper.getServerSession(getEmf());
+        UnitOfWork uow = session.acquireUnitOfWork();
+
+        ReportQuery idQuery = new ReportQuery();
+        idQuery.setReferenceClass(Address.class);
+        idQuery.addAttribute("id");
+        idQuery.setShouldReturnSingleAttribute(true);
+        idQuery.setShouldReturnSingleValue(true);
+
+        int id = ((Number) uow.executeQuery(idQuery)).intValue();
+
+        ReadObjectQuery addrQuery = new ReadObjectQuery();
+        addrQuery.setReferenceClass(Address.class);
+        addrQuery.setSelectionCriteria(addrQuery.getExpressionBuilder().get("id").equal(id));
+
+        Address addr = (Address) uow.executeQuery(addrQuery);
+
+        Assert.assertNotNull(addr);
+        Assert.assertNull(addr.getCity());
+
+        addr.setCity("Ottawa");
+
+        Assert.assertNotNull(addr.getCity());
+
+        uow.refreshObject(addr);
+
+        Assert.assertNotNull(addr.getCity());
+
+    }
+
+    @Test
+    public void verifyConfig() {
+        ClassDescriptor desc = JpaHelper.getServerSession(getEmf()).getClassDescriptorForAlias("Address");
+        Assert.assertNotNull(desc);
+
+        Assert.assertTrue(desc.getCachePolicy().shouldOnlyRefreshCacheIfNewerVersion());
     }
 
     private static EntityManagerFactory emf;
@@ -98,4 +257,8 @@ public class PessimisticLockTest {
         emf = null;
     }
 
+    @Before
+    public void clearCache() {
+        JpaHelper.getServerSession(getEmf()).getIdentityMapAccessor().initializeAllIdentityMaps();
+    }
 }
