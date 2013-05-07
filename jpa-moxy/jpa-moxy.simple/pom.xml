@@ -126,7 +126,7 @@
 						<artifactId>exec-maven-plugin</artifactId>
 						<version>1.2.1</version>
 						<configuration>
-							<mainClass>eclipselink.example.jpamoxy.roundtrip.InitDB</mainClass>
+							<mainClass>eclipselink.example.jpamoxy.simple.InitDB</mainClass>
 						</configuration>
 					</plugin>
 				</plugins>
@@ -141,7 +141,7 @@
 						<artifactId>exec-maven-plugin</artifactId>
 						<version>1.2.1</version>
 						<configuration>
-							<mainClass>eclipselink.example.jpamoxy.roundtrip.Marshall</mainClass>
+							<mainClass>eclipselink.example.jpamoxy.simple.Marshall</mainClass>
 							<arguments>
 								<argument>xml</argument>
 							</arguments>
@@ -159,7 +159,7 @@
 						<artifactId>exec-maven-plugin</artifactId>
 						<version>1.2.1</version>
 						<configuration>
-							<mainClass>eclipselink.example.jpamoxy.roundtrip.Marshall</mainClass>
+							<mainClass>eclipselink.example.jpamoxy.simple.Marshall</mainClass>
 							<arguments>
 								<argument>json</argument>
 							</arguments>
@@ -177,7 +177,7 @@
 						<artifactId>exec-maven-plugin</artifactId>
 						<version>1.2.1</version>
 						<configuration>
-							<mainClass>eclipselink.example.jpamoxy.roundtrip.Unmarshall</mainClass>
+							<mainClass>eclipselink.example.jpamoxy.simple.Unmarshall</mainClass>
 							<arguments>
 								<argument>xml</argument>
 							</arguments>
@@ -195,7 +195,7 @@
 						<artifactId>exec-maven-plugin</artifactId>
 						<version>1.2.1</version>
 						<configuration>
-							<mainClass>eclipselink.example.jpamoxy.roundtrip.Unmarshall</mainClass>
+							<mainClass>eclipselink.example.jpamoxy.simple.Unmarshall</mainClass>
 							<arguments>
 								<argument>json</argument>
 							</arguments>
