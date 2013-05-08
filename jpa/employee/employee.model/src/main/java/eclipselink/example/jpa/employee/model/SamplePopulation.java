@@ -27,13 +27,13 @@ import javax.persistence.EntityManager;
  */
 public class SamplePopulation {
 
+    /**
+     * Create the specified number of random sample employees.  
+     */
     public void createNewEmployees(EntityManager em, int quantity) {
-        em.getTransaction().begin();
-
         for (int index = 0; index < quantity; index++) {
             em.persist(createRandomEmployee());
         }
-        em.getTransaction().commit();
     }
 
     private static final String[] MALE_FIRST_NAMES = { "Jacob", "Ethan", "Michael", "Alexander", "William", "Joshua", "Daniel", "Jayden", "Noah", "Anthony" };

@@ -58,9 +58,6 @@ public class AdminBeanTest {
 
         Assert.assertEquals(40, admin.getCacheSize("PhoneNumber"));
         Assert.assertEquals(40, admin.getDatabaseCount("PhoneNumber"));
-
-        Assert.assertEquals(0, admin.getCacheSize("Project"));
-        Assert.assertEquals(0, admin.getDatabaseCount("Project"));
     }
 
     @Test
@@ -68,12 +65,11 @@ public class AdminBeanTest {
         List<String> types = getAdmin().getTypes();
 
         Assert.assertNotNull(types);
-        Assert.assertEquals(4, types.size());
+        Assert.assertEquals(3, types.size());
 
         Assert.assertTrue(types.contains("Employee"));
         Assert.assertTrue(types.contains("Address"));
         Assert.assertTrue(types.contains("PhoneNumber"));
-        Assert.assertTrue(types.contains("Project"));
     }
 
     private static EntityManagerFactory emf;
@@ -94,7 +90,9 @@ public class AdminBeanTest {
         emf = PersistenceTesting.createEMF(true);
 
         EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
         new SamplePopulation().createNewEmployees(em, 25);
+        em.getTransaction().commit();
         em.close();
 
         Diagnostics.getInstance(emf);

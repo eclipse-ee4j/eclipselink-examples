@@ -12,6 +12,7 @@
  ******************************************************************************/
 package eclipselink.example.jpa.employee.services;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -20,7 +21,11 @@ import javax.persistence.criteria.Root;
 
 import eclipselink.example.jpa.employee.model.Employee;
 import eclipselink.example.jpa.employee.model.Employee_;
-import eclipselink.example.jpa.employee.services.EntityPaging.Type;
+import eclipselink.example.jpa.employee.services.paging.EntityPaging;
+import eclipselink.example.jpa.employee.services.paging.EntityPaging.Type;
+import eclipselink.example.jpa.employee.services.paging.FirstMaxPaging;
+import eclipselink.example.jpa.employee.services.paging.IdInPaging;
+import eclipselink.example.jpa.employee.services.paging.StreamPaging;
 
 /**
  * TODO
@@ -79,6 +84,14 @@ public class EmployeeCriteria {
     }
 
     @SuppressWarnings("unchecked")
+    public CriteriaQuery<Employee> createQuery(EntityManager em) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Employee> query = cb.createQuery(Employee.class);
+        Root<Employee> employee = query.from(Employee.class);
+        return (CriteriaQuery<Employee>) addWhereOrder(cb, query, employee, true);
+    }
+
+    @SuppressWarnings("unchecked")
     public CriteriaQuery<Number> createIdQuery(EntityManagerFactory emf) {
         CriteriaBuilder cb = emf.getCriteriaBuilder();
         CriteriaQuery<Number> query = cb.createQuery(Number.class);
@@ -116,7 +129,7 @@ public class EmployeeCriteria {
         return query;
     }
 
-    public EntityPaging<Employee> getPaging(EntityManagerFactory emf) {
+    protected EntityPaging<Employee> getPaging(EntityManagerFactory emf) {
         if (getPagingType() != null) {
             Type type = EntityPaging.Type.valueOf(getPagingType());
 

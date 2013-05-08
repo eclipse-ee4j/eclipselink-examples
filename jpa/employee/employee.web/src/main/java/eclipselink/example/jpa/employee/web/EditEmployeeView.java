@@ -20,16 +20,13 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.context.Flash;
 import javax.persistence.OptimisticLockException;
-import javax.persistence.RollbackException;
-
-import org.eclipse.persistence.logging.SessionLogEntry;
 
 import eclipselink.example.jpa.employee.model.Address;
 import eclipselink.example.jpa.employee.model.Employee;
 import eclipselink.example.jpa.employee.model.PhoneNumber;
 import eclipselink.example.jpa.employee.services.Diagnostics;
 import eclipselink.example.jpa.employee.services.Diagnostics.SQLTrace;
-import eclipselink.example.jpa.employee.services.EditEmployeeBean;
+import eclipselink.example.jpa.employee.services.EmployeeRepository;
 
 /**
  * Backing bean to edit or create an {@link Employee}.
@@ -41,7 +38,9 @@ import eclipselink.example.jpa.employee.services.EditEmployeeBean;
 @ViewScoped
 public class EditEmployeeView {
 
-    private EditEmployeeBean edit;
+    private EmployeeRepository repository;
+
+    private Employee employee;
 
     /**
      * Value used to create new unique {@link PhoneNumber}
@@ -58,23 +57,23 @@ public class EditEmployeeView {
         setEmployee(id);
     }
 
-    public EditEmployeeBean getEdit() {
-        return edit;
+    @EJB
+    public EmployeeRepository getRepository() {
+        return repository;
     }
 
-    @EJB
-    public void setEdit(EditEmployeeBean edit) {
-        this.edit = edit;
+    public void setRepository(EmployeeRepository repository) {
+        this.repository = repository;
     }
 
     public Employee getEmployee() {
-        return getEdit().getEmployee();
+        return this.employee;
     }
 
     public void setEmployee(int id) {
         getDiagnostics().start();
-        this.edit.setEmployee(id);
-        addMessages(getDiagnostics().stop());
+        this.employee = getRepository().find(id);
+
     }
 
     public String getEmployeeId() {
@@ -93,11 +92,11 @@ public class EditEmployeeView {
     }
 
     public boolean isCreate() {
-        return getEdit().isNew();
+        return getEmployee() != null && getEmployee().getId() <= 0;
     }
 
     public Diagnostics getDiagnostics() {
-        return getEdit().getDiagnostics();
+        return getRepository().getDiagnostics();
     }
 
     /**
@@ -107,30 +106,26 @@ public class EditEmployeeView {
     public String save() {
         try {
             getDiagnostics().start();
-            getEdit().save();
-        } catch (RollbackException e) {
-            if (e.getCause() instanceof OptimisticLockException) {
-                FacesContext.getCurrentInstance().addMessage("EclipseLink", new FacesMessage("OptimisticLockException: Could not save changes"));
-            } else {
-                throw e;
-            }
+            getRepository().save(getEmployee());
+        } catch (OptimisticLockException e) {
+            FacesContext.getCurrentInstance().addMessage("EclipseLink", new FacesMessage("OptimisticLockException: Could not save changes"));
         } finally {
-            addMessages(getDiagnostics().stop());
+            stopSqlCapture();
         }
         return null;
     }
 
     public String delete() {
         getDiagnostics().start();
-        getEdit().delete();
-        addMessages(getDiagnostics().stop());
+        getRepository().delete(getEmployee());
+        stopSqlCapture();
         return cancel();
     }
 
     public String refresh() {
         getDiagnostics().start();
-        getEdit().refresh();
-        addMessages(getDiagnostics().stop());
+        this.employee = getRepository().refresh(getEmployee());
+        stopSqlCapture();
         return null;
     }
 
@@ -144,8 +139,8 @@ public class EditEmployeeView {
      */
     public String updateVersion() {
         getDiagnostics().start();
-        getEdit().updateVersion();
-        addMessages(getDiagnostics().stop());
+        getRepository().updateVersion(getEmployee());
+        stopSqlCapture();
         return null;
     }
 
@@ -164,7 +159,7 @@ public class EditEmployeeView {
     }
 
     public String addPhone() {
-        PhoneNumber newPhone = getEdit().addPhone(getType());
+        PhoneNumber newPhone = getRepository().addPhone(getEmployee(), getType());
         if (newPhone == null) {
             FacesContext.getCurrentInstance().addMessage("input", new FacesMessage("Invalid type. Phone number could not be added"));
         }
@@ -177,13 +172,13 @@ public class EditEmployeeView {
         return null;
     }
 
-    /**
-     * Add each SQL string to the messages TODO: Allow this to be
-     * enabled/disabled
-     */
+    protected void stopSqlCapture() {
+        addMessages(getRepository().getDiagnostics().stop());
+    }
+
     private void addMessages(SQLTrace sqlTrace) {
-        for (SessionLogEntry entry : sqlTrace.getEntries()) {
-            FacesContext.getCurrentInstance().addMessage("SQL", new FacesMessage(entry.getMessage()));
+        for (String entry : sqlTrace.getEntries()) {
+            FacesContext.getCurrentInstance().addMessage("SQL", new FacesMessage(entry));
         }
     }
 

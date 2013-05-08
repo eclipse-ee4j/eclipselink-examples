@@ -13,21 +13,20 @@
 package eclipselink.example.jpa.employee.web;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.context.Flash;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.LockModeType;
 import javax.persistence.OptimisticLockException;
-import javax.persistence.PersistenceUnit;
 import javax.persistence.RollbackException;
 
 import eclipselink.example.jpa.employee.model.Address;
 import eclipselink.example.jpa.employee.model.Employee;
 import eclipselink.example.jpa.employee.model.PhoneNumber;
+import eclipselink.example.jpa.employee.services.Diagnostics.SQLTrace;
+import eclipselink.example.jpa.employee.services.EmployeeRepository;
 
 /**
  * Backing bean to edit or create an {@link Employee}.
@@ -37,19 +36,27 @@ import eclipselink.example.jpa.employee.model.PhoneNumber;
  */
 @ManagedBean
 @ViewScoped
-public class EditEmployee extends BaseBean {
+public class EditEmployee {
 
     private Employee employee;
 
-    /**
-     * TODO
-     */
     private String type;
 
     boolean create = false;
 
+    private EmployeeRepository repository;
+
     protected static final String PAGE = "/employee/edit";
     protected static final String PAGE_REDIRECT = "/employee/edit?faces-redirect=true";
+
+    public EmployeeRepository getRepository() {
+        return repository;
+    }
+
+    @EJB
+    public void setRepository(EmployeeRepository repository) {
+        this.repository = repository;
+    }
 
     @PostConstruct
     private void init() {
@@ -65,7 +72,7 @@ public class EditEmployee extends BaseBean {
     }
 
     public Employee getEmployee() {
-        return employee;
+        return this.employee;
     }
 
     public String getEmployeeId() {
@@ -87,72 +94,31 @@ public class EditEmployee extends BaseBean {
         return  getEmployee() != null && getEmployee().getId() <= 0;
     }
 
-    @PersistenceUnit(unitName = "employee")
-    public void setEmf(EntityManagerFactory emf) {
-        super.setEmf(emf);
-    }
-
     /**
      * 
      * @return
      */
     public String save() {
-        EntityManager em = createEntityManager();
-
         try {
-            em.getTransaction().begin();
-            if (getEmployee().getAddress() != null) {
-               // em.merge(getEmployee().getAddress());
-            }
-            this.employee = em.merge(getEmployee());
-            // Ensure the Employee's lock value is incremented
-            em.lock(this.employee, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
-            
-            em.getTransaction().commit();
-            if (isCreate()) {
-                em.refresh(getEmployee());
-            }
+            this.employee = getRepository().save(getEmployee());
         } catch (RollbackException e) {
             if (e.getCause() instanceof OptimisticLockException) {
                 FacesContext.getCurrentInstance().addMessage("OptimisticLockException", new FacesMessage("Commit Failed: Optimistic Lock Exception."));
             } else {
                 throw e;
             }
-        } finally {
-            close(em);
         }
         return null;
     }
     
     public String delete() {
-        EntityManager em = createEntityManager();
-        try {
-            this.employee = em.find(Employee.class, getEmployee().getId());
-            // TODO: Handle find failure
-            em.getTransaction().begin();
-            em.remove(getEmployee());
-            em.getTransaction().commit();
-
-        } finally {
-            close(em);
-            this.employee = null;
-        }
-        return cancel();
+        getRepository().delete(getEmployee());
+        return null;
     }
 
 
     public String refresh() {
-        EntityManager em = createEntityManager();
-
-        try {
-            this.employee = em.find(Employee.class, getEmployee().getId());
-            em.refresh(getEmployee());
-            getEmployee().getAddress();
-            getEmployee().getPhoneNumbers().size();
-            em.detach(employee);
-        } finally {
-            close(em);
-        }
+        this.employee = getRepository().refresh(getEmployee());
         return null;
     }
 
@@ -165,19 +131,7 @@ public class EditEmployee extends BaseBean {
      * operations will fail.
      */
     public String updateVersion() {
-        EntityManager em = createEntityManager();
-        int newVersion = -1;
-
-        try {
-            em.getTransaction().begin();
-            em.createNativeQuery("UPDATE EMPLOYEE SET VERSION = VERSION + 1 WHERE EMP_ID = " + getEmployee().getId()).executeUpdate();
-            em.getTransaction().commit();
-
-            Number result = (Number) em.createNativeQuery("SELECT VERSION FROM EMPLOYEE WHERE EMP_ID = " + getEmployee().getId()).getSingleResult();
-            newVersion = result.intValue();
-        } finally {
-            close(em);
-        }
+       int newVersion = getRepository().updateVersion(getEmployee());
 
         FacesContext.getCurrentInstance().addMessage("Update version", new FacesMessage("DATABASE EMPLOYEE ID: " + getEmployee().getId() + " VERSION= " + newVersion));
 
@@ -208,5 +162,20 @@ public class EditEmployee extends BaseBean {
         getEmployee().removePhoneNumber(phone);
         return null;
     }
+    
+    protected void stopSqlCapture() {
+        addMessages(getRepository().getDiagnostics().stop());
+    }
+
+    /**
+     * Add each SQL string to the messages TODO: Allow this to be
+     * enabled/disabled
+     */
+    private void addMessages(SQLTrace sqlTrace) {
+        for (String entry : sqlTrace.getEntries()) {
+            FacesContext.getCurrentInstance().addMessage("SQL", new FacesMessage(entry));
+        }
+    }
+
 
 }

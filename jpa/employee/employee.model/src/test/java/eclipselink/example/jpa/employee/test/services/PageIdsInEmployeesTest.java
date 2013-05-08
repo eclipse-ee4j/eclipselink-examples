@@ -17,8 +17,10 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -27,7 +29,8 @@ import eclipselink.example.jpa.employee.model.SamplePopulation;
 import eclipselink.example.jpa.employee.services.Diagnostics;
 import eclipselink.example.jpa.employee.services.Diagnostics.SQLTrace;
 import eclipselink.example.jpa.employee.services.EmployeeCriteria;
-import eclipselink.example.jpa.employee.services.EntityPaging;
+import eclipselink.example.jpa.employee.services.EmployeeRepository;
+import eclipselink.example.jpa.employee.services.paging.EntityPaging;
 import eclipselink.example.jpa.employee.test.PersistenceTesting;
 
 /**
@@ -40,10 +43,8 @@ public class PageIdsInEmployeesTest {
 
     @Test
     public void page5ByIndex() {
-        EntityManager em = getEmf().createEntityManager();
-        Diagnostics diagnostics = Diagnostics.getInstance(getEmf());
 
-        SQLTrace start = diagnostics.start();
+        SQLTrace start = getDiagnostics().start();
         Assert.assertTrue(start.getEntries().isEmpty());
 
         EmployeeCriteria criteria = new EmployeeCriteria();
@@ -51,11 +52,12 @@ public class PageIdsInEmployeesTest {
         criteria.setLastName(null);
         criteria.setPageSize(5);
         criteria.setPagingType(EntityPaging.Type.PAGE_IN.name());
-        EntityPaging<Employee> paging = criteria.getPaging(getEmf());
+
+        EntityPaging<Employee> paging = getRepository().getPaging(criteria);
 
         Assert.assertEquals(25, paging.size());
 
-        SQLTrace end = diagnostics.stop();
+        SQLTrace end = getDiagnostics().stop();
 
         Assert.assertNotNull(end);
         Assert.assertSame(start, end);
@@ -73,15 +75,11 @@ public class PageIdsInEmployeesTest {
 
         Assert.assertFalse(paging.hasNext());
 
-        em.close();
     }
 
     @Test
     public void page5ByNext() {
-        EntityManager em = getEmf().createEntityManager();
-        Diagnostics diagnostics = Diagnostics.getInstance(getEmf());
-
-        SQLTrace start = diagnostics.start();
+        SQLTrace start = getDiagnostics().start();
         Assert.assertTrue(start.getEntries().isEmpty());
 
         EmployeeCriteria criteria = new EmployeeCriteria();
@@ -89,11 +87,11 @@ public class PageIdsInEmployeesTest {
         criteria.setLastName(null);
         criteria.setPageSize(5);
         criteria.setPagingType(EntityPaging.Type.PAGE_IN.name());
-        EntityPaging<Employee> paging = criteria.getPaging(getEmf());
+        EntityPaging<Employee> paging = getRepository().getPaging(criteria);
 
         Assert.assertEquals(25, paging.size());
 
-        SQLTrace end = diagnostics.stop();
+        SQLTrace end = getDiagnostics().stop();
 
         Assert.assertNotNull(end);
         Assert.assertSame(start, end);
@@ -111,15 +109,11 @@ public class PageIdsInEmployeesTest {
 
         Assert.assertFalse(paging.hasNext());
 
-        em.close();
     }
 
     @Test
     public void page10ByIndex() {
-        EntityManager em = getEmf().createEntityManager();
-        Diagnostics diagnostics = Diagnostics.getInstance(getEmf());
-
-        SQLTrace start = diagnostics.start();
+        SQLTrace start = getDiagnostics().start();
         Assert.assertTrue(start.getEntries().isEmpty());
 
         EmployeeCriteria criteria = new EmployeeCriteria();
@@ -127,11 +121,12 @@ public class PageIdsInEmployeesTest {
         criteria.setLastName(null);
         criteria.setPageSize(10);
         criteria.setPagingType(EntityPaging.Type.PAGE_IN.name());
-        EntityPaging<Employee> paging = criteria.getPaging(getEmf());
+
+        EntityPaging<Employee> paging = getRepository().getPaging(criteria);
 
         Assert.assertEquals(25, paging.size());
 
-        SQLTrace end = diagnostics.stop();
+        SQLTrace end = getDiagnostics().stop();
 
         Assert.assertNotNull(end);
         Assert.assertSame(start, end);
@@ -150,15 +145,11 @@ public class PageIdsInEmployeesTest {
 
         Assert.assertFalse(paging.hasNext());
 
-        em.close();
     }
 
     @Test
     public void page10ByNext() {
-        EntityManager em = getEmf().createEntityManager();
-        Diagnostics diagnostics = Diagnostics.getInstance(getEmf());
-
-        SQLTrace start = diagnostics.start();
+        SQLTrace start = getDiagnostics().start();
         Assert.assertTrue(start.getEntries().isEmpty());
 
         EmployeeCriteria criteria = new EmployeeCriteria();
@@ -166,11 +157,11 @@ public class PageIdsInEmployeesTest {
         criteria.setLastName(null);
         criteria.setPageSize(10);
         criteria.setPagingType(EntityPaging.Type.PAGE_IN.name());
-        EntityPaging<Employee> paging = criteria.getPaging(getEmf());
+        EntityPaging<Employee> paging = getRepository().getPaging(criteria);
 
         Assert.assertEquals(25, paging.size());
 
-        SQLTrace end = diagnostics.stop();
+        SQLTrace end = getDiagnostics().stop();
 
         Assert.assertNotNull(end);
         Assert.assertSame(start, end);
@@ -189,7 +180,6 @@ public class PageIdsInEmployeesTest {
 
         Assert.assertFalse(paging.hasNext());
 
-        em.close();
     }
 
     private static EntityManagerFactory emf;
@@ -203,7 +193,9 @@ public class PageIdsInEmployeesTest {
         emf = PersistenceTesting.createEMF(true);
 
         EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
         new SamplePopulation().createNewEmployees(em, 25);
+        em.getTransaction().commit();
         em.close();
 
         emf.getCache().evictAll();
@@ -215,6 +207,29 @@ public class PageIdsInEmployeesTest {
             emf.close();
         }
         emf = null;
+    }
+
+    private EmployeeRepository repository;
+
+    @Before
+    public void setup() {
+        this.repository = new EmployeeRepository();
+        this.repository.setEntityManager(getEmf().createEntityManager());
+        this.repository.getEntityManager().getTransaction().begin();
+    }
+
+    @After
+    public void close() {
+        this.repository.getEntityManager().getTransaction().commit();
+        this.repository.getEntityManager().close();
+    }
+
+    public EmployeeRepository getRepository() {
+        return repository;
+    }
+
+    public Diagnostics getDiagnostics() {
+        return getRepository().getDiagnostics();
     }
 
 }

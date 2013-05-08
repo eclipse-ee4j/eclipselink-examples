@@ -15,18 +15,18 @@ package eclipselink.example.jpa.employee.web;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.context.Flash;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
-import javax.persistence.criteria.CriteriaQuery;
 
 import eclipselink.example.jpa.employee.model.Employee;
+import eclipselink.example.jpa.employee.services.Diagnostics.SQLTrace;
 import eclipselink.example.jpa.employee.services.EmployeeCriteria;
-import eclipselink.example.jpa.employee.services.EntityPaging;
+import eclipselink.example.jpa.employee.services.EmployeeRepository;
+import eclipselink.example.jpa.employee.services.paging.EntityPaging;
 
 /**
  * Backing bean to manage search results for an Employee query. The results can
@@ -37,9 +37,11 @@ import eclipselink.example.jpa.employee.services.EntityPaging;
  */
 @ManagedBean
 @ViewScoped
-public class EmployeeResults extends BaseBean {
+public class EmployeeResults {
 
     protected static final String PAGE = "/employee/results?faces-redirect=true";
+
+    private EmployeeRepository repository;
 
     /**
      * Current employees being shown
@@ -50,9 +52,13 @@ public class EmployeeResults extends BaseBean {
 
     private int currentPage = 1;
 
-    @PersistenceUnit(unitName = "employee")
-    public void setEmf(EntityManagerFactory emf) {
-        super.setEmf(emf);
+    public EmployeeRepository getRepository() {
+        return repository;
+    }
+
+    @EJB
+    public void setRepository(EmployeeRepository repository) {
+        this.repository = repository;
     }
 
     public EntityPaging<Employee> getPaging() {
@@ -67,25 +73,19 @@ public class EmployeeResults extends BaseBean {
         this.currentPage = 1;
         this.employees = null;
 
-        this.paging = criteria.getPaging(getEmf());
+        this.paging = getRepository().getPaging(criteria);
 
         if (!hasPaging()) {
-            EntityManager em = createEntityManager();
-            try {
-                startSqlCapture();
-                CriteriaQuery<Employee> cq = criteria.createQuery(getEmf());
-                this.employees = em.createQuery(cq).getResultList();
-            } finally {
-                close(em);
-            }
+            getRepository().getDiagnostics().start();
+            this.employees = getRepository().getEmployees(criteria);
         }
     }
 
     public List<Employee> getEmployees() {
         if (this.employees == null && hasPaging()) {
-            startSqlCapture();
+            getRepository().getDiagnostics().start();
             this.employees = getPaging().get(this.currentPage);
-            this.stopSqlCapture();
+            stopSqlCapture();
         }
         return this.employees;
     }
@@ -142,5 +142,20 @@ public class EmployeeResults extends BaseBean {
 
         return EditEmployee.PAGE;
     }
+    
+    protected void stopSqlCapture() {
+        addMessages(getRepository().getDiagnostics().stop());
+    }
+
+    /**
+     * Add each SQL string to the messages TODO: Allow this to be
+     * enabled/disabled
+     */
+    private void addMessages(SQLTrace sqlTrace) {
+        for (String entry : sqlTrace.getEntries()) {
+            FacesContext.getCurrentInstance().addMessage("SQL", new FacesMessage(entry));
+        }
+    }
+
 
 }

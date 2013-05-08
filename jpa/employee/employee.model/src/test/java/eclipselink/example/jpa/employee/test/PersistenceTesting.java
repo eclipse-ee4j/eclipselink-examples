@@ -36,7 +36,8 @@ public class PersistenceTesting {
         // SE testing
         props.put(PersistenceUnitProperties.NON_JTA_DATASOURCE, "");
         props.put(PersistenceUnitProperties.JTA_DATASOURCE, "");
-
+        props.put(PersistenceUnitProperties.TRANSACTION_TYPE, "RESOURCE_LOCAL");
+        
         // Configure the use of embedded derby for the tests allowing system
         // properties of the same name to override
         setProperty(props, PersistenceUnitProperties.JDBC_DRIVER, "org.apache.derby.jdbc.EmbeddedDriver");

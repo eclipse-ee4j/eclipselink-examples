@@ -53,13 +53,20 @@ public class Diagnostics implements InvocationHandler {
      */
     public static Diagnostics getInstance(EntityManagerFactory emf) {
         EntityManager em = emf.createEntityManager();
+        try {
+            return getInstance(em);
+        } finally {
+            em.close();
+        }
+    }
+
+    public static Diagnostics getInstance(EntityManager em) {
         Server session = em.unwrap(Server.class);
-        em.close();
 
         Diagnostics diagnostics = (Diagnostics) session.getProperty(DIAGNOSTICS);
 
         if (diagnostics == null) {
-            synchronized (emf) {
+            synchronized (em.unwrap(Server.class)) {
                 diagnostics = (Diagnostics) session.getProperty(DIAGNOSTICS);
                 if (diagnostics == null) {
                     diagnostics = new Diagnostics(session);
@@ -108,7 +115,9 @@ public class Diagnostics implements InvocationHandler {
 
         if (trace != null && "log".equals(method.getName()) && args.length == 1) {
             SessionLogEntry entry = (SessionLogEntry) args[0];
-            trace.add(entry);
+            if (SessionLog.SQL.equals(entry.getNameSpace())) {
+                trace.add(entry.getMessage());
+            }
         }
 
         return method.invoke(getLog(), args);
@@ -117,15 +126,13 @@ public class Diagnostics implements InvocationHandler {
 
     public static class SQLTrace {
 
-        private List<SessionLogEntry> entries = new ArrayList<SessionLogEntry>();
+        private List<String> entries = new ArrayList<String>();
 
-        protected void add(SessionLogEntry entry) {
-            if (SessionLog.SQL.equals(entry.getNameSpace())) {
-                this.entries.add(entry);
-            }
+        protected void add(String entry) {
+            this.entries.add(entry);
         }
 
-        public List<SessionLogEntry> getEntries() {
+        public List<String> getEntries() {
             return entries;
         }
 

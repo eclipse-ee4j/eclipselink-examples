@@ -18,8 +18,10 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -28,7 +30,8 @@ import eclipselink.example.jpa.employee.model.SamplePopulation;
 import eclipselink.example.jpa.employee.services.Diagnostics;
 import eclipselink.example.jpa.employee.services.Diagnostics.SQLTrace;
 import eclipselink.example.jpa.employee.services.EmployeeCriteria;
-import eclipselink.example.jpa.employee.services.EntityPaging;
+import eclipselink.example.jpa.employee.services.EmployeeRepository;
+import eclipselink.example.jpa.employee.services.paging.EntityPaging;
 import eclipselink.example.jpa.employee.test.PersistenceTesting;
 
 /**
@@ -41,10 +44,7 @@ public class StreamEmployeesTest {
 
     @Test
     public void streamAllNext() {
-        EntityManager em = getEmf().createEntityManager();
-        Diagnostics diagnostics = Diagnostics.getInstance(getEmf());
-
-        SQLTrace start = diagnostics.start();
+        SQLTrace start = getDiagnostics().start();
         Assert.assertTrue(start.getEntries().isEmpty());
 
         EmployeeCriteria criteria = new EmployeeCriteria();
@@ -52,11 +52,11 @@ public class StreamEmployeesTest {
         criteria.setLastName(null);
         criteria.setPageSize(5);
         criteria.setPagingType(EntityPaging.Type.CURSOR.name());
-        EntityPaging<Employee> stream = criteria.getPaging(getEmf());
+        EntityPaging<Employee> stream = getRepository().getPaging(criteria);
 
         Assert.assertEquals(25, stream.size());
 
-        SQLTrace end = diagnostics.stop();
+        SQLTrace end = getDiagnostics().stop();
 
         Assert.assertNotNull(end);
         Assert.assertSame(start, end);
@@ -87,19 +87,14 @@ public class StreamEmployeesTest {
             stream.next();
         } catch (IllegalStateException e) {
             return;
-        } finally {
-            em.close();
-        }
+        } 
 
         Assert.fail("IllegalStateException not thrown on next()");
     }
 
     @Test
     public void streamAllNext10() {
-        EntityManager em = getEmf().createEntityManager();
-        Diagnostics diagnostics = Diagnostics.getInstance(getEmf());
-
-        SQLTrace start = diagnostics.start();
+        SQLTrace start = getDiagnostics().start();
         Assert.assertTrue(start.getEntries().isEmpty());
 
         EmployeeCriteria criteria = new EmployeeCriteria();
@@ -107,11 +102,11 @@ public class StreamEmployeesTest {
         criteria.setLastName(null);
         criteria.setPageSize(10);
         criteria.setPagingType(EntityPaging.Type.CURSOR.name());
-        EntityPaging<Employee> stream = criteria.getPaging(getEmf());
+        EntityPaging<Employee> stream = getRepository().getPaging(criteria);
 
         Assert.assertEquals(25, stream.size());
 
-        SQLTrace end = diagnostics.stop();
+        SQLTrace end = getDiagnostics().stop();
 
         Assert.assertNotNull(end);
         Assert.assertSame(start, end);
@@ -146,19 +141,14 @@ public class StreamEmployeesTest {
             stream.next();
         } catch (IllegalStateException e) {
             return;
-        } finally {
-            em.close();
-        }
+        } 
 
         Assert.fail("IllegalStateException not thrown on next()");
     }
 
     @Test
     public void streamAllPrevious() {
-        EntityManager em = getEmf().createEntityManager();
-        Diagnostics diagnostics = Diagnostics.getInstance(getEmf());
-
-        SQLTrace start = diagnostics.start();
+        SQLTrace start = getDiagnostics().start();
         Assert.assertTrue(start.getEntries().isEmpty());
 
         EmployeeCriteria criteria = new EmployeeCriteria();
@@ -166,11 +156,11 @@ public class StreamEmployeesTest {
         criteria.setLastName(null);
         criteria.setPageSize(5);
         criteria.setPagingType(EntityPaging.Type.CURSOR.name());
-        EntityPaging<Employee> stream = criteria.getPaging(getEmf());
+        EntityPaging<Employee> stream = getRepository().getPaging(criteria);
 
         Assert.assertEquals(25, stream.size());
 
-        SQLTrace end = diagnostics.stop();
+        SQLTrace end = getDiagnostics().stop();
 
         Assert.assertNotNull(end);
         Assert.assertSame(start, end);
@@ -224,19 +214,14 @@ public class StreamEmployeesTest {
             stream.previous();
         } catch (IllegalStateException e) {
             return;
-        } finally {
-            em.close();
-        }
+        } 
 
         Assert.fail("IllegalStateException not thrown on previous()");
     }
 
     @Test
     public void streamAllPreviousGet() {
-        EntityManager em = getEmf().createEntityManager();
-        Diagnostics diagnostics = Diagnostics.getInstance(getEmf());
-
-        SQLTrace start = diagnostics.start();
+        SQLTrace start = getDiagnostics().start();
         Assert.assertTrue(start.getEntries().isEmpty());
 
         EmployeeCriteria criteria = new EmployeeCriteria();
@@ -244,11 +229,12 @@ public class StreamEmployeesTest {
         criteria.setLastName(null);
         criteria.setPageSize(5);
         criteria.setPagingType(EntityPaging.Type.CURSOR.name());
-        EntityPaging<Employee> stream = criteria.getPaging(getEmf());
+        
+        EntityPaging<Employee> stream = getRepository().getPaging(criteria);
 
         Assert.assertEquals(25, stream.size());
 
-        SQLTrace end = diagnostics.stop();
+        SQLTrace end = getDiagnostics().stop();
 
         Assert.assertNotNull(end);
         Assert.assertSame(start, end);
@@ -302,9 +288,7 @@ public class StreamEmployeesTest {
             stream.previous();
         } catch (IllegalStateException e) {
             return;
-        } finally {
-            em.close();
-        }
+        } 
 
         Assert.fail("IllegalStateException not thrown on previous()");
     }
@@ -320,11 +304,9 @@ public class StreamEmployeesTest {
         emf = PersistenceTesting.createEMF(true);
 
         EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
         new SamplePopulation().createNewEmployees(em, 25);
-
-        Number count = em.createNamedQuery("Employee.count", Number.class).getSingleResult();
-        Assert.assertEquals(25, count.intValue());
-
+        em.getTransaction().commit();
         em.close();
 
         emf.getCache().evictAll();
@@ -336,6 +318,29 @@ public class StreamEmployeesTest {
             emf.close();
         }
         emf = null;
+    }
+
+    private EmployeeRepository repository;
+    
+    @Before
+    public void setup() {
+        this.repository = new EmployeeRepository();
+        this.repository.setEntityManager(getEmf().createEntityManager());
+        this.repository.getEntityManager().getTransaction().begin();
+    }
+    
+    @After
+    public void close() {
+        this.repository.getEntityManager().getTransaction().commit();
+        this.repository.getEntityManager().close();
+    }
+
+    public EmployeeRepository getRepository() {
+        return repository;
+    }
+    
+    public Diagnostics getDiagnostics() {
+        return getRepository().getDiagnostics();
     }
 
 }

@@ -95,10 +95,6 @@ public class Employee {
     @Version
     private Long version;
     
-    @ManyToMany
-    @JoinTable(joinColumns = @JoinColumn(name = "EMP_ID"), inverseJoinColumns = @JoinColumn(name = "PROJ_ID"), name = "PROJ_EMP")
-    private List<Project> projects = new ArrayList<Project>();
-
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "MANAGER_ID")
     private Employee manager;
@@ -169,24 +165,6 @@ public class Employee {
 
     public void setVersion(Long version) {
         this.version = version;
-    }
-
-    public List<Project> getProjects() {
-        return projects;
-    }
-
-    public void setProjects(List<Project> projectList) {
-        this.projects = projectList;
-    }
-
-    public Project addProject(Project project) {
-        getProjects().add(project);
-        return project;
-    }
-
-    public Project removeProject(Project project) {
-        getProjects().remove(project);
-        return project;
     }
 
     public Employee getManager() {

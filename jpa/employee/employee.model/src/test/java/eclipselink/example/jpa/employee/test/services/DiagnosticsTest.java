@@ -75,7 +75,9 @@ public class DiagnosticsTest {
         emf = PersistenceTesting.createEMF(true);
 
         EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
         new SamplePopulation().createNewEmployees(em, 25);
+        em.getTransaction().commit();
         em.close();
 
         Diagnostics.getInstance(emf);

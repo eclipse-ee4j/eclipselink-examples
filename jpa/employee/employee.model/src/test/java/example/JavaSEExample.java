@@ -20,8 +20,6 @@ import javax.persistence.TypedQuery;
 
 import eclipselink.example.jpa.employee.model.Employee;
 import eclipselink.example.jpa.employee.model.SamplePopulation;
-import eclipselink.example.jpa.employee.services.EmployeeCriteria;
-import eclipselink.example.jpa.employee.services.EntityPaging;
 import eclipselink.example.jpa.employee.test.PersistenceTesting;
 
 /**
@@ -42,7 +40,9 @@ public class JavaSEExample {
         try {
             EntityManager em = emf.createEntityManager();
 
+            em.getTransaction().begin();
             new SamplePopulation().createNewEmployees(em, 10);
+            em.getTransaction().commit();
             em.clear();
 
             example.queryAllEmployees(em);
@@ -56,8 +56,6 @@ public class JavaSEExample {
 
             example.deleteEmployee(em, 1);
             em.clear();
-
-            example.pagingIdIn(emf);
 
             em.close();
 
@@ -110,18 +108,6 @@ public class JavaSEExample {
 
         em.getTransaction().rollback();
 
-    }
-
-    public void pagingIdIn(EntityManagerFactory emf) {
-        EmployeeCriteria criteria = new EmployeeCriteria();
-        criteria.setFirstName(null);
-        criteria.setLastName(null);
-        criteria.setPagingType(EntityPaging.Type.PAGE.name());
-
-        EntityPaging<Employee> paging = criteria.getPaging(emf);
-
-        paging.get(1);
-        paging.get(2);
     }
 
 }

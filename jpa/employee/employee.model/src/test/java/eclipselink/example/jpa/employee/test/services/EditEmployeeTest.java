@@ -17,6 +17,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.OptimisticLockException;
 import javax.persistence.RollbackException;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
@@ -25,7 +26,7 @@ import org.junit.Test;
 
 import eclipselink.example.jpa.employee.model.Employee;
 import eclipselink.example.jpa.employee.model.SamplePopulation;
-import eclipselink.example.jpa.employee.services.EditEmployeeBean;
+import eclipselink.example.jpa.employee.services.EmployeeRepository;
 import eclipselink.example.jpa.employee.test.PersistenceTesting;
 
 /**
@@ -36,44 +37,36 @@ import eclipselink.example.jpa.employee.test.PersistenceTesting;
  */
 public class EditEmployeeTest {
 
-    private EditEmployeeBean edit = new EditEmployeeBean();
-
-    @Before
-    public void setup() {
-        this.edit = new EditEmployeeBean();
-        this.edit.setEmf(getEmf());
-    }
-
     @Test
     public void saveWithoutChanges() {
-        Employee emp = this.edit.setEmployee(sampleId);
-        
+        Employee emp = this.repository.find(sampleId);
+
         Assert.assertNotNull(emp);
 
-        edit.save();
+        repository.save(emp);
     }
 
     @Test
     public void incrementSalary() {
-        edit.setEmployee(sampleId);
+        Employee emp = this.repository.find(sampleId);
 
-        edit.getEmployee().setSalary(edit.getEmployee().getSalary() + 1);
-        edit.save();
+        emp.setSalary(emp.getSalary() + 1);
+
+        repository.save(emp);
     }
 
     @Test
     public void optimisticLockFailure() {
-        edit.setEmployee(sampleId);
-        
+        Employee emp = this.repository.find(sampleId);
+
         try {
-            edit.updateVersion();
-            edit.getEmployee().setSalary(edit.getEmployee().getSalary() + 1);
-            edit.save();
-        } catch (RollbackException e) {
-            if (e.getCause() instanceof OptimisticLockException) {
-                return;
-            }
-            throw e;
+            repository.updateVersion(emp);
+            emp.setSalary(emp.getSalary() + 1);
+            repository.save(emp);
+
+        } catch (OptimisticLockException e) {
+            getRepository().getEntityManager().getTransaction().rollback();
+            return;
         }
 
         Assert.fail("OptimisticLockException not thrown");
@@ -81,12 +74,33 @@ public class EditEmployeeTest {
 
     @Test
     public void refreshUpdateAddress() {
-        edit.setEmployee(sampleId);
+        Employee emp = this.repository.find(sampleId);
 
-        edit.refresh();
-        edit.getEmployee().getAddress().setCity("Ottawa");
-        edit.save();
+        emp = repository.refresh(emp);
+        emp.getAddress().setCity("Ottawa");
+        repository.save(emp);
 
+    }
+
+    private EmployeeRepository repository;
+
+    @Before
+    public void setup() {
+        this.repository = new EmployeeRepository();
+        this.repository.setEntityManager(getEmf().createEntityManager());
+        this.repository.getEntityManager().getTransaction().begin();
+    }
+
+    @After
+    public void close() {
+        if (this.repository.getEntityManager().getTransaction().isActive()) {
+            this.repository.getEntityManager().getTransaction().commit();
+        }
+        this.repository.getEntityManager().close();
+    }
+
+    public EmployeeRepository getRepository() {
+        return repository;
     }
 
     private static EntityManagerFactory emf;
@@ -107,7 +121,9 @@ public class EditEmployeeTest {
         emf = PersistenceTesting.createEMF(true);
 
         EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
         new SamplePopulation().createNewEmployees(em, 1);
+        em.getTransaction().commit();
 
         sampleId = em.createQuery("SELECT e.id FROM Employee e", Integer.class).getSingleResult();
         em.close();

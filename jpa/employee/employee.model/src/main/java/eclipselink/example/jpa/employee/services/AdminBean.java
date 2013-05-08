@@ -70,7 +70,9 @@ public class AdminBean {
         EntityManager em = getEmf().createEntityManager();
 
         try {
+            em.getTransaction().begin();
             new SamplePopulation().createNewEmployees(em, quantity);
+            em.getTransaction().commit();
         } finally {
             em.close();
         }

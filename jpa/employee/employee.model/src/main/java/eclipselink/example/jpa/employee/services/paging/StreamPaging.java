@@ -10,7 +10,7 @@
  * Contributors:
  *      dclarke - initial 
  ******************************************************************************/
-package eclipselink.example.jpa.employee.services;
+package eclipselink.example.jpa.employee.services.paging;
 
 import java.util.List;
 
