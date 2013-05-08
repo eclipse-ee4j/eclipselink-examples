@@ -12,6 +12,9 @@
 			<property name="eclipselink.logging.level" value="FINEST"/>
 			<property name="eclipselink.logging.parameters" value="true"/>
 			<property name="eclipselink.ddl-generation" value="drop-and-create-tables"/>
+			<!--
+			<property name="eclipselink.jpa-rs.oxm" value="META-INF/oxm-bindings.xml"/>
+			-->
 		</properties>
 	</persistence-unit>
 </persistence>

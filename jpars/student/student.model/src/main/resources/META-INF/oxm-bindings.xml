@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml-bindings package-name="eclipselink.example.jpars.student.model" xmlns="http://www.eclipse.org/eclipselink/xsds/persistence/oxm">
+
+    <java-types>
+        
+        <java-type name="Student">
+            <java-attributes>
+                <xml-attribute java-attribute="name" name="student-name"/>
+            </java-attributes>
+        </java-type>
+
+    </java-types>
+
+</xml-bindings>
