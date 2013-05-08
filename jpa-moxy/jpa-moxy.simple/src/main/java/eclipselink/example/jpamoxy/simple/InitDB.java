@@ -1,4 +1,4 @@
-package eclipselink.example.jpamoxy.roundtrip;
+package eclipselink.example.jpamoxy.simple;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,9 +7,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-import eclipselink.example.jpamoxy.roundtrip.model.Address;
-import eclipselink.example.jpamoxy.roundtrip.model.Customer;
-import eclipselink.example.jpamoxy.roundtrip.model.PhoneNumber;
+import eclipselink.example.jpamoxy.simple.model.Address;
+import eclipselink.example.jpamoxy.simple.model.Customer;
+import eclipselink.example.jpamoxy.simple.model.PhoneNumber;
 
 public class InitDB {
 

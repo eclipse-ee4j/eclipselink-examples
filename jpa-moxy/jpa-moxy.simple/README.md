@@ -1,3 +1,6 @@
+Simple JPA-MOXY Example
+-----------------------
+
 This example illustrates JPA-JAXB fidelity with EclipseLink JPA and MOXy:
 
 It demonstrates the use of XmlInverseReference to manage the ManyToOne 'backpointer' of a ManyToOne relationship.  EclipseLink MOXy will marshall a cyclical JPA entity graph to XML or JSON and upon unmarshall, will restore the backpointer.

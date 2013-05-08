@@ -61,7 +61,6 @@
 					<groupId>commonj.sdo</groupId>
 				</exclusion>
 			</exclusions> 
-			<scope>test</scope>
 		</dependency>
 
 		<dependency>
@@ -75,7 +74,6 @@
 			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>dbws.builder</artifactId>
 			<version>${eclipselink.version}</version>
-			<scope>test</scope>
 		</dependency>
 
 		<dependency>
