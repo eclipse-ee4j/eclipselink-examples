@@ -27,7 +27,9 @@ import org.eclipse.persistence.logging.SessionLogEntry;
 import org.eclipse.persistence.sessions.server.Server;
 
 /**
- * TODO
+ * SessionLog proxy {@link InvocationHandler} used to intercept SQL logging
+ * messages so this sample application can display the SQL executed by the most
+ * recent operations.
  * 
  * @author dclarke
  * @since EclipseLink 2.4.2
@@ -46,10 +48,8 @@ public class Diagnostics implements InvocationHandler {
     private SessionLog log;
 
     /**
-     * TODO
-     * 
-     * @param emf
-     * @return
+     * Lookup the Diagnostics instance and registered as the SessionLog (proxy).
+     * If one does not exist then create one.
      */
     public static Diagnostics getInstance(EntityManagerFactory emf) {
         EntityManager em = emf.createEntityManager();

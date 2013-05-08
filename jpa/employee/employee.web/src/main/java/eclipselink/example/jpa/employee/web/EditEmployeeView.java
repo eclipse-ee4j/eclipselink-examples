@@ -13,15 +13,13 @@
 package eclipselink.example.jpa.employee.web;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
+import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.context.Flash;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.OptimisticLockException;
-import javax.persistence.PersistenceUnit;
 import javax.persistence.RollbackException;
 
 import org.eclipse.persistence.logging.SessionLogEntry;
@@ -31,7 +29,6 @@ import eclipselink.example.jpa.employee.model.Employee;
 import eclipselink.example.jpa.employee.model.PhoneNumber;
 import eclipselink.example.jpa.employee.services.Diagnostics;
 import eclipselink.example.jpa.employee.services.Diagnostics.SQLTrace;
-import eclipselink.example.jpa.employee.services.EditEmployee;
 import eclipselink.example.jpa.employee.services.EditEmployeeBean;
 
 /**
@@ -44,16 +41,12 @@ import eclipselink.example.jpa.employee.services.EditEmployeeBean;
 @ViewScoped
 public class EditEmployeeView {
 
-    private EditEmployee edit;
+    private EditEmployeeBean edit;
 
     /**
      * Value used to create new unique {@link PhoneNumber}
      */
     private String type;
-
-    private EntityManagerFactory emf;
-
-    private Diagnostics diagnostics;
 
     protected static final String PAGE = "/employee/edit";
     protected static final String PAGE_REDIRECT = "/employee/edit?faces-redirect=true";
@@ -65,8 +58,13 @@ public class EditEmployeeView {
         setEmployee(id);
     }
 
-    public EditEmployee getEdit() {
+    public EditEmployeeBean getEdit() {
         return edit;
+    }
+
+    @EJB
+    public void setEdit(EditEmployeeBean edit) {
+        this.edit = edit;
     }
 
     public Employee getEmployee() {
@@ -75,7 +73,7 @@ public class EditEmployeeView {
 
     public void setEmployee(int id) {
         getDiagnostics().start();
-        this.edit = new EditEmployeeBean(getEmf(), id);
+        this.edit.setEmployee(id);
         addMessages(getDiagnostics().stop());
     }
 
@@ -98,18 +96,8 @@ public class EditEmployeeView {
         return getEdit().isNew();
     }
 
-    @PersistenceUnit(unitName = "employee")
-    public void setEmf(EntityManagerFactory emf) {
-        this.emf = emf;
-        this.diagnostics = Diagnostics.getInstance(emf);
-    }
-
-    public EntityManagerFactory getEmf() {
-        return emf;
-    }
-
     public Diagnostics getDiagnostics() {
-        return diagnostics;
+        return getEdit().getDiagnostics();
     }
 
     /**
@@ -187,11 +175,6 @@ public class EditEmployeeView {
     public String remove(PhoneNumber phone) {
         getEmployee().removePhoneNumber(phone);
         return null;
-    }
-
-    @PreDestroy
-    public void destroy() {
-        getEdit().close();
     }
 
     /**

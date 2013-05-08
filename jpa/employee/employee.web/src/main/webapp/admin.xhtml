@@ -21,15 +21,15 @@
 					action="#{admin.populateDatabase}" class="menu-button"
 					style="width: 400" />
 				<p />
-				<h:commandButton value="#{config.toggleSqlDisplayButton}"
-					action="#{config.toggleSqlDisplay}" class="menu-button"
+				<h:commandButton value="#{admin.toggleSqlDisplayButton}"
+					action="#{admin.toggleSqlDisplay}" class="menu-button"
 					style="width: 400" />
 				<p />
 			</div>
 		</h:form>
 		<h2>Entity Status</h2>
 		<h:form>
-			<h:dataTable var="type" value="#{config.typeNames}"
+			<h:dataTable var="type" value="#{admin.typeNames}"
 				class="table-design" width="500">
 				<h:column>
 					<f:facet name="header">Type</f:facet>
@@ -40,7 +40,7 @@
 						<div align="center">Cache Size</div>
 					</f:facet>
 					<div align="center">
-						<h:outputLabel value="#{config.getCacheSize(type)}" />
+						<h:outputLabel value="#{admin.getCacheSize(type)}" />
 					</div>
 				</h:column>
 			</h:dataTable>

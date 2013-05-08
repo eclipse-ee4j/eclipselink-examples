@@ -12,11 +12,12 @@
  ******************************************************************************/
 package eclipselink.example.jpa.employee.services;
 
-import javax.ejb.Local;
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.LockModeType;
+import javax.persistence.PersistenceUnit;
 
 import eclipselink.example.jpa.employee.model.Address;
 import eclipselink.example.jpa.employee.model.Employee;
@@ -29,47 +30,37 @@ import eclipselink.example.jpa.employee.model.PhoneNumber;
  * @since EclipseLink 2.4.2
  */
 @Stateless
-@Local(EditEmployee.class)
-public class EditEmployeeBean implements EditEmployee {
+@LocalBean
+public class EditEmployeeBean {
 
-    private EntityManager entityManager;
+    private EntityManagerFactory emf;
 
     private Employee employee;
+
+    private Diagnostics diagnostics;
 
     public EditEmployeeBean() {
         super();
     }
 
-    public EditEmployeeBean(EntityManagerFactory emf, Integer id) {
-        this.entityManager = emf.createEntityManager();
-        if (id != null) {
-            setEmployee(getEntityManager().find(Employee.class, id));
-        } else {
-            this.employee = new Employee();
-        }
+    public EntityManagerFactory getEmf() {
+        return emf;
     }
 
-    protected EntityManager getEntityManager() {
-        return this.entityManager;
+    @PersistenceUnit(unitName = "employee")
+    public void setEmf(EntityManagerFactory emf) {
+        this.emf = emf;
+        this.diagnostics = Diagnostics.getInstance(emf);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see eclipselink.example.jpa.employee.services.EditEmployee#getEmployee()
-     */
-    @Override
+    public Diagnostics getDiagnostics() {
+        return diagnostics;
+    }
+
     public Employee getEmployee() {
         return employee;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see eclipselink.example.jpa.employee.services.EditEmployee#setEmployee(
-     * eclipselink.example.jpa.employee.model.Employee)
-     */
-    @Override
     public void setEmployee(Employee employee) {
         this.employee = employee;
         if (employee != null) {
@@ -78,108 +69,89 @@ public class EditEmployeeBean implements EditEmployee {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see eclipselink.example.jpa.employee.services.EditEmployee#isNew()
-     */
-    @Override
+    public Employee setEmployee(int id) {
+        EntityManager em = getEmf().createEntityManager();
+
+        try {
+            this.employee = em.find(Employee.class, id);
+            return this.employee;
+        } finally {
+            em.close();
+        }
+    }
+
     public boolean isNew() {
         return getEmployee().getId() <= 0;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see eclipselink.example.jpa.employee.services.EditEmployee#save()
-     */
-    @Override
     public void save() {
-        getEntityManager().getTransaction().begin();
+        EntityManager em = getEmf().createEntityManager();
 
-        // Ensure the Employee's lock value is incremented
-        getEntityManager().lock(getEmployee(), LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+        try {
+            this.employee = em.merge(getEmployee());
+            em.getTransaction().begin();
 
-        getEntityManager().getTransaction().commit();
+            // Ensure the Employee's lock value is incremented
+            em.lock(getEmployee(), LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see eclipselink.example.jpa.employee.services.EditEmployee#delete()
-     */
-    @Override
     public void delete() {
+        EntityManager em = getEmf().createEntityManager();
+
         try {
-            getEntityManager().getTransaction().begin();
-            getEntityManager().remove(getEmployee());
-            getEntityManager().getTransaction().commit();
+            this.employee = em.merge(getEmployee());
+            em.getTransaction().begin();
+            em.remove(getEmployee());
+            em.getTransaction().commit();
         } finally {
             setEmployee(null);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see eclipselink.example.jpa.employee.services.EditEmployee#refresh()
-     */
-    @Override
     public void refresh() {
-        if (!getEntityManager().contains(getEmployee())) {
-            setEmployee(getEntityManager().merge(getEmployee()));
+        EntityManager em = getEmf().createEntityManager();
+
+        try {
+            if (!em.contains(getEmployee())) {
+                setEmployee(em.merge(getEmployee()));
+            }
+            em.refresh(getEmployee());
+        } finally {
+            em.close();
         }
-        getEntityManager().refresh(getEmployee());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * eclipselink.example.jpa.employee.services.EditEmployee#updateVersion()
-     */
-    @Override
     public int updateVersion() {
-        getEntityManager().detach(getEmployee());
-        getEntityManager().getTransaction().begin();
-        getEntityManager().createNativeQuery("UPDATE EMPLOYEE SET VERSION = VERSION + 1 WHERE EMP_ID = " + getEmployee().getId()).executeUpdate();
-        getEntityManager().getTransaction().commit();
-        setEmployee(getEntityManager().merge(getEmployee()));
-        Number result = (Number) getEntityManager().createNativeQuery("SELECT VERSION FROM EMPLOYEE WHERE EMP_ID = " + getEmployee().getId()).getSingleResult();
-        return result.intValue();
+        EntityManager em = getEmf().createEntityManager();
+
+        try {
+            this.employee = em.merge(getEmployee());
+            em.getTransaction().begin();
+            em.createNativeQuery("UPDATE EMPLOYEE SET VERSION = VERSION + 1 WHERE EMP_ID = " + getEmployee().getId()).executeUpdate();
+            em.getTransaction().commit();
+            setEmployee(em.merge(getEmployee()));
+            Number result = (Number) em.createNativeQuery("SELECT VERSION FROM EMPLOYEE WHERE EMP_ID = " + getEmployee().getId()).getSingleResult();
+            return result.intValue();
+        } finally {
+            em.close();
+        }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * eclipselink.example.jpa.employee.services.EditEmployee#removeAddress()
-     */
-    @Override
     public String removeAddress() {
         getEmployee().setAddress(null);
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see eclipselink.example.jpa.employee.services.EditEmployee#addAddress()
-     */
-    @Override
     public String addAddress() {
         getEmployee().setAddress(new Address());
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * eclipselink.example.jpa.employee.services.EditEmployee#addPhone(java.
-     * lang.String)
-     */
-    @Override
     public PhoneNumber addPhone(String type) {
         if (type != null && !type.isEmpty()) {
             return getEmployee().addPhoneNumber(type, "", "");
@@ -187,26 +159,8 @@ public class EditEmployeeBean implements EditEmployee {
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * eclipselink.example.jpa.employee.services.EditEmployee#remove(eclipselink
-     * .example.jpa.employee.model.PhoneNumber)
-     */
-    @Override
     public void remove(PhoneNumber phone) {
         getEmployee().removePhoneNumber(phone);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see eclipselink.example.jpa.employee.services.EditEmployee#close()
-     */
-    @Override
-    public void close() {
-        getEntityManager().close();
     }
 
 }

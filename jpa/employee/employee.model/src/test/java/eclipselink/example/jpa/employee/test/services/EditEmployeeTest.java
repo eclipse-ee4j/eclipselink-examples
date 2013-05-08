@@ -23,8 +23,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import eclipselink.example.jpa.employee.model.Employee;
 import eclipselink.example.jpa.employee.model.SamplePopulation;
-import eclipselink.example.jpa.employee.services.EditEmployee;
 import eclipselink.example.jpa.employee.services.EditEmployeeBean;
 import eclipselink.example.jpa.employee.test.PersistenceTesting;
 
@@ -36,33 +36,35 @@ import eclipselink.example.jpa.employee.test.PersistenceTesting;
  */
 public class EditEmployeeTest {
 
+    private EditEmployeeBean edit = new EditEmployeeBean();
+
+    @Before
+    public void setup() {
+        this.edit = new EditEmployeeBean();
+        this.edit.setEmf(getEmf());
+    }
+
     @Test
     public void saveWithoutChanges() {
-        EditEmployee edit = new EditEmployeeBean(getEmf(), sampleId);
+        Employee emp = this.edit.setEmployee(sampleId);
+        
+        Assert.assertNotNull(emp);
 
-        try {
-            edit.save();
-        } finally {
-            edit.close();
-        }
+        edit.save();
     }
 
     @Test
     public void incrementSalary() {
-        EditEmployee edit = new EditEmployeeBean(getEmf(), sampleId);
+        edit.setEmployee(sampleId);
 
-        try {
-            edit.getEmployee().setSalary(edit.getEmployee().getSalary() + 1);
-            edit.save();
-        } finally {
-            edit.close();
-        }
+        edit.getEmployee().setSalary(edit.getEmployee().getSalary() + 1);
+        edit.save();
     }
 
     @Test
     public void optimisticLockFailure() {
-        EditEmployee edit = new EditEmployeeBean(getEmf(), sampleId);
-
+        edit.setEmployee(sampleId);
+        
         try {
             edit.updateVersion();
             edit.getEmployee().setSalary(edit.getEmployee().getSalary() + 1);
@@ -72,8 +74,6 @@ public class EditEmployeeTest {
                 return;
             }
             throw e;
-        } finally {
-            edit.close();
         }
 
         Assert.fail("OptimisticLockException not thrown");
@@ -81,15 +81,11 @@ public class EditEmployeeTest {
 
     @Test
     public void refreshUpdateAddress() {
-        EditEmployee edit = new EditEmployeeBean(getEmf(), sampleId);
+        edit.setEmployee(sampleId);
 
-        try {
-            edit.refresh();
-            edit.getEmployee().getAddress().setCity("Ottawa");
-            edit.save();
-        } finally {
-            edit.close();
-        }
+        edit.refresh();
+        edit.getEmployee().getAddress().setCity("Ottawa");
+        edit.save();
 
     }
 

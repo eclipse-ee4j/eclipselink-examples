@@ -12,16 +12,13 @@
  ******************************************************************************/
 package eclipselink.example.jpa.employee.web;
 
+import java.util.List;
+
+import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
 
-import org.eclipse.persistence.sessions.server.Server;
-import org.eclipse.persistence.tools.schemaframework.SchemaManager;
-
-import eclipselink.example.jpa.employee.model.SamplePopulation;
+import eclipselink.example.jpa.employee.services.AdminBean;
 
 /**
  * TODO
@@ -33,41 +30,58 @@ import eclipselink.example.jpa.employee.model.SamplePopulation;
 @RequestScoped
 public class Admin {
 
-    private EntityManagerFactory emf;
+    private AdminBean adminBean;
 
-    public EntityManagerFactory getEmf() {
-        return emf;
+    private List<String> typeNames;
+
+    private boolean displaySql = false;
+
+    public AdminBean getAdminBean() {
+        return adminBean;
     }
 
-    @PersistenceUnit(unitName = "employee")
-    public void setEmf(EntityManagerFactory emf) {
-        this.emf = emf;
+    @EJB
+    public void setAdminBean(AdminBean adminBean) {
+        this.adminBean = adminBean;
     }
 
     public String resetDatabase() {
-        EntityManager em = getEmf().createEntityManager();
-
-        try {
-            SchemaManager sm = new SchemaManager(em.unwrap(Server.class));
-            sm.replaceDefaultTables();
-            sm.replaceSequences();
-
-            em.unwrap(Server.class).getIdentityMapAccessor().initializeAllIdentityMaps();
-        } finally {
-            em.close();
-        }
-        return null;
+        return getAdminBean().resetDatabase();
     }
 
     public String populateDatabase() {
-        EntityManager em = getEmf().createEntityManager();
+        return getAdminBean().populateDatabase(25);
+    }
 
-        try {
-            new SamplePopulation().createNewEmployees(em, 25);
-        } finally {
-            em.close();
+    public List<String> getTypeNames() {
+        if (this.typeNames == null) {
+            this.typeNames = getAdminBean().getTypes();
         }
-        return null;
+        return typeNames;
+    }
+
+    public boolean isDisplaySql() {
+        return displaySql;
+    }
+
+    public void setDisplaySql(boolean displaySql) {
+        this.displaySql = displaySql;
+    }
+
+    public void toggleSqlDisplay() {
+        this.displaySql = !this.displaySql;
+    }
+
+    public String getToggleSqlDisplayButton() {
+        return isDisplaySql() ? "Disable SQL Display" : "Enable SQL Display";
+    }
+
+    public String getCacheSize(String typeName) {
+        int size = getAdminBean().getCacheSize(typeName);
+        if (size < 0) {
+            return "Error";
+        }
+        return Integer.toString(size);
     }
 
 }
