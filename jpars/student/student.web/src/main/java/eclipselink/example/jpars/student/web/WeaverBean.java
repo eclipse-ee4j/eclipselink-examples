@@ -12,10 +12,15 @@
  ******************************************************************************/
 package eclipselink.example.jpars.student.web;
 
+import java.util.ServiceLoader;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
+
+import javax.annotation.PreDestroy;
+import org.eclipse.persistence.jpa.rs.PersistenceContextFactory;
+import org.eclipse.persistence.jpa.rs.PersistenceContextFactoryProvider;
 
 /**
  * Forces weaving of persistence units
@@ -26,4 +31,20 @@ import javax.persistence.PersistenceUnit;
 public class WeaverBean {
     @PersistenceUnit(unitName = "jpars_example_student")
     private EntityManagerFactory emf;
+
+    /**
+     * Clean up.
+     */
+    @PreDestroy
+    public void preDestroy() {
+        ServiceLoader<PersistenceContextFactoryProvider> persistenceContextFactoryProviderLoader =
+                ServiceLoader.load(PersistenceContextFactoryProvider.class, Thread.currentThread().getContextClassLoader());
+
+        for (PersistenceContextFactoryProvider persistenceContextFactoryProvider : persistenceContextFactoryProviderLoader) {
+            PersistenceContextFactory persistenceContextFactory = persistenceContextFactoryProvider.getPersistenceContextFactory(null);
+            if (persistenceContextFactory != null) {
+                persistenceContextFactory.close();
+            }
+        }
+    }
 }
