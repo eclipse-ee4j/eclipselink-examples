@@ -52,6 +52,8 @@ public class EmployeeResults {
 
     private int currentPage = 1;
 
+    private EmployeeCriteria criteria;
+
     public EmployeeRepository getRepository() {
         return repository;
     }
@@ -68,7 +70,7 @@ public class EmployeeResults {
     @PostConstruct
     public void initialize() {
         Flash flash = FacesContext.getCurrentInstance().getExternalContext().getFlash();
-        EmployeeCriteria criteria = (EmployeeCriteria) flash.get(SearchEmployees.CRITERIA);
+        criteria = (EmployeeCriteria) flash.get(SearchEmployees.CRITERIA);
 
         this.currentPage = 1;
         this.employees = null;
@@ -76,17 +78,22 @@ public class EmployeeResults {
         this.paging = getRepository().getPaging(criteria);
 
         if (!hasPaging()) {
-            getRepository().getDiagnostics().start();
-            this.employees = getRepository().getEmployees(criteria);
+            startSqlCapture();
+
+            stopSqlCapture();
         }
     }
 
     public List<Employee> getEmployees() {
-        if (this.employees == null && hasPaging()) {
-            getRepository().getDiagnostics().start();
-            this.employees = getPaging().get(this.currentPage);
-            stopSqlCapture();
+        startSqlCapture();
+        if (this.employees == null) {
+            if (hasPaging()) {
+                this.employees = getPaging().get(this.currentPage);
+            } else {
+                this.employees = getRepository().getEmployees(criteria);
+            }
         }
+        stopSqlCapture();
         return this.employees;
     }
 
@@ -142,7 +149,11 @@ public class EmployeeResults {
 
         return EditEmployee.PAGE;
     }
-    
+
+    protected void startSqlCapture() {
+        addMessages(getRepository().getDiagnostics().start());
+    }
+
     protected void stopSqlCapture() {
         addMessages(getRepository().getDiagnostics().stop());
     }
@@ -156,6 +167,5 @@ public class EmployeeResults {
             FacesContext.getCurrentInstance().addMessage("SQL", new FacesMessage(entry));
         }
     }
-
 
 }

@@ -18,6 +18,7 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
+import javax.persistence.OptimisticLockException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaQuery;
 
@@ -57,25 +58,38 @@ public class EmployeeRepository {
         return getEntityManager().find(Employee.class, id);
     }
 
+    /**
+     * TODO
+     * 
+     * @param employee
+     * @return updated employee or null if save failed due to lock failure of
+     *         entity not existing.
+     */
     public Employee save(Employee employee) {
-        Employee emp = getEntityManager().merge(employee);
+        Employee emp = null;
+        try {
+            emp = getEntityManager().merge(employee);
 
-        // Ensure the Employee's lock value is incremented
-        getEntityManager().lock(emp, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
-        getEntityManager().flush();
+            if (emp != null) {
+                // Ensure the Employee's lock value is incremented
+                getEntityManager().lock(emp, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+                getEntityManager().flush();
+            }
+        } catch (OptimisticLockException ole) {
+            return null;
+        }
+
         return emp;
     }
 
     public void delete(Employee employee) {
         Employee emp = getEntityManager().merge(employee);
         getEntityManager().remove(emp);
+        getEntityManager().flush();
     }
 
     public Employee refresh(Employee employee) {
-        Employee emp = employee;
-        if (!getEntityManager().contains(employee)) {
-            emp = getEntityManager().merge(employee);
-        }
+        Employee emp = getEntityManager().find(Employee.class, employee.getId());
         getEntityManager().refresh(emp);
         return emp;
     }

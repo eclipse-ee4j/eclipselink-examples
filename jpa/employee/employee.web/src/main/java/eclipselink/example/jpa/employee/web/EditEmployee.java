@@ -19,8 +19,6 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.context.Flash;
-import javax.persistence.OptimisticLockException;
-import javax.persistence.RollbackException;
 
 import eclipselink.example.jpa.employee.model.Address;
 import eclipselink.example.jpa.employee.model.Employee;
@@ -91,7 +89,7 @@ public class EditEmployee {
     }
 
     public boolean isCreate() {
-        return  getEmployee() != null && getEmployee().getId() <= 0;
+        return getEmployee() != null && getEmployee().getId() <= 0;
     }
 
     /**
@@ -99,26 +97,37 @@ public class EditEmployee {
      * @return
      */
     public String save() {
-        try {
-            this.employee = getRepository().save(getEmployee());
-        } catch (RollbackException e) {
-            if (e.getCause() instanceof OptimisticLockException) {
-                FacesContext.getCurrentInstance().addMessage("OptimisticLockException", new FacesMessage("Commit Failed: Optimistic Lock Exception."));
-            } else {
-                throw e;
-            }
+        startSqlCapture();
+        Employee emp = getRepository().save(getEmployee());
+        stopSqlCapture();
+        if (emp == null) {
+            FacesContext.getCurrentInstance().addMessage("OptimisticLockException", new FacesMessage("Commit Failed: Lock Exception or Entity Deleted."));
+        } else {
+            this.employee = emp;
         }
-        return null;
-    }
-    
-    public String delete() {
-        getRepository().delete(getEmployee());
+
         return null;
     }
 
+    public String delete() {
+        startSqlCapture();
+        getRepository().delete(getEmployee());
+        stopSqlCapture();
+        return cancel();
+    }
 
     public String refresh() {
+        startSqlCapture();
+        
         this.employee = getRepository().refresh(getEmployee());
+        if (this.employee == null) {
+            return cancel();
+        }
+        getEmployee().getAddress();
+        getEmployee().getPhoneNumbers().size();
+        
+        stopSqlCapture();
+        
         return null;
     }
 
@@ -131,7 +140,9 @@ public class EditEmployee {
      * operations will fail.
      */
     public String updateVersion() {
-       int newVersion = getRepository().updateVersion(getEmployee());
+        startSqlCapture();
+        int newVersion = getRepository().updateVersion(getEmployee());
+        stopSqlCapture();
 
         FacesContext.getCurrentInstance().addMessage("Update version", new FacesMessage("DATABASE EMPLOYEE ID: " + getEmployee().getId() + " VERSION= " + newVersion));
 
@@ -162,7 +173,11 @@ public class EditEmployee {
         getEmployee().removePhoneNumber(phone);
         return null;
     }
-    
+
+    protected void startSqlCapture() {
+        addMessages(getRepository().getDiagnostics().start());
+    }
+
     protected void stopSqlCapture() {
         addMessages(getRepository().getDiagnostics().stop());
     }
@@ -176,6 +191,5 @@ public class EditEmployee {
             FacesContext.getCurrentInstance().addMessage("SQL", new FacesMessage(entry));
         }
     }
-
 
 }
