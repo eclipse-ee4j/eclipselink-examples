@@ -163,8 +163,7 @@
                         </goals>
                         <configuration>
                             <tasks>
-                                <mkdir dir="${project.basedir}/target/generated-src/java" />
-                                <mkdir dir="${project.basedir}/target/generated-src/webapp" />
+                                <mkdir dir="${project.basedir}/src/main" />
                             </tasks>
                         </configuration>
                     </execution>
@@ -189,7 +188,7 @@
 								<argument>-builderFile</argument>
 								<argument>${project.basedir}/dbws-builder.xml</argument>
 								<argument>-stageDir</argument>
-								<argument>${project.basedir}/target/generated-src</argument>
+								<argument>${project.basedir}/src/main</argument>
 								<argument>-packageAs</argument>
 								<argument>maven</argument>
 							</arguments>
@@ -197,14 +196,75 @@
 					</execution>
 				</executions>
 			</plugin>
+
+            <plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>1.5.2</version>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <file>${project.basedir}/target/classes/META-INF/eclipselink-dbws-sessions.xml</file>
+                    <replacements>
+                        <replacement>
+                            <token>SERVER_CLASS_NAME_TOKEN</token>
+                            <value>${server.name}</value>
+                        </replacement>
+                        <replacement>
+                            <token>EXT_TRANS_CONTROLLER_CLASS_TOKEN</token>
+                            <value>${external.txn.controller.name}</value>
+                        </replacement>
+                    </replacements>
+                </configuration>
+            </plugin>
+            
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>properties-maven-plugin</artifactId>
+				<version>1.0-alpha-2</version>
+				<executions>
+					<execution>
+						<phase>initialize</phase>
+						<goals>
+							<goal>read-project-properties</goal>
+						</goals>
+						<configuration>
+							<files>
+								<file>${basedir}/../config.properties</file>
+							</files>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+            
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.4.1</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>${project.basedir}/src/main</directory>
+							<includes>
+								<include>**/*</include>
+							</includes>
+							<followSymlinks>false</followSymlinks>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+            
 		</plugins>
 
 		<resources>
 			<resource>
-				<directory>${project.basedir}/target/generated-src/java/</directory>
-			</resource>
-			<resource>
-				<directory>${project.basedir}/target/generated-src/webapp/</directory>
+				<directory>${project.basedir}/src/main/java/</directory>
 			</resource>
 		</resources>
 
