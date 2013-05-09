@@ -23,7 +23,6 @@ import javax.faces.context.Flash;
 import eclipselink.example.jpa.employee.model.Address;
 import eclipselink.example.jpa.employee.model.Employee;
 import eclipselink.example.jpa.employee.model.PhoneNumber;
-import eclipselink.example.jpa.employee.services.Diagnostics.SQLTrace;
 import eclipselink.example.jpa.employee.services.EmployeeRepository;
 
 /**
@@ -46,6 +45,7 @@ public class EditEmployee {
 
     protected static final String PAGE = "/employee/edit";
     protected static final String PAGE_REDIRECT = "/employee/edit?faces-redirect=true";
+    protected static final String INDEX_PAGE = "/index?faces-redirect=true";
 
     public EmployeeRepository getRepository() {
         return repository;
@@ -61,9 +61,7 @@ public class EditEmployee {
         Flash flashScope = FacesContext.getCurrentInstance().getExternalContext().getFlash();
         this.employee = (Employee) flashScope.get("employee");
 
-        if (this.employee != null) {
-            refresh();
-        } else {
+        if (this.employee == null) {
             this.employee = new Employee();
             this.employee.setAddress(new Address());
         }
@@ -74,7 +72,7 @@ public class EditEmployee {
     }
 
     public String getEmployeeId() {
-        if (getEmployee().getId() <= 0) {
+        if (getEmployee() == null || getEmployee().getId() <= 0) {
             return "None Assigned";
         }
         return Integer.toString(getEmployee().getId());
@@ -97,9 +95,7 @@ public class EditEmployee {
      * @return
      */
     public String save() {
-        startSqlCapture();
         Employee emp = getRepository().save(getEmployee());
-        stopSqlCapture();
         if (emp == null) {
             FacesContext.getCurrentInstance().addMessage("OptimisticLockException", new FacesMessage("Commit Failed: Lock Exception or Entity Deleted."));
         } else {
@@ -110,29 +106,21 @@ public class EditEmployee {
     }
 
     public String delete() {
-        startSqlCapture();
-        getRepository().delete(getEmployee());
-        stopSqlCapture();
+        this.employee = getRepository().delete(getEmployee());
         return cancel();
     }
 
     public String refresh() {
-        startSqlCapture();
-        
         this.employee = getRepository().refresh(getEmployee());
         if (this.employee == null) {
             return cancel();
         }
-        getEmployee().getAddress();
-        getEmployee().getPhoneNumbers().size();
-        
-        stopSqlCapture();
-        
+
         return null;
     }
 
     public String cancel() {
-        return "/index?faces-redirect=true";
+        return INDEX_PAGE;
     }
 
     /**
@@ -140,9 +128,7 @@ public class EditEmployee {
      * operations will fail.
      */
     public String updateVersion() {
-        startSqlCapture();
         int newVersion = getRepository().updateVersion(getEmployee());
-        stopSqlCapture();
 
         FacesContext.getCurrentInstance().addMessage("Update version", new FacesMessage("DATABASE EMPLOYEE ID: " + getEmployee().getId() + " VERSION= " + newVersion));
 
@@ -172,24 +158,6 @@ public class EditEmployee {
     public String remove(PhoneNumber phone) {
         getEmployee().removePhoneNumber(phone);
         return null;
-    }
-
-    protected void startSqlCapture() {
-        addMessages(getRepository().getDiagnostics().start());
-    }
-
-    protected void stopSqlCapture() {
-        addMessages(getRepository().getDiagnostics().stop());
-    }
-
-    /**
-     * Add each SQL string to the messages TODO: Allow this to be
-     * enabled/disabled
-     */
-    private void addMessages(SQLTrace sqlTrace) {
-        for (String entry : sqlTrace.getEntries()) {
-            FacesContext.getCurrentInstance().addMessage("SQL", new FacesMessage(entry));
-        }
     }
 
 }

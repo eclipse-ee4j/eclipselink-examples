@@ -38,7 +38,7 @@ public class EditEmployeeTest {
 
     @Test
     public void saveWithoutChanges() {
-        Employee emp = this.repository.find(sampleId);
+        Employee emp = this.repository.find(sampleId, true);
 
         Assert.assertNotNull(emp);
 
@@ -47,7 +47,7 @@ public class EditEmployeeTest {
 
     @Test
     public void incrementSalary() {
-        Employee emp = this.repository.find(sampleId);
+        Employee emp = this.repository.find(sampleId, true);
 
         emp.setSalary(emp.getSalary() + 1);
 
@@ -56,24 +56,20 @@ public class EditEmployeeTest {
 
     @Test
     public void optimisticLockFailure() {
-        Employee emp = this.repository.find(sampleId);
+        Employee emp = this.repository.find(sampleId, true);
 
-        try {
-            repository.updateVersion(emp);
-            emp.setSalary(emp.getSalary() + 1);
-            repository.save(emp);
+        repository.updateVersion(emp);
+        emp.setSalary(emp.getSalary() + 1);
 
-        } catch (OptimisticLockException e) {
-            getRepository().getEntityManager().getTransaction().rollback();
-            return;
-        }
+        Employee result = repository.save(emp);
 
-        Assert.fail("OptimisticLockException not thrown");
+        Assert.assertNull(result);
+        repository.getEntityManager().getTransaction().rollback();
     }
 
     @Test
     public void refreshUpdateAddress() {
-        Employee emp = this.repository.find(sampleId);
+        Employee emp = this.repository.find(sampleId, true);
 
         emp = repository.refresh(emp);
         emp.getAddress().setCity("Ottawa");

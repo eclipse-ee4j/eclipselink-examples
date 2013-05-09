@@ -46,11 +46,13 @@ public class Admin {
     }
 
     public String resetDatabase() {
-        return getAdminBean().resetDatabase();
+        getAdminBean().resetDatabase();
+        return null;
     }
 
     public String populateDatabase() {
-        return getAdminBean().populateDatabase(25);
+        getAdminBean().populateDatabase(25);
+        return null;
     }
 
     public List<String> getTypeNames() {

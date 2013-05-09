@@ -13,25 +13,22 @@
  ******************************************************************************/
 package eclipselink.example.jpa.employee.model;
 
-import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.FetchType.LAZY;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -63,7 +60,7 @@ import org.eclipse.persistence.config.QueryHints;
 	@NamedQuery(name = "Employee.count", query = "SELECT COUNT(e) FROM Employee e"),
 	@NamedQuery(name = "Employee.countByName", query = "SELECT COUNT(e) FROM Employee e WHERE e.firstName LIKE :firstName AND e.lastName LIKE :lastName"),
 	/**
-	 * Query used in {@link EmployeeIdInPaging}
+	 * Query used in {@link IdInPaging}
 	 */
 	@NamedQuery(name = "Employee.idsIn", query = "SELECT e FROM Employee e WHERE e.id IN :IDS ORDER BY e.id", hints = { @QueryHint(name = QueryHints.QUERY_RESULTS_CACHE, value = HintValues.TRUE) })})
 public class Employee {
@@ -95,18 +92,18 @@ public class Employee {
     @Version
     private Long version;
     
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MANAGER_ID")
     private Employee manager;
 
     @OneToMany(mappedBy = "manager")
     private List<Employee> managedEmployees = new ArrayList<Employee>();
 
-    @OneToMany(mappedBy = "owner", cascade = ALL, orphanRemoval=true)
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval=true)
     @PrivateOwned
     private List<PhoneNumber> phoneNumbers = new ArrayList<PhoneNumber>();
 
-    @OneToOne(cascade = ALL, fetch = LAZY, orphanRemoval=true)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval=true)
     @JoinColumn(name = "ADDR_ID")
     private Address address;
 

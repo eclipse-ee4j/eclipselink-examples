@@ -17,6 +17,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
@@ -24,7 +25,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import eclipselink.example.jpa.employee.model.SamplePopulation;
-import eclipselink.example.jpa.employee.services.Diagnostics;
 import eclipselink.example.jpa.employee.services.AdminBean;
 import eclipselink.example.jpa.employee.test.PersistenceTesting;
 
@@ -49,14 +49,11 @@ public class AdminBeanTest {
         verifyReset();
 
         getAdmin().populateDatabase(20);
-
-        Assert.assertEquals(20, admin.getCacheSize("Employee"));
+        
         Assert.assertEquals(20, admin.getDatabaseCount("Employee"));
 
-        Assert.assertEquals(20, admin.getCacheSize("Address"));
         Assert.assertEquals(20, admin.getDatabaseCount("Address"));
 
-        Assert.assertEquals(40, admin.getCacheSize("PhoneNumber"));
         Assert.assertEquals(40, admin.getDatabaseCount("PhoneNumber"));
     }
 
@@ -78,13 +75,6 @@ public class AdminBeanTest {
         return emf;
     }
 
-    @Before
-    public void resetDatabase() {
-        this.admin = new AdminBean();
-        this.admin.setEmf(getEmf());
-        this.admin.resetDatabase();
-    }
-
     @BeforeClass
     public static void createEMF() {
         emf = PersistenceTesting.createEMF(true);
@@ -95,7 +85,6 @@ public class AdminBeanTest {
         em.getTransaction().commit();
         em.close();
 
-        Diagnostics.getInstance(emf);
         emf.getCache().evictAll();
     }
 
@@ -105,6 +94,26 @@ public class AdminBeanTest {
             emf.close();
         }
         emf = null;
+    }
+
+    @Before
+    public void setup() {
+        EntityManager em = getEmf().createEntityManager();
+        this.admin = new AdminBean();
+        this.admin.setEntityManager(em);
+
+        em.getTransaction().begin();
+        this.admin.resetDatabase();
+        em.getTransaction().commit();
+        em.clear();
+
+        em.getTransaction().begin();
+    }
+
+    @After
+    public void close() {
+        this.admin.getEntityManager().getTransaction().commit();
+        this.admin.getEntityManager().close();
     }
 
 }

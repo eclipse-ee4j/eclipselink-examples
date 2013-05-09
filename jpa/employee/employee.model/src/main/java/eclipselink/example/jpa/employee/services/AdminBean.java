@@ -17,8 +17,7 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
+import javax.persistence.PersistenceContext;
 import javax.persistence.metamodel.EntityType;
 
 import org.eclipse.persistence.descriptors.ClassDescriptor;
@@ -38,46 +37,35 @@ import eclipselink.example.jpa.employee.model.SamplePopulation;
 @Stateless
 public class AdminBean {
 
-    private EntityManagerFactory emf;
+    private EntityManager entityManager;
 
-    public EntityManagerFactory getEmf() {
-        return emf;
+    public EntityManager getEntityManager() {
+        return entityManager;
     }
 
-    @PersistenceUnit(unitName = "employee")
-    public void setEmf(EntityManagerFactory emf) {
-        this.emf = emf;
+    @PersistenceContext(unitName = "employee")
+    public void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
     }
 
-    public String resetDatabase() {
-        EntityManager em = getEmf().createEntityManager();
+    public void resetDatabase() {
+        Server session = getEntityManager().unwrap(Server.class);
 
-        try {
-            SchemaManager sm = new SchemaManager(em.unwrap(Server.class));
-            sm.replaceDefaultTables();
-            sm.replaceSequences();
+        SchemaManager sm = new SchemaManager(session);
+        sm.replaceDefaultTables();
+        sm.replaceSequences();
 
-            em.unwrap(Server.class).getIdentityMapAccessor().initializeAllIdentityMaps();
-        } finally {
-            em.close();
-        }
-        return null;
+        session.getIdentityMapAccessor().initializeAllIdentityMaps();
     }
 
-    public String populateDatabase(int quantity) {
-        EntityManager em = getEmf().createEntityManager();
-
-        try {
-            new SamplePopulation().createNewEmployees(em, quantity);
-        } finally {
-            em.close();
-        }
-        return null;
+    public void populateDatabase(int quantity) {
+        new SamplePopulation().createNewEmployees(getEntityManager(), quantity);
+        getEntityManager().flush();
     }
 
     public int getCacheSize(String typeName) {
-        EntityManager em = getEmf().createEntityManager();
-        Server session = em.unwrap(Server.class);
+        Server session = getEntityManager().unwrap(Server.class);
+
         ClassDescriptor descriptor = session.getDescriptorForAlias(typeName);
         if (descriptor != null) {
             return ((IdentityMapAccessor) session.getIdentityMapAccessor()).getIdentityMap(descriptor.getJavaClass()).getSize();
@@ -87,13 +75,7 @@ public class AdminBean {
     }
 
     public int getDatabaseCount(String type) {
-        EntityManager em = getEmf().createEntityManager();
-
-        try {
-            return em.createQuery("SELECT COUNT(o) FROM " + type + " o", Number.class).getSingleResult().intValue();
-        } finally {
-            em.close();
-        }
+            return getEntityManager().createQuery("SELECT COUNT(o) FROM " + type + " o", Number.class).getSingleResult().intValue();
     }
 
     /**
@@ -102,7 +84,7 @@ public class AdminBean {
      */
     public List<String> getTypes() {
         List<String> typeNames = new ArrayList<String>();
-        for (EntityType<?> type : getEmf().getMetamodel().getEntities()) {
+        for (EntityType<?> type : getEntityManager().getMetamodel().getEntities()) {
             if (type.getSupertype() == null) {
                 typeNames.add(type.getName());
             }

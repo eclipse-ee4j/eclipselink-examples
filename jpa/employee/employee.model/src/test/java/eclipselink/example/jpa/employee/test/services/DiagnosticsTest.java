@@ -21,13 +21,14 @@ import org.eclipse.persistence.logging.SessionLog;
 import org.eclipse.persistence.sessions.server.Server;
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import eclipselink.example.jpa.employee.model.Employee;
 import eclipselink.example.jpa.employee.model.SamplePopulation;
-import eclipselink.example.jpa.employee.services.Diagnostics;
-import eclipselink.example.jpa.employee.services.Diagnostics.SQLTrace;
+import eclipselink.example.jpa.employee.services.diagnostics.Diagnostics;
+import eclipselink.example.jpa.employee.services.diagnostics.Diagnostics.SQLTrace;
 import eclipselink.example.jpa.employee.test.PersistenceTesting;
 
 public class DiagnosticsTest {
@@ -41,21 +42,20 @@ public class DiagnosticsTest {
 
         Assert.assertNotNull(log);
         Assert.assertTrue(Proxy.isProxyClass(log.getClass()));
-        Assert.assertTrue(Proxy.getInvocationHandler(log) instanceof Diagnostics);
+        Assert.assertEquals(Diagnostics.class.getName() + "$SessionLogHandler", Proxy.getInvocationHandler(log).getClass().getName());
 
         em.close();
     }
 
     @Test
     public void singleFind() {
-        Diagnostics diagnostics = Diagnostics.getInstance(getEmf());
         EntityManager em = getEmf().createEntityManager();
 
-        SQLTrace start = diagnostics.start();
+        SQLTrace start = diagnostics.getTrace();
         Assert.assertEquals(0, start.getEntries().size());
 
         em.find(Employee.class, 1);
-        SQLTrace trace = diagnostics.stop();
+        SQLTrace trace = diagnostics.getTrace(true);
 
         Assert.assertSame(trace, start);
         Assert.assertNotNull(trace);
@@ -66,6 +66,8 @@ public class DiagnosticsTest {
 
     private static EntityManagerFactory emf;
 
+    private static Diagnostics diagnostics;
+
     public static EntityManagerFactory getEmf() {
         return emf;
     }
@@ -73,6 +75,8 @@ public class DiagnosticsTest {
     @BeforeClass
     public static void createEMF() {
         emf = PersistenceTesting.createEMF(true);
+        diagnostics = new Diagnostics();
+        diagnostics.setEmf(emf);
 
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
@@ -80,7 +84,6 @@ public class DiagnosticsTest {
         em.getTransaction().commit();
         em.close();
 
-        Diagnostics.getInstance(emf);
         emf.getCache().evictAll();
     }
 
@@ -90,6 +93,11 @@ public class DiagnosticsTest {
             emf.close();
         }
         emf = null;
+    }
+
+    @Before
+    public void clear() {
+        diagnostics.clear();
     }
 
 }

@@ -26,11 +26,11 @@ import org.junit.Test;
 
 import eclipselink.example.jpa.employee.model.Employee;
 import eclipselink.example.jpa.employee.model.SamplePopulation;
-import eclipselink.example.jpa.employee.services.Diagnostics;
-import eclipselink.example.jpa.employee.services.EmployeeRepository;
-import eclipselink.example.jpa.employee.services.Diagnostics.SQLTrace;
-import eclipselink.example.jpa.employee.services.paging.EntityPaging;
 import eclipselink.example.jpa.employee.services.EmployeeCriteria;
+import eclipselink.example.jpa.employee.services.EmployeeRepository;
+import eclipselink.example.jpa.employee.services.diagnostics.Diagnostics;
+import eclipselink.example.jpa.employee.services.diagnostics.Diagnostics.SQLTrace;
+import eclipselink.example.jpa.employee.services.paging.EntityPaging;
 import eclipselink.example.jpa.employee.test.PersistenceTesting;
 
 /**
@@ -44,7 +44,7 @@ public class PageEmployeesTest {
     @Test
     public void page5ByIndex() {
 
-        SQLTrace start = getDiagnostics().start();
+        SQLTrace start = diagnostics.getTrace();
         Assert.assertTrue(start.getEntries().isEmpty());
 
         EmployeeCriteria criteria = new EmployeeCriteria();
@@ -52,12 +52,12 @@ public class PageEmployeesTest {
         criteria.setLastName(null);
         criteria.setPageSize(5);
         criteria.setPagingType(EntityPaging.Type.PAGE.name());
-        
+
         EntityPaging<Employee> paging = getRepository().getPaging(criteria);
-        
+
         Assert.assertEquals(25, paging.size());
 
-        SQLTrace end = getDiagnostics().stop();
+        SQLTrace end = diagnostics.getTrace(true);
 
         Assert.assertNotNull(end);
         Assert.assertSame(start, end);
@@ -80,7 +80,7 @@ public class PageEmployeesTest {
     @Test
     public void page5ByNext() {
 
-        SQLTrace start = getDiagnostics().start();
+        SQLTrace start = diagnostics.getTrace();
         Assert.assertTrue(start.getEntries().isEmpty());
 
         EmployeeCriteria criteria = new EmployeeCriteria();
@@ -88,12 +88,12 @@ public class PageEmployeesTest {
         criteria.setLastName(null);
         criteria.setPageSize(5);
         criteria.setPagingType(EntityPaging.Type.PAGE.name());
-        
+
         EntityPaging<Employee> paging = getRepository().getPaging(criteria);
 
         Assert.assertEquals(25, paging.size());
 
-        SQLTrace end = getDiagnostics().stop();
+        SQLTrace end = diagnostics.getTrace(true);
 
         Assert.assertNotNull(end);
         Assert.assertSame(start, end);
@@ -116,7 +116,7 @@ public class PageEmployeesTest {
     @Test
     public void page10ByIndex() {
 
-        SQLTrace start = getDiagnostics().start();
+        SQLTrace start = diagnostics.getTrace();
         Assert.assertTrue(start.getEntries().isEmpty());
 
         EmployeeCriteria criteria = new EmployeeCriteria();
@@ -124,12 +124,12 @@ public class PageEmployeesTest {
         criteria.setLastName(null);
         criteria.setPageSize(10);
         criteria.setPagingType(EntityPaging.Type.PAGE.name());
-        
+
         EntityPaging<Employee> paging = getRepository().getPaging(criteria);
 
         Assert.assertEquals(25, paging.size());
 
-        SQLTrace end = getDiagnostics().stop();
+        SQLTrace end = diagnostics.getTrace(true);
 
         Assert.assertNotNull(end);
         Assert.assertSame(start, end);
@@ -153,7 +153,7 @@ public class PageEmployeesTest {
     @Test
     public void page10ByNext() {
 
-        SQLTrace start = getDiagnostics().start();
+        SQLTrace start = diagnostics.getTrace();
         Assert.assertTrue(start.getEntries().isEmpty());
 
         EmployeeCriteria criteria = new EmployeeCriteria();
@@ -161,12 +161,12 @@ public class PageEmployeesTest {
         criteria.setLastName(null);
         criteria.setPageSize(10);
         criteria.setPagingType(EntityPaging.Type.PAGE.name());
-        
+
         EntityPaging<Employee> paging = getRepository().getPaging(criteria);
 
         Assert.assertEquals(25, paging.size());
 
-        SQLTrace end = getDiagnostics().stop();
+        SQLTrace end = diagnostics.getTrace(true);
 
         Assert.assertNotNull(end);
         Assert.assertSame(start, end);
@@ -189,6 +189,8 @@ public class PageEmployeesTest {
 
     private static EntityManagerFactory emf;
 
+    private static Diagnostics diagnostics;
+
     public static EntityManagerFactory getEmf() {
         return emf;
     }
@@ -196,6 +198,8 @@ public class PageEmployeesTest {
     @BeforeClass
     public static void createEMF() {
         emf = PersistenceTesting.createEMF(true);
+        diagnostics = new Diagnostics();
+        diagnostics.setEmf(emf);
 
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
@@ -215,14 +219,16 @@ public class PageEmployeesTest {
     }
 
     private EmployeeRepository repository;
-    
+
     @Before
     public void setup() {
         this.repository = new EmployeeRepository();
         this.repository.setEntityManager(getEmf().createEntityManager());
         this.repository.getEntityManager().getTransaction().begin();
+        
+        diagnostics.clear();
     }
-    
+
     @After
     public void close() {
         this.repository.getEntityManager().getTransaction().commit();
@@ -231,10 +237,6 @@ public class PageEmployeesTest {
 
     public EmployeeRepository getRepository() {
         return repository;
-    }
-    
-    public Diagnostics getDiagnostics() {
-        return getRepository().getDiagnostics();
     }
 
 }

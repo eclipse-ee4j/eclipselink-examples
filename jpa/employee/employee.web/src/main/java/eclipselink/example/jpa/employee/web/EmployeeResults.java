@@ -16,14 +16,12 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.context.Flash;
 
 import eclipselink.example.jpa.employee.model.Employee;
-import eclipselink.example.jpa.employee.services.Diagnostics.SQLTrace;
 import eclipselink.example.jpa.employee.services.EmployeeCriteria;
 import eclipselink.example.jpa.employee.services.EmployeeRepository;
 import eclipselink.example.jpa.employee.services.paging.EntityPaging;
@@ -76,16 +74,9 @@ public class EmployeeResults {
         this.employees = null;
 
         this.paging = getRepository().getPaging(criteria);
-
-        if (!hasPaging()) {
-            startSqlCapture();
-
-            stopSqlCapture();
-        }
     }
 
     public List<Employee> getEmployees() {
-        startSqlCapture();
         if (this.employees == null) {
             if (hasPaging()) {
                 this.employees = getPaging().get(this.currentPage);
@@ -93,7 +84,6 @@ public class EmployeeResults {
                 this.employees = getRepository().getEmployees(criteria);
             }
         }
-        stopSqlCapture();
         return this.employees;
     }
 
@@ -148,24 +138,6 @@ public class EmployeeResults {
         flashScope.put("employee", employee);
 
         return EditEmployee.PAGE;
-    }
-
-    protected void startSqlCapture() {
-        addMessages(getRepository().getDiagnostics().start());
-    }
-
-    protected void stopSqlCapture() {
-        addMessages(getRepository().getDiagnostics().stop());
-    }
-
-    /**
-     * Add each SQL string to the messages TODO: Allow this to be
-     * enabled/disabled
-     */
-    private void addMessages(SQLTrace sqlTrace) {
-        for (String entry : sqlTrace.getEntries()) {
-            FacesContext.getCurrentInstance().addMessage("SQL", new FacesMessage(entry));
-        }
     }
 
 }

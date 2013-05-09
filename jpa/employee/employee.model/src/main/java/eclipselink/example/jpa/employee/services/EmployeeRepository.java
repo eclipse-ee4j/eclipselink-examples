@@ -37,8 +37,6 @@ public class EmployeeRepository {
 
     private EntityManager entityManager;
 
-    private Diagnostics diagnostics;
-
     public EntityManager getEntityManager() {
         return entityManager;
     }
@@ -46,15 +44,15 @@ public class EmployeeRepository {
     @PersistenceContext(unitName = "employee")
     public void setEntityManager(EntityManager entityManager) {
         this.entityManager = entityManager;
-        this.diagnostics = Diagnostics.getInstance(entityManager);
     }
 
-    public Diagnostics getDiagnostics() {
-        return diagnostics;
-    }
-
-    public Employee find(int id) {
-        return getEntityManager().find(Employee.class, id);
+    public Employee find(int id, boolean complete) {
+        Employee emp = getEntityManager().find(Employee.class, id);
+        if (complete && emp != null) {
+            emp.getAddress();
+            emp.getPhoneNumbers().size();
+        }
+        return emp;
     }
 
     /**
@@ -81,15 +79,24 @@ public class EmployeeRepository {
         return emp;
     }
 
-    public void delete(Employee employee) {
-        Employee emp = getEntityManager().merge(employee);
-        getEntityManager().remove(emp);
-        getEntityManager().flush();
+    public Employee delete(Employee employee) {
+        try {
+            Employee emp = getEntityManager().find(Employee.class, employee.getId());
+            getEntityManager().remove(emp);
+            getEntityManager().flush();
+            return emp;
+        } catch (OptimisticLockException ole) {
+            return null;
+        }
     }
 
     public Employee refresh(Employee employee) {
         Employee emp = getEntityManager().find(Employee.class, employee.getId());
         getEntityManager().refresh(emp);
+
+        emp.getAddress();
+        emp.getPhoneNumbers().size();
+
         return emp;
     }
 
@@ -133,4 +140,5 @@ public class EmployeeRepository {
         CriteriaQuery<Employee> cq = criteria.createQuery(getEntityManager());
         return getEntityManager().createQuery(cq).getResultList();
     }
+
 }

@@ -27,7 +27,8 @@ import eclipselink.example.jpa.employee.services.paging.FirstMaxPaging;
 import eclipselink.example.jpa.employee.services.paging.IdInPaging;
 
 /**
- * TODO
+ * Search criteria definition. View layer populates this criteria and passes it
+ * to the services layer for execution.
  * 
  * @author dclarke
  * @since EclipseLInk 2.4.2

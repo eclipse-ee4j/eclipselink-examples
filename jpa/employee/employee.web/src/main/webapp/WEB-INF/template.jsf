@@ -47,7 +47,7 @@
 
 			</div>
 		</div>
-
+		<h:outputText value="#{diagnosticsTrace.messages}" />
 		<div id="footer-container">
 			<footer class="wrapper"> <h:messages /> </footer>
 		</div>
