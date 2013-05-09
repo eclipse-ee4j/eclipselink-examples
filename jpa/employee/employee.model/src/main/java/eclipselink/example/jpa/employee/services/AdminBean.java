@@ -37,7 +37,6 @@ import eclipselink.example.jpa.employee.model.SamplePopulation;
  * @since EclipseLink 2.4.2
  */
 @Stateless
-@LocalBean
 public class AdminBean {
 
     private EntityManagerFactory emf;

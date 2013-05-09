@@ -33,7 +33,6 @@ import eclipselink.example.jpa.employee.services.paging.EntityPaging;
  * @since EclipseLink 2.4.2
  */
 @Stateless
-@LocalBean
 public class EmployeeRepository {
 
     private EntityManager entityManager;

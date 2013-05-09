@@ -57,11 +57,11 @@ public class EditEmployeeView {
         setEmployee(id);
     }
 
-    @EJB
     public EmployeeRepository getRepository() {
         return repository;
     }
 
+    @EJB
     public void setRepository(EmployeeRepository repository) {
         this.repository = repository;
     }

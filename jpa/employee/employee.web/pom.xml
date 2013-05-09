@@ -15,7 +15,24 @@
 
 	<dependencies>
 
-		<!-- EclipseLink JPA-RS Web Fragment -->
+		<dependency>
+			<groupId>${eclipselink.groupid}</groupId>
+			<artifactId>${eclipselink.artifactid}</artifactId>
+			<version>${eclipselink.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>commonj.sdo</artifactId>
+					<groupId>commonj.sdo</groupId>
+				</exclusion>
+			</exclusions>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>eclipselink.example.jpa</groupId>
+			<artifactId>employee.model</artifactId>
+			<version>${eclipselink.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>junit</groupId>
@@ -23,22 +40,6 @@
 			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
-
-
-		<dependency>
-			<groupId>eclipselink.example.jpa</groupId>
-			<artifactId>employee.model</artifactId>
-			<version>2.4.2-SNAPSHOT</version>
-		</dependency>
-
-<!-- 
-		<dependency>
-			<groupId>com.sun.jersey.jersey-test-framework</groupId>
-			<artifactId>jersey-test-framework-grizzly2</artifactId>
-			<version>1.17.1</version>
-			<scope>test</scope>
-		</dependency>
- -->
 		<dependency>
 			<groupId>javax.faces</groupId>
 			<artifactId>javax.faces-api</artifactId>

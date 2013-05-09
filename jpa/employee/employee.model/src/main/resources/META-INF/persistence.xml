@@ -15,6 +15,7 @@
 			<property name="eclipselink.logging.connection" value="false"/>
 			<property name="eclipselink.logging.level.metadata" value="WARNING"/>
 			<property name="eclipselink.logging.parameters" value="true"/>
+			<property name="eclipselink.logging.logger" value="DefaultLogger"/>
 		</properties>
 	</persistence-unit>
 </persistence>
