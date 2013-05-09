@@ -14,12 +14,10 @@
 	<name>Employee Web JavaScript App</name>
 
 	<dependencies>
-		<!-- EclipseLink JPA-RS Web Fragment -->
 		<dependency>
 			<groupId>${eclipselink.groupid}</groupId>
 			<artifactId>org.eclipse.persistence.jpars</artifactId>
 			<version>${eclipselink.version}</version>
-			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
@@ -28,12 +26,9 @@
 			<version>2.4.2-SNAPSHOT</version>
 		</dependency>
 
-		<dependency>
-			<groupId>javax</groupId>
-			<artifactId>javaee-api</artifactId>
-			<version>6.0</version>
-			<scope>provided</scope>
-		</dependency>
-
 	</dependencies>
+	
+	<build>
+		<finalName>employee.web-js</finalName>
+	</build>
 </project>
