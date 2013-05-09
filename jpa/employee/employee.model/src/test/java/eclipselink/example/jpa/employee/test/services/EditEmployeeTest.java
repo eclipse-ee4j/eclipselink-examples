@@ -15,7 +15,6 @@ package eclipselink.example.jpa.employee.test.services;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.OptimisticLockException;
-import javax.persistence.RollbackException;
 
 import org.junit.After;
 import org.junit.AfterClass;

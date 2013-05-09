@@ -62,7 +62,7 @@ public abstract class EntityPaging<T> {
 
     public List<T> next() {
         if (!hasNext()) {
-            throw new IllegalStateException("Next page available");
+            throw new IllegalStateException("Next page not available");
         }
         return get(++this.currentPage);
     }
@@ -73,10 +73,10 @@ public abstract class EntityPaging<T> {
 
     public List<T> previous() {
         if (!hasPrevious()) {
-            throw new IllegalStateException("Previous page available");
+            throw new IllegalStateException("Previous page not available");
         }
         return get(--this.currentPage);
     }
     
-    public enum Type { NONE, PAGE, PAGE_IN, CURSOR }
+    public enum Type { NONE, PAGE, PAGE_IN }
 }

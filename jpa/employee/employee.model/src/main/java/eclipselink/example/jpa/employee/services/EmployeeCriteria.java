@@ -25,7 +25,6 @@ import eclipselink.example.jpa.employee.services.paging.EntityPaging;
 import eclipselink.example.jpa.employee.services.paging.EntityPaging.Type;
 import eclipselink.example.jpa.employee.services.paging.FirstMaxPaging;
 import eclipselink.example.jpa.employee.services.paging.IdInPaging;
-import eclipselink.example.jpa.employee.services.paging.StreamPaging;
 
 /**
  * TODO
@@ -140,8 +139,6 @@ public class EmployeeCriteria {
                 return new FirstMaxPaging(emf, createQuery(emf), createCountQuery(emf), getPageSize());
             case PAGE_IN:
                 return new IdInPaging(emf, createIdQuery(emf), getPageSize());
-            case CURSOR:
-                return new StreamPaging<Employee>(emf, createQuery(emf), getPageSize());
             }
         }
         return null;
