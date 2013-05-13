@@ -137,7 +137,13 @@ public class EmployeeResults {
         Flash flashScope = FacesContext.getCurrentInstance().getExternalContext().getFlash();
         flashScope.put("employee", employee);
 
-        return EditEmployee.PAGE;
+        return Navigation.EDIT;
     }
 
+    public String delete(Employee employee) {
+        Flash flashScope = FacesContext.getCurrentInstance().getExternalContext().getFlash();
+        flashScope.put("employee", employee);
+
+        return Navigation.EDIT;
+    }
 }

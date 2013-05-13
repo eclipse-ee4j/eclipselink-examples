@@ -62,6 +62,7 @@
 
 
 	<build>
+		<finalName>employe.web</finalName>
 		<defaultGoal>package</defaultGoal>
 
 		<plugins>

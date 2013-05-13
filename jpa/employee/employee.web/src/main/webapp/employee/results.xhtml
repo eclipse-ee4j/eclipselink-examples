@@ -28,6 +28,8 @@
 				<h:column>
 					<h:commandButton value="Edit" action="#{employeeResults.edit(emp)}"
 						class="button-small" />
+					<h:commandButton value="Delete" action="#{employeeResults.delete(emp)}"
+						class="button-small" rendered="false"/>
 				</h:column>
 
 				<f:facet name="footer" rendered="#{employeeResults.hasPaging}">

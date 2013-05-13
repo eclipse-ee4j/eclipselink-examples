@@ -23,11 +23,11 @@
 			<h1 class="title">Employee Example</h1>
 			<nav> <h:form>
 				<ul>
-					<li><h:commandLink action="/index?faces-redirect=true"
+					<li><h:commandLink action="#{navigation.home}"
 							value="Home" /></li>
-					<li><h:commandLink action="/about?faces-redirect=true"
+					<li><h:commandLink action="#{navigation.about}"
 							value="About" /></li>
-					<li><h:commandLink action="/admin?faces-redirect=true"
+					<li><h:commandLink action="#{navigation.admin}"
 							value="Admin" /></li>
 				</ul>
 			</h:form></nav> </header>
@@ -47,7 +47,7 @@
 
 			</div>
 		</div>
-		<h:outputText value="#{diagnosticsTrace.messages}" />
+		<h:outputText value="#{admin.messages}"/>
 		<div id="footer-container">
 			<footer class="wrapper"> <h:messages /> </footer>
 		</div>

@@ -86,7 +86,7 @@ public class Diagnostics {
         }
         return trace;
     }
-    
+
     public void clear() {
         this.traces.set(null);
     }
@@ -123,6 +123,13 @@ public class Diagnostics {
 
         public List<String> getEntries() {
             return entries;
+        }
+
+        public void truncate(int length, String message) {
+            if (getEntries().size() > length) {
+                this.entries = this.entries.subList(0, length - 1);
+                this.entries.add(message);
+            }
         }
 
     }

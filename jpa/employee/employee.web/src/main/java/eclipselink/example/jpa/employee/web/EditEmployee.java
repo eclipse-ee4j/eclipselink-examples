@@ -43,10 +43,6 @@ public class EditEmployee {
 
     private EmployeeRepository repository;
 
-    protected static final String PAGE = "/employee/edit";
-    protected static final String PAGE_REDIRECT = "/employee/edit?faces-redirect=true";
-    protected static final String INDEX_PAGE = "/index?faces-redirect=true";
-
     public EmployeeRepository getRepository() {
         return repository;
     }
@@ -120,7 +116,7 @@ public class EditEmployee {
     }
 
     public String cancel() {
-        return INDEX_PAGE;
+        return Navigation.INDEX_REDIRECT;
     }
 
     /**
@@ -159,5 +155,5 @@ public class EditEmployee {
         getEmployee().removePhoneNumber(phone);
         return null;
     }
-
+    
 }

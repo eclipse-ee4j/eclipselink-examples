@@ -25,13 +25,13 @@
 					</div>
 					<div align="right">
 						<h:commandLink value="Advanced Search"
-							action="employee/search?faces-redirect=true" />
+							action="#{navigation.search}" />
 					</div>
 				</h:panelGroup>
 				<h:panelGroup>
 					<div align="center">
-						<h:commandButton action="/employee/edit?faces-redirect=true"
-							value="Create" class="menu-button" />
+						<h:commandButton action="#{navigation.edit}" value="Create"
+							class="menu-button" />
 					</div>
 				</h:panelGroup>
 			</h:panelGrid>

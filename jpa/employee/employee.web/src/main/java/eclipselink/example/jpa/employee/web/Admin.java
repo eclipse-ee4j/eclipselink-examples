@@ -15,10 +15,14 @@ package eclipselink.example.jpa.employee.web;
 import java.util.List;
 
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
+import javax.faces.context.FacesContext;
 
 import eclipselink.example.jpa.employee.services.AdminBean;
+import eclipselink.example.jpa.employee.services.diagnostics.Diagnostics;
+import eclipselink.example.jpa.employee.services.diagnostics.Diagnostics.SQLTrace;
 
 /**
  * TODO
@@ -27,14 +31,25 @@ import eclipselink.example.jpa.employee.services.AdminBean;
  * @since EclipseLink 2.4.2
  */
 @ManagedBean
-@RequestScoped
+@ApplicationScoped
 public class Admin {
 
     private AdminBean adminBean;
 
     private List<String> typeNames;
 
-    private boolean displaySql = false;
+    boolean sqlTraceEnabled = true;
+
+    private Diagnostics diagnostics;
+
+    public Diagnostics getDiagnostics() {
+        return diagnostics;
+    }
+
+    @EJB
+    public void setDiagnostics(Diagnostics diagnostics) {
+        this.diagnostics = diagnostics;
+    }
 
     public AdminBean getAdminBean() {
         return adminBean;
@@ -62,28 +77,30 @@ public class Admin {
         return typeNames;
     }
 
-    public boolean isDisplaySql() {
-        return displaySql;
-    }
-
-    public void setDisplaySql(boolean displaySql) {
-        this.displaySql = displaySql;
-    }
-
-    public void toggleSqlDisplay() {
-        this.displaySql = !this.displaySql;
-    }
-
-    public String getToggleSqlDisplayButton() {
-        return isDisplaySql() ? "Disable SQL Display" : "Enable SQL Display";
-    }
-
     public String getCacheSize(String typeName) {
         int size = getAdminBean().getCacheSize(typeName);
         if (size < 0) {
             return "Error";
         }
         return Integer.toString(size);
+    }
+
+    public boolean isSqlTraceEnabled() {
+        return getDiagnostics().isEnabled();
+    }
+
+    public String getMessages() {
+        SQLTrace trace = getDiagnostics().getTrace(true);
+
+        if (isSqlTraceEnabled() && trace != null) {
+            // Truncate at 5 messages
+            trace.truncate(5, "... SQL trace truncated");
+
+            for (String entry : trace.getEntries()) {
+                FacesContext.getCurrentInstance().addMessage("SQL", new FacesMessage(entry));
+            }
+        }
+        return null;
     }
 
 }
