@@ -62,7 +62,7 @@
 
 
 	<build>
-		<finalName>employe.web</finalName>
+		<finalName>employee.web</finalName>
 		<defaultGoal>package</defaultGoal>
 
 		<plugins>
