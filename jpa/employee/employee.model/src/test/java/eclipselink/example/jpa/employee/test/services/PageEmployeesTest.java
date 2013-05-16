@@ -17,6 +17,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
+import org.eclipse.persistence.jpa.JpaHelper;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -28,9 +29,9 @@ import eclipselink.example.jpa.employee.model.Employee;
 import eclipselink.example.jpa.employee.model.SamplePopulation;
 import eclipselink.example.jpa.employee.services.EmployeeCriteria;
 import eclipselink.example.jpa.employee.services.EmployeeRepository;
-import eclipselink.example.jpa.employee.services.diagnostics.Diagnostics;
-import eclipselink.example.jpa.employee.services.diagnostics.Diagnostics.SQLTrace;
 import eclipselink.example.jpa.employee.services.paging.EntityPaging;
+import eclipselink.example.jpa.employee.services.persistence.SQLCapture;
+import eclipselink.example.jpa.employee.services.persistence.SQLCapture.SQLTrace;
 import eclipselink.example.jpa.employee.test.PersistenceTesting;
 
 /**
@@ -47,7 +48,7 @@ public class PageEmployeesTest {
         SQLTrace start = diagnostics.getTrace();
         Assert.assertTrue(start.getEntries().isEmpty());
 
-        EmployeeCriteria criteria = new EmployeeCriteria();
+        EmployeeCriteria criteria = new EmployeeCriteria(10);
         criteria.setFirstName(null);
         criteria.setLastName(null);
         criteria.setPageSize(5);
@@ -83,7 +84,7 @@ public class PageEmployeesTest {
         SQLTrace start = diagnostics.getTrace();
         Assert.assertTrue(start.getEntries().isEmpty());
 
-        EmployeeCriteria criteria = new EmployeeCriteria();
+        EmployeeCriteria criteria = new EmployeeCriteria(10);
         criteria.setFirstName(null);
         criteria.setLastName(null);
         criteria.setPageSize(5);
@@ -119,7 +120,7 @@ public class PageEmployeesTest {
         SQLTrace start = diagnostics.getTrace();
         Assert.assertTrue(start.getEntries().isEmpty());
 
-        EmployeeCriteria criteria = new EmployeeCriteria();
+        EmployeeCriteria criteria = new EmployeeCriteria(10);
         criteria.setFirstName(null);
         criteria.setLastName(null);
         criteria.setPageSize(10);
@@ -156,7 +157,7 @@ public class PageEmployeesTest {
         SQLTrace start = diagnostics.getTrace();
         Assert.assertTrue(start.getEntries().isEmpty());
 
-        EmployeeCriteria criteria = new EmployeeCriteria();
+        EmployeeCriteria criteria = new EmployeeCriteria(10);
         criteria.setFirstName(null);
         criteria.setLastName(null);
         criteria.setPageSize(10);
@@ -189,7 +190,7 @@ public class PageEmployeesTest {
 
     private static EntityManagerFactory emf;
 
-    private static Diagnostics diagnostics;
+    private static SQLCapture diagnostics;
 
     public static EntityManagerFactory getEmf() {
         return emf;
@@ -198,8 +199,7 @@ public class PageEmployeesTest {
     @BeforeClass
     public static void createEMF() {
         emf = PersistenceTesting.createEMF(true);
-        diagnostics = new Diagnostics();
-        diagnostics.setEmf(emf);
+        diagnostics = new SQLCapture(JpaHelper.getServerSession(getEmf()));
 
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();

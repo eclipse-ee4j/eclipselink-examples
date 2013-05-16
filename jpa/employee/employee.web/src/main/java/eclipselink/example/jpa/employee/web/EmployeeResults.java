@@ -16,10 +16,12 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.context.Flash;
+import javax.inject.Inject;
 
 import eclipselink.example.jpa.employee.model.Employee;
 import eclipselink.example.jpa.employee.services.EmployeeCriteria;
@@ -50,6 +52,7 @@ public class EmployeeResults {
 
     private int currentPage = 1;
 
+    @Inject
     private EmployeeCriteria criteria;
 
     public EmployeeRepository getRepository() {
@@ -61,15 +64,28 @@ public class EmployeeResults {
         this.repository = repository;
     }
 
+    public EmployeeCriteria getCriteria() {
+        return criteria;
+    }
+
+    public void setCriteria(EmployeeCriteria criteria) {
+        this.criteria = criteria;
+    }
+
     public EntityPaging<Employee> getPaging() {
         return this.paging;
     }
 
     @PostConstruct
     public void initialize() {
-        Flash flash = FacesContext.getCurrentInstance().getExternalContext().getFlash();
-        criteria = (EmployeeCriteria) flash.get(SearchEmployees.CRITERIA);
-
+        if (getCriteria() == null) {
+            Flash flash = FacesContext.getCurrentInstance().getExternalContext().getFlash();
+            criteria = (EmployeeCriteria) flash.get(SearchEmployees.CRITERIA);
+        }
+        if (getCriteria() == null) {
+            System.err.println("No criteria found, using default in EmployeeResults");
+            this.criteria = new EmployeeCriteria(10);
+        }
         this.currentPage = 1;
         this.employees = null;
 
@@ -78,21 +94,27 @@ public class EmployeeResults {
 
     public List<Employee> getEmployees() {
         if (this.employees == null) {
-            if (hasPaging()) {
+            if (getHasPaging()) {
                 this.employees = getPaging().get(this.currentPage);
             } else {
                 this.employees = getRepository().getEmployees(criteria);
             }
         }
+
+        // Enforce 10 result max
+        if (this.employees.size() > 10) {
+            FacesContext.getCurrentInstance().addMessage("Max Results", new FacesMessage("Found " + employees.size() + " Employees. Try Advanced Search with pagination"));
+            this.employees = this.employees.subList(0, 10);
+        }
         return this.employees;
     }
 
-    public boolean hasPaging() {
+    public boolean getHasPaging() {
         return this.paging != null;
     }
 
     public int getSize() {
-        if (hasPaging()) {
+        if (getHasPaging()) {
             return this.paging.size();
         }
         return getEmployees().size();
@@ -103,7 +125,7 @@ public class EmployeeResults {
     }
 
     public int getNumPages() {
-        if (hasPaging()) {
+        if (getHasPaging()) {
             return this.paging.getNumPages();
         }
         return 1;
@@ -144,6 +166,6 @@ public class EmployeeResults {
         Flash flashScope = FacesContext.getCurrentInstance().getExternalContext().getFlash();
         flashScope.put("employee", employee);
 
-        return Navigation.EDIT;
+        return Navigation.DELETE;
     }
 }

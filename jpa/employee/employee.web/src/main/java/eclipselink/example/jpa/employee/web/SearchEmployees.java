@@ -16,6 +16,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.context.Flash;
+import javax.inject.Inject;
 
 import eclipselink.example.jpa.employee.services.EmployeeCriteria;
 
@@ -35,8 +36,9 @@ public class SearchEmployees {
      */
     protected final static String CRITERIA = "CRITERIA";
 
-    private EmployeeCriteria criteria = new EmployeeCriteria();
-
+    @Inject
+    private EmployeeCriteria criteria = new EmployeeCriteria(10);
+    
     public EmployeeCriteria getCriteria() {
         return criteria;
     }

@@ -53,7 +53,6 @@ public class SamplePopulation {
         emp.setLastName(LAST_NAMES[r.nextInt(LAST_NAMES.length)]);
         emp.addPhoneNumber("HOME", "111", "5552222");
         emp.addPhoneNumber("WORK", "222", "5552222");
-        emp.setAddress(new Address());
 
         return emp;
     }

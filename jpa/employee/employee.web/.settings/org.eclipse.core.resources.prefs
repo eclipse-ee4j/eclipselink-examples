@@ -1,5 +1,6 @@
 eclipse.preferences.version=1
 encoding//src/main/java=UTF-8
+encoding//src/main/java/eclipselink/example/jpa/employee/web/DeleteEmployee.java=UTF-8
 encoding//src/main/java/eclipselink/example/jpa/employee/web/EditEmployee.java=UTF-8
 encoding//src/main/java/eclipselink/example/jpa/employee/web/Navigation.java=UTF-8
 encoding//src/main/resources=UTF-8

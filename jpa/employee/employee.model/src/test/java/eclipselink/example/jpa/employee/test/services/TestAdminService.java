@@ -17,7 +17,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
@@ -25,14 +24,14 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import eclipselink.example.jpa.employee.model.SamplePopulation;
-import eclipselink.example.jpa.employee.services.AdminBean;
+import eclipselink.example.jpa.employee.services.AdminService;
 import eclipselink.example.jpa.employee.test.PersistenceTesting;
 
-public class AdminBeanTest {
+public class TestAdminService {
 
-    private AdminBean admin;
+    private AdminService admin;
 
-    public AdminBean getAdmin() {
+    public AdminService getAdmin() {
         return admin;
     }
 
@@ -52,7 +51,7 @@ public class AdminBeanTest {
         
         Assert.assertEquals(20, admin.getDatabaseCount("Employee"));
 
-        Assert.assertEquals(20, admin.getDatabaseCount("Address"));
+        Assert.assertEquals(0, admin.getDatabaseCount("Address"));
 
         Assert.assertEquals(40, admin.getDatabaseCount("PhoneNumber"));
     }
@@ -98,22 +97,10 @@ public class AdminBeanTest {
 
     @Before
     public void setup() {
-        EntityManager em = getEmf().createEntityManager();
-        this.admin = new AdminBean();
-        this.admin.setEntityManager(em);
+        this.admin = new AdminService();
+        this.admin.setEmf(getEmf());
 
-        em.getTransaction().begin();
         this.admin.resetDatabase();
-        em.getTransaction().commit();
-        em.clear();
-
-        em.getTransaction().begin();
-    }
-
-    @After
-    public void close() {
-        this.admin.getEntityManager().getTransaction().commit();
-        this.admin.getEntityManager().close();
     }
 
 }

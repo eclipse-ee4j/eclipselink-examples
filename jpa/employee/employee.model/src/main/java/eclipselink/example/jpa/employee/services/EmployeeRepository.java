@@ -21,6 +21,8 @@ import javax.persistence.OptimisticLockException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaQuery;
 
+import org.eclipse.persistence.internal.sessions.RepeatableWriteUnitOfWork;
+
 import eclipselink.example.jpa.employee.model.Address;
 import eclipselink.example.jpa.employee.model.Employee;
 import eclipselink.example.jpa.employee.model.PhoneNumber;
@@ -68,7 +70,6 @@ public class EmployeeRepository {
             emp = getEntityManager().merge(employee);
 
             if (emp != null) {
-                // Ensure the Employee's lock value is incremented
                 getEntityManager().lock(emp, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
                 getEntityManager().flush();
             }
@@ -79,15 +80,21 @@ public class EmployeeRepository {
         return emp;
     }
 
+    /**
+     * TODO
+     * 
+     * @param employee
+     * @return
+     */
     public Employee delete(Employee employee) {
         try {
             Employee emp = getEntityManager().find(Employee.class, employee.getId());
             getEntityManager().remove(emp);
             getEntityManager().flush();
-            return emp;
         } catch (OptimisticLockException ole) {
-            return null;
+            return employee;
         }
+        return null;
     }
 
     public Employee refresh(Employee employee) {

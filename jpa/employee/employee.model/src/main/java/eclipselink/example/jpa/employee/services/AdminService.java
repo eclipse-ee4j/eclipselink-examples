@@ -15,9 +15,11 @@ package eclipselink.example.jpa.employee.services;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ejb.Stateless;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
 import javax.persistence.metamodel.EntityType;
 
 import org.eclipse.persistence.descriptors.ClassDescriptor;
@@ -25,31 +27,51 @@ import org.eclipse.persistence.internal.sessions.IdentityMapAccessor;
 import org.eclipse.persistence.sessions.server.Server;
 import org.eclipse.persistence.tools.schemaframework.SchemaManager;
 
-import eclipselink.example.jpa.employee.model.Employee;
 import eclipselink.example.jpa.employee.model.SamplePopulation;
+import eclipselink.example.jpa.employee.services.persistence.SQLCapture;
+import eclipselink.example.jpa.employee.services.persistence.SQLCapture.SQLTrace;
 
 /**
- * Edit service for an {@link Employee} instance.
+ * TODO
+ * <p>
+ * This session bean uses some internals of EclipseLink and is written to be
+ * used in both JTA and RESOURCE_LOCAL. Its transaction behavior is determined
+ * by {@link #isJTA()}
  * 
  * @author dclarke
  * @since EclipseLink 2.4.2
  */
-@Stateless
-public class AdminBean {
+@Singleton
+@Startup
+public class AdminService {
 
-    private EntityManager entityManager;
+    private EntityManagerFactory emf;
 
-    public EntityManager getEntityManager() {
-        return entityManager;
+    private SQLCapture sqlCapture;
+
+    public EntityManagerFactory getEmf() {
+        return emf;
     }
 
-    @PersistenceContext(unitName = "employee")
-    public void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
+    @PersistenceUnit(unitName = "employee")
+    public void setEmf(EntityManagerFactory emf) {
+        this.emf = emf;
+        this.sqlCapture = new SQLCapture(getServerSession());
+    }
+
+    public SQLCapture getSqlCapture() {
+        return sqlCapture;
+    }
+
+    public void removeSqlCapture() {
+        if (this.sqlCapture != null) {
+            this.sqlCapture.remove();
+            this.sqlCapture = null;
+        }
     }
 
     public void resetDatabase() {
-        Server session = getEntityManager().unwrap(Server.class);
+        Server session = getServerSession();
 
         SchemaManager sm = new SchemaManager(session);
         sm.replaceDefaultTables();
@@ -59,12 +81,25 @@ public class AdminBean {
     }
 
     public void populateDatabase(int quantity) {
-        new SamplePopulation().createNewEmployees(getEntityManager(), quantity);
-        getEntityManager().flush();
+        EntityManager em = getEmf().createEntityManager();
+
+        if (isJTA()) {
+            em.joinTransaction();
+        } else {
+            em.getTransaction().begin();
+        }
+
+        new SamplePopulation().createNewEmployees(em, quantity);
+
+        if (isJTA()) {
+            em.flush();
+        } else {
+            em.getTransaction().commit();
+        }
     }
 
     public int getCacheSize(String typeName) {
-        Server session = getEntityManager().unwrap(Server.class);
+        Server session = getServerSession();
 
         ClassDescriptor descriptor = session.getDescriptorForAlias(typeName);
         if (descriptor != null) {
@@ -75,7 +110,12 @@ public class AdminBean {
     }
 
     public int getDatabaseCount(String type) {
-            return getEntityManager().createQuery("SELECT COUNT(o) FROM " + type + " o", Number.class).getSingleResult().intValue();
+        EntityManager em = getEmf().createEntityManager();
+        try {
+            return em.createQuery("SELECT COUNT(o) FROM " + type + " o", Number.class).getSingleResult().intValue();
+        } finally {
+            em.close();
+        }
     }
 
     /**
@@ -84,12 +124,37 @@ public class AdminBean {
      */
     public List<String> getTypes() {
         List<String> typeNames = new ArrayList<String>();
-        for (EntityType<?> type : getEntityManager().getMetamodel().getEntities()) {
+        for (EntityType<?> type : getEmf().getMetamodel().getEntities()) {
             if (type.getSupertype() == null) {
                 typeNames.add(type.getName());
             }
         }
         return typeNames;
+    }
+
+    /**
+     * TODO
+     * 
+     * @return
+     */
+    private Server getServerSession() {
+        EntityManager em = getEmf().createEntityManager();
+        try {
+            return em.unwrap(Server.class);
+        } finally {
+            em.close();
+        }
+
+    }
+
+    private Boolean jta = null;
+
+    private boolean isJTA() {
+        if (jta == null) {
+            jta = getServerSession().getServerPlatform().isJTAEnabled();
+        }
+        return jta;
+
     }
 
 }

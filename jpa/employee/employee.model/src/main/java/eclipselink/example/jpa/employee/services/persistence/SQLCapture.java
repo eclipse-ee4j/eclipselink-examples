@@ -10,19 +10,13 @@
  * Contributors:
  *  dclarke - initial
  ******************************************************************************/
-package eclipselink.example.jpa.employee.services.diagnostics;
+package eclipselink.example.jpa.employee.services.persistence;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
 
 import org.eclipse.persistence.logging.SessionLog;
 import org.eclipse.persistence.logging.SessionLogEntry;
@@ -36,39 +30,24 @@ import org.eclipse.persistence.sessions.server.Server;
  * @author dclarke
  * @since EclipseLink 2.4.2
  */
-@Singleton
-@Startup
-public class Diagnostics {
+public class SQLCapture {
 
-    private boolean enabled = true;
-
-    private EntityManagerFactory emf;
+    private Server session;
 
     private ThreadLocal<SQLTrace> traces = new ThreadLocal<SQLTrace>();
+    
+    private SessionLog originalLog;
 
-    public EntityManagerFactory getEmf() {
-        return emf;
-    }
+    public SQLCapture(Server session) {
+        this.session = session;
 
-    @PersistenceUnit(unitName = "employee")
-    public void setEmf(EntityManagerFactory emf) {
-        this.emf = emf;
-
-        EntityManager em = emf.createEntityManager();
-        Server session = em.unwrap(Server.class);
-        SessionLog original = session.getSessionLog();
-        SessionLog logProxy = (SessionLog) Proxy.newProxyInstance(session.getPlatform().getConversionManager().getLoader(), new Class[] { SessionLog.class }, new SessionLogHandler(original));
+        this.originalLog = session.getSessionLog();
+        SessionLog logProxy = (SessionLog) Proxy.newProxyInstance(session.getPlatform().getConversionManager().getLoader(), new Class[] { SessionLog.class }, new SessionLogHandler(originalLog));
         session.setSessionLog(logProxy);
-
-        em.close();
     }
 
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    public Server getSession() {
+        return session;
     }
 
     public SQLTrace getTrace() {
@@ -90,6 +69,10 @@ public class Diagnostics {
     public void clear() {
         this.traces.set(null);
     }
+    
+    public void remove() {
+        getSession().setSessionLog(this.originalLog);
+    }
 
     private class SessionLogHandler implements InvocationHandler {
 
@@ -101,7 +84,7 @@ public class Diagnostics {
 
         @Override
         public Object invoke(Object source, Method method, Object[] args) throws Throwable {
-            if (isEnabled() && "log".equals(method.getName()) && args.length == 1) {
+            if ("log".equals(method.getName()) && args.length == 1) {
                 SessionLogEntry entry = (SessionLogEntry) args[0];
                 if (SessionLog.SQL.equals(entry.getNameSpace())) {
                     getTrace(false).add(entry.getMessage());

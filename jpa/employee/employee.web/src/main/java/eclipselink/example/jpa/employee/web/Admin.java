@@ -20,9 +20,8 @@ import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
 
-import eclipselink.example.jpa.employee.services.AdminBean;
-import eclipselink.example.jpa.employee.services.diagnostics.Diagnostics;
-import eclipselink.example.jpa.employee.services.diagnostics.Diagnostics.SQLTrace;
+import eclipselink.example.jpa.employee.services.AdminService;
+import eclipselink.example.jpa.employee.services.persistence.SQLCapture.SQLTrace;
 
 /**
  * TODO
@@ -34,29 +33,18 @@ import eclipselink.example.jpa.employee.services.diagnostics.Diagnostics.SQLTrac
 @ApplicationScoped
 public class Admin {
 
-    private AdminBean adminBean;
+    private AdminService adminBean;
 
     private List<String> typeNames;
 
     boolean sqlTraceEnabled = true;
 
-    private Diagnostics diagnostics;
-
-    public Diagnostics getDiagnostics() {
-        return diagnostics;
-    }
-
-    @EJB
-    public void setDiagnostics(Diagnostics diagnostics) {
-        this.diagnostics = diagnostics;
-    }
-
-    public AdminBean getAdminBean() {
+    public AdminService getAdminBean() {
         return adminBean;
     }
 
     @EJB
-    public void setAdminBean(AdminBean adminBean) {
+    public void setAdminBean(AdminService adminBean) {
         this.adminBean = adminBean;
     }
 
@@ -86,18 +74,19 @@ public class Admin {
     }
 
     public boolean isSqlTraceEnabled() {
-        return getDiagnostics().isEnabled();
+        return getAdminBean().getSqlCapture() != null;
     }
 
     public String getMessages() {
-        SQLTrace trace = getDiagnostics().getTrace(true);
+        SQLTrace trace = getAdminBean().getSqlCapture().getTrace(true);
 
         if (isSqlTraceEnabled() && trace != null) {
             // Truncate at 5 messages
             trace.truncate(5, "... SQL trace truncated");
 
             for (String entry : trace.getEntries()) {
-                FacesContext.getCurrentInstance().addMessage("SQL", new FacesMessage(entry));
+                FacesMessage msg = new FacesMessage(entry);
+                FacesContext.getCurrentInstance().addMessage("SQL", msg);
             }
         }
         return null;

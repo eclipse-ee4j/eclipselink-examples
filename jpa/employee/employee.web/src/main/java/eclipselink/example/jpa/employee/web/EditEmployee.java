@@ -59,7 +59,6 @@ public class EditEmployee {
 
         if (this.employee == null) {
             this.employee = new Employee();
-            this.employee.setAddress(new Address());
         }
     }
 
@@ -102,8 +101,10 @@ public class EditEmployee {
     }
 
     public String delete() {
-        this.employee = getRepository().delete(getEmployee());
-        return cancel();
+        Flash flashScope = FacesContext.getCurrentInstance().getExternalContext().getFlash();
+        flashScope.put("employee", getEmployee());
+
+        return Navigation.DELETE;
     }
 
     public String refresh() {

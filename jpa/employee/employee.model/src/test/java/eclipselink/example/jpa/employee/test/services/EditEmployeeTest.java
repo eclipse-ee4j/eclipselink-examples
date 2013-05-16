@@ -66,7 +66,7 @@ public class EditEmployeeTest {
         repository.getEntityManager().getTransaction().rollback();
     }
 
-    @Test
+    //@Test
     public void refreshUpdateAddress() {
         Employee emp = this.repository.find(sampleId, true);
 

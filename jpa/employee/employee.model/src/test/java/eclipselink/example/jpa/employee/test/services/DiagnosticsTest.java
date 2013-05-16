@@ -17,6 +17,7 @@ import java.lang.reflect.Proxy;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
+import org.eclipse.persistence.jpa.JpaHelper;
 import org.eclipse.persistence.logging.SessionLog;
 import org.eclipse.persistence.sessions.server.Server;
 import org.junit.AfterClass;
@@ -27,8 +28,8 @@ import org.junit.Test;
 
 import eclipselink.example.jpa.employee.model.Employee;
 import eclipselink.example.jpa.employee.model.SamplePopulation;
-import eclipselink.example.jpa.employee.services.diagnostics.Diagnostics;
-import eclipselink.example.jpa.employee.services.diagnostics.Diagnostics.SQLTrace;
+import eclipselink.example.jpa.employee.services.persistence.SQLCapture;
+import eclipselink.example.jpa.employee.services.persistence.SQLCapture.SQLTrace;
 import eclipselink.example.jpa.employee.test.PersistenceTesting;
 
 public class DiagnosticsTest {
@@ -42,7 +43,7 @@ public class DiagnosticsTest {
 
         Assert.assertNotNull(log);
         Assert.assertTrue(Proxy.isProxyClass(log.getClass()));
-        Assert.assertEquals(Diagnostics.class.getName() + "$SessionLogHandler", Proxy.getInvocationHandler(log).getClass().getName());
+        Assert.assertEquals(SQLCapture.class.getName() + "$SessionLogHandler", Proxy.getInvocationHandler(log).getClass().getName());
 
         em.close();
     }
@@ -66,7 +67,7 @@ public class DiagnosticsTest {
 
     private static EntityManagerFactory emf;
 
-    private static Diagnostics diagnostics;
+    private static SQLCapture diagnostics;
 
     public static EntityManagerFactory getEmf() {
         return emf;
@@ -75,8 +76,7 @@ public class DiagnosticsTest {
     @BeforeClass
     public static void createEMF() {
         emf = PersistenceTesting.createEMF(true);
-        diagnostics = new Diagnostics();
-        diagnostics.setEmf(emf);
+        diagnostics = new SQLCapture(JpaHelper.getServerSession(getEmf()));
 
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();

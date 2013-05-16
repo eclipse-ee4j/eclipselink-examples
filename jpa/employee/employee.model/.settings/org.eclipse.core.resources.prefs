@@ -1,6 +1,6 @@
 eclipse.preferences.version=1
 encoding//src/main/java=UTF-8
-encoding//src/main/java/eclipselink/example/jpa/employee/services/AdminBean.java=UTF-8
+encoding//src/main/java/eclipselink/example/jpa/employee/services/AdminService.java=UTF-8
 encoding//src/main/java/eclipselink/example/jpa/employee/services/EmployeeRepository.java=UTF-8
 encoding//src/main/resources=UTF-8
 encoding//src/test/java=UTF-8

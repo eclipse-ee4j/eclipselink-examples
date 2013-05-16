@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+
+<ui:composition template="/WEB-INF/template.jsf">
+	<ui:define name="body">
+
+		<h:form>
+			<h2>
+				<h:outputLabel value="Confirm Employee Delete"
+					rendered="#{deleteEmployee.employee != null}" />
+				<h:outputLabel value="Employee Deleted"
+					rendered="#{deleteEmployee.employee == null}" />
+			</h2>
+
+			<div align="center">
+				<h:panelGrid width="600" columns="2" border="1" class="table-design" rendered="#{deleteEmployee.employee != null}">
+					<f:facet name="header">Employee			<div align="right">
+							<h:commandButton value="Confirm"
+								action="#{deleteEmployee.confirm}" class="button-small" />
+							<h:commandButton value="Cancel" action="#{deleteEmployee.cancel}"
+								class="button-small" />
+						</div>
+					</f:facet>
+					<h:outputLabel value="ID:" />
+					<h:outputLabel value="#{deleteEmployee.employee.id}" />
+					<h:outputLabel value="First Name:" />
+					<h:outputLabel value="#{deleteEmployee.employee.firstName}" />
+					<h:outputLabel value="Last Name:" />
+					<h:outputLabel value="#{deleteEmployee.employee.lastName}" />
+					<h:outputLabel value="Gender:" />
+					<h:outputLabel value="#{deleteEmployee.employee.gender}" />
+					<h:outputLabel value="Salary: $" />
+					<h:outputLabel value="#{deleteEmployee.employee.salary}" />
+					<h:outputLabel value="Version" />
+					<h:outputLabel value="#{deleteEmployee.employee.version}" />
+
+				</h:panelGrid>
+
+				<h:panelGrid width="600" columns="2" border="1"
+					rendered="#{deleteEmployee.employee.address != null}"
+					class="table-design">
+					<f:facet name="header">Address</f:facet>
+					<h:outputLabel value="Street:" />
+					<h:outputLabel value="#{deleteEmployee.employee.address.street}" />
+					<h:outputLabel value="City:" />
+					<h:outputLabel value="#{deleteEmployee.employee.address.city}" />
+					<h:outputLabel value="Country" />
+					<h:outputLabel value="#{deleteEmployee.employee.address.country}" />
+				</h:panelGrid>
+
+
+				<h:dataTable width="600" var="phone" rendered="#{deleteEmployee.employee != null}"
+					value="#{deleteEmployee.employee.phoneNumbers}" border="1"
+					class="table-design">
+					<f:facet name="header">Phone Numbers</f:facet>
+					<h:column>
+						<f:facet name="header">Type</f:facet>
+						<h:outputLabel value="#{phone.type}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">Area Code</f:facet>
+						<h:outputLabel value="#{phone.areaCode}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">Number</f:facet>
+						<h:outputLabel value="#{phone.number}" />
+					</h:column>
+				</h:dataTable>
+			</div>
+		</h:form>
+	</ui:define>
+
+	<ui:define name="eclipselink" rendered="#{deleteEmployee.employee != null}">
+		<h3>Delete Entity</h3>
+		<p>This example is configured to delete an employee along with its address and phone numbers. It will also verify the optimistic lock field.</p>
+	</ui:define>
+</ui:composition>
+</html>

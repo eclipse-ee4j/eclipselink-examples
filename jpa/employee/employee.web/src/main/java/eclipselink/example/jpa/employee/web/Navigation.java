@@ -32,7 +32,8 @@ public class Navigation {
     protected static final String ADMIN_REDIRECT = "/admin?faces-redirect=true";
     protected static final String EDIT = "/employee/edit";
     protected static final String EDIT_REDIRECT = EDIT + "?faces-redirect=true";
-    protected static final String SEARCH_REDIRECT = "employee/search?faces-redirect=true";
+    protected static final String SEARCH_REDIRECT = "/employee/search?faces-redirect=true";
+    protected static final String DELETE = "/employee/delete";
 
     public String home() {
         return INDEX_REDIRECT;

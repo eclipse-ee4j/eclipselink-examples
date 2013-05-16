@@ -93,6 +93,8 @@ textarea {
 	color: white;
 	padding: 5px 0 0 20px;
 	position: fixed;
+	text-indent: 5px;
+	overflow: hidden;
 }
 
 .title {
