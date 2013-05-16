@@ -29,6 +29,7 @@ Running the Example
         - WebSphere
             - org.eclipse.persistence.platform.server.was.WebSphere_7_Platform
             - org.eclipse.persistence.transaction.was.WebSphereTransactionController
-4. Run the Packaging: mvn package
-5. Deploy WAR file to compatible target server
-6. Run the Integration Tests: mvn integration-test
+4.  Run the Packaging: mvn package
+5.  Deploy WAR file to compatible target server
+6.  Run the Integration Tests: mvn integration-test
+7.  Generate the test report HTML:  mvn site
