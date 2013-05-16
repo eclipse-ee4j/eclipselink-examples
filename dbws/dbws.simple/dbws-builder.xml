@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dbws-builder version="1.2">
     <properties>
-        <property name="projectName">simpletable</property>
+        <property name="projectName">emp</property>
         <property name="logLevel">all</property>
         <property name="username">user</property>
         <property name="password">password</property>
         <property name="url">jdbc:mysql://localhost:3306/test</property>
         <property name="driver">com.mysql.jdbc.Driver</property>
         <property name="platformClassname">org.eclipse.persistence.platform.database.MySQLPlatform</property>
-        <property name="dataSource">jdbc/DBWStestDS</property>
-        <property name="wsdlLocationURI">http://localhost:8080/dbws.simple/simpletable?wsdl</property>
+        <property name="dataSource">jdbc/TestDS</property>
+        <property name="wsdlLocationURI">http://localhost:8080/dbws.simple/emp?wsdl</property>
     </properties>
-	<table schemaPattern="%" tableNamePattern="SIMPLETABLE" catalogPattern="%" />
+	<table schemaPattern="%" tableNamePattern="EMP" catalogPattern="%" />
 </dbws-builder>
