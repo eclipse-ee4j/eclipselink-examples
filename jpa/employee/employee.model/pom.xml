@@ -48,12 +48,6 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>org.jboss.weld</groupId>
-			<artifactId>weld-api</artifactId>
-			<version>1.0</version>
-			<scope>provided</scope>
-		</dependency>
 	</dependencies>
 
 	<build>
