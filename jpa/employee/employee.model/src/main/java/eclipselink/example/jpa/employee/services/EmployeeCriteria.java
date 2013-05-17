@@ -12,9 +12,6 @@
  ******************************************************************************/
 package eclipselink.example.jpa.employee.services;
 
-import java.io.Serializable;
-
-import javax.enterprise.context.SessionScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -36,9 +33,7 @@ import eclipselink.example.jpa.employee.services.paging.IdInPaging;
  * @author dclarke
  * @since EclipseLInk 2.4.2
  */
-@SessionScoped
-public class EmployeeCriteria implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class EmployeeCriteria {
 
     private String firstName = "%";
 
@@ -153,6 +148,12 @@ public class EmployeeCriteria implements Serializable {
             }
         }
         return null;
+    }
+
+    public void reset() {
+        this.firstName = "%";
+        this.lastName = "%";
+        this.pagingType = "NONE";
     }
 
 }

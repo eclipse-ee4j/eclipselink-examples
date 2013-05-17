@@ -12,11 +12,10 @@
  ******************************************************************************/
 package eclipselink.example.jpa.employee.web;
 
+import java.io.Serializable;
+
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
-import javax.faces.context.Flash;
-import javax.inject.Inject;
+import javax.faces.bean.SessionScoped;
 
 import eclipselink.example.jpa.employee.services.EmployeeCriteria;
 
@@ -27,29 +26,17 @@ import eclipselink.example.jpa.employee.services.EmployeeCriteria;
  * @since EclipseLink 2.4.2
  */
 @ManagedBean
-@ViewScoped
-public class SearchEmployees {
+@SessionScoped
+public class SearchEmployees implements Serializable {
+    private static final long serialVersionUID = 1L;
 
-    /**
-     * Flash property name used to pass the criteria through to the results
-     * rendering page.
-     */
-    protected final static String CRITERIA = "CRITERIA";
-
-    @Inject
     private EmployeeCriteria criteria = new EmployeeCriteria(10);
     
     public EmployeeCriteria getCriteria() {
         return criteria;
     }
 
-    public void setCriteria(EmployeeCriteria criteria) {
-        this.criteria = criteria;
-    }
-
-    public String search() {
-        Flash flash = FacesContext.getCurrentInstance().getExternalContext().getFlash();
-        flash.put(CRITERIA, getCriteria());
+     public String search() {
         return EmployeeResults.PAGE;
     }
 

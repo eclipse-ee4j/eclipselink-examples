@@ -13,6 +13,7 @@
 package eclipselink.example.jpa.employee.web;
 
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
 
 import eclipselink.example.jpa.employee.model.Employee;
@@ -50,8 +51,20 @@ public class Navigation {
     public String edit() {
         return EDIT_REDIRECT;
     }
+    
+    @ManagedProperty("#{searchEmployees}")
+    private SearchEmployees search;
+
+    public SearchEmployees getSearch() {
+        return search;
+    }
+
+    public void setSearch(SearchEmployees search) {
+        this.search = search;
+    }
 
     public String search() {
+        getSearch().getCriteria().reset();
         return SEARCH_REDIRECT;
     }
 

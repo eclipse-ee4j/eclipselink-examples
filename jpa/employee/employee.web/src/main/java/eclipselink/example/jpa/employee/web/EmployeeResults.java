@@ -18,13 +18,12 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.context.Flash;
-import javax.inject.Inject;
 
 import eclipselink.example.jpa.employee.model.Employee;
-import eclipselink.example.jpa.employee.services.EmployeeCriteria;
 import eclipselink.example.jpa.employee.services.EmployeeRepository;
 import eclipselink.example.jpa.employee.services.paging.EntityPaging;
 
@@ -41,6 +40,9 @@ public class EmployeeResults {
 
     protected static final String PAGE = "/employee/results?faces-redirect=true";
 
+    @ManagedProperty("#{searchEmployees}")
+    private SearchEmployees search;
+    
     private EmployeeRepository repository;
 
     /**
@@ -52,9 +54,6 @@ public class EmployeeResults {
 
     private int currentPage = 1;
 
-    @Inject
-    private EmployeeCriteria criteria;
-
     public EmployeeRepository getRepository() {
         return repository;
     }
@@ -64,12 +63,12 @@ public class EmployeeResults {
         this.repository = repository;
     }
 
-    public EmployeeCriteria getCriteria() {
-        return criteria;
+    public SearchEmployees getSearch() {
+        return search;
     }
 
-    public void setCriteria(EmployeeCriteria criteria) {
-        this.criteria = criteria;
+    public void setSearch(SearchEmployees search) {
+        this.search = search;
     }
 
     public EntityPaging<Employee> getPaging() {
@@ -78,18 +77,10 @@ public class EmployeeResults {
 
     @PostConstruct
     public void initialize() {
-        if (getCriteria() == null) {
-            Flash flash = FacesContext.getCurrentInstance().getExternalContext().getFlash();
-            criteria = (EmployeeCriteria) flash.get(SearchEmployees.CRITERIA);
-        }
-        if (getCriteria() == null) {
-            System.err.println("No criteria found, using default in EmployeeResults");
-            this.criteria = new EmployeeCriteria(10);
-        }
         this.currentPage = 1;
         this.employees = null;
 
-        this.paging = getRepository().getPaging(criteria);
+        this.paging = getRepository().getPaging(getSearch().getCriteria());
     }
 
     public List<Employee> getEmployees() {
@@ -97,7 +88,7 @@ public class EmployeeResults {
             if (getHasPaging()) {
                 this.employees = getPaging().get(this.currentPage);
             } else {
-                this.employees = getRepository().getEmployees(criteria);
+                this.employees = getRepository().getEmployees(getSearch().getCriteria());
             }
         }
 
