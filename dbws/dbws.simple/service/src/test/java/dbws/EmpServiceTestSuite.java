@@ -211,7 +211,7 @@ public class EmpServiceTestSuite {
 	        QName qname = new QName("urn:empService", "empServicePort");
 	        Service service = Service.create(new QName("urn:emp", "empService"));
 	        service.addPort(qname, SOAPBinding.SOAP11HTTP_BINDING, "http://" + "localhost" + ":" + "8080" + "/dbws.simple/emp");
-	        //service.addPort(qname, SOAPBinding.SOAP11HTTP_BINDING, "http://" + host + ":" + port + "/dbws.simple/simpletable");
+	        //service.addPort(qname, SOAPBinding.SOAP11HTTP_BINDING, "http://" + host + ":" + port + "/dbws.simple/emp");
 	        Dispatch<SOAPMessage> sourceDispatch = service.createDispatch(qname, SOAPMessage.class, Service.Mode.MESSAGE);
 	                    
             SOAPMessage request = createSOAPMessage(SOAP_FINDALL_REQUEST);

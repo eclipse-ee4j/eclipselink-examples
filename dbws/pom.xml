@@ -2,9 +2,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eclipselink.example.dbws</groupId>
-	<artifactId>dbws.maven</artifactId>
+	<artifactId>dbws</artifactId>
 	<version>2.4.2-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>pom</packaging>
 
 	<scm>
 		<connection>git://git.eclipse.org/gitroot/eclipselink/examples.git</connection>
@@ -54,7 +54,6 @@
 		<defaultGoal>install</defaultGoal>
 
 		<plugins>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-install-plugin</artifactId>
@@ -74,49 +73,6 @@
 							<version>${eclipselink.version}</version>
 						</configuration>
 					</execution>
-					<execution>
-						<id>oracleddlparser</id>
-						<phase>install</phase>
-						<goals>
-							<goal>install-file</goal>
-						</goals>
-						<configuration>
-							<file>${eclipselink.home}/utils/dbws/org.eclipse.persistence.oracleddlparser_1.0.0.v20121122.jar</file>
-							<sources>${eclipselink.home}/utils/dbws/org.eclipse.persistence.oracleddlparser.source_1.0.0.v20121122.jar</sources>
-							<packaging>jar</packaging>
-							<groupId>org.eclipse.persistence</groupId>
-							<artifactId>oracleddlparser</artifactId>
-							<version>${eclipselink.version}</version>
-						</configuration>
-					</execution>
-					<execution>
-						<id>javax.wsdl</id>
-						<phase>install</phase>
-						<goals>
-							<goal>install-file</goal>
-						</goals>
-						<configuration>
-							<file>${eclipselink.home}/utils/dbws/javax.wsdl_1.6.2.v201012040545.jar</file>
-							<packaging>jar</packaging>
-							<groupId>org.eclipse.persistence</groupId>
-							<artifactId>javax.wsdl</artifactId>
-							<version>1.6.2</version>
-						</configuration>
-					</execution>
-					<execution>
-						<id>javax.servlet</id>
-						<phase>install</phase>
-						<goals>
-							<goal>install-file</goal>
-						</goals>
-						<configuration>
-							<file>${eclipselink.home}/utils/dbws/javax.servlet_2.4.0.v200806031604.jar</file>
-							<packaging>jar</packaging>
-							<groupId>org.eclipse.persistence</groupId>
-							<artifactId>javax.servlet</artifactId>
-							<version>2.4.0</version>
-						</configuration>
-					</execution>
 				</executions>
 			</plugin>
 
@@ -128,27 +84,6 @@
 					<filesets>
 						<fileset>
 							<directory>${settings.localRepository}/org/eclipse/persistence/dbws.builder</directory>
-							<includes>
-								<include>**/*</include>
-							</includes>
-							<followSymlinks>false</followSymlinks>
-						</fileset>
-						<fileset>
-							<directory>${settings.localRepository}/org/eclipse/persistence/oracleddlparser</directory>
-							<includes>
-								<include>**/*</include>
-							</includes>
-							<followSymlinks>false</followSymlinks>
-						</fileset>
-						<fileset>
-							<directory>${settings.localRepository}/org/eclipse/persistence/javax.wsdl</directory>
-							<includes>
-								<include>**/*</include>
-							</includes>
-							<followSymlinks>false</followSymlinks>
-						</fileset>
-						<fileset>
-							<directory>${settings.localRepository}/org/eclipse/persistence/javax.servlet</directory>
 							<includes>
 								<include>**/*</include>
 							</includes>
@@ -170,7 +105,7 @@
 						</goals>
 						<configuration>
 							<files>
-								<file>${basedir}/config.properties</file>
+								<file>${project.basedir}/config.properties</file>
 							</files>
 						</configuration>
 					</execution>

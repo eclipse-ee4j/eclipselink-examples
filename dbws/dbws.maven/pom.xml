@@ -5,7 +5,7 @@
 	<artifactId>dbws.maven</artifactId>
 	<version>2.4.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
-
+    
 	<scm>
 		<connection>git://git.eclipse.org/gitroot/eclipselink/examples.git</connection>
 		<url>http://git.eclipse.org/c/eclipselink/examples.git/</url>
@@ -65,37 +65,14 @@
 
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
-			<artifactId>oracleddlparser</artifactId>
-			<version>${eclipselink.version}</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>dbws.builder</artifactId>
 			<version>${eclipselink.version}</version>
 		</dependency>
 
-		<dependency>
-			<groupId>org.eclipse.persistence</groupId>
-			<artifactId>javax.wsdl</artifactId>
-			<version>1.6.2</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.eclipse.persistence</groupId>
-			<artifactId>javax.servlet</artifactId>
-			<version>2.4.0</version>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 
 	<build>
 		<defaultGoal>install</defaultGoal>
-
-		<plugins>
-
-		</plugins>
+		<plugins></plugins>
 	</build>
 </project>

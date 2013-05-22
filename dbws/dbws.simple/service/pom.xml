@@ -1,0 +1,158 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>eclipselink.example.dbws</groupId>
+	<artifactId>service</artifactId>
+	<version>2.4.2-SNAPSHOT</version>
+	<packaging>jar</packaging>
+    
+	<name>EclipseLink Simple DBWS Example</name>
+	<url>http://wiki.eclipse.org/EclipseLink/Examples/DBWS</url>
+
+	<scm>
+		<connection>git://git.eclipse.org/gitroot/eclipselink/examples.git</connection>
+		<url>http://git.eclipse.org/c/eclipselink/examples.git/</url>
+	</scm>
+
+	<licenses>
+		<license>
+			<name>EPL: Eclipse Public License</name>
+			<url>http://www.eclipse.org/legal/epl-v10.html</url>
+		</license>
+		<license>
+			<name>EDL: Eclipse Distribution License</name>
+			<url>http://www.eclipse.org/org/documents/edl-v10.php</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Doug Clarke</name>
+			<organization>Oracle</organization>
+			<email>douglas.clarke@oracle.com</email>
+			<url>java-persistence.blogspot.com</url>
+		</developer>
+		<developer>
+			<name>Dave McCann</name>
+			<organization>Oracle</organization>
+			<email>david.mccann@oracle.com</email>
+		</developer>
+	</developers>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<eclipselink.groupid>org.eclipse.persistence</eclipselink.groupid>
+		<eclipselink.artifactid>eclipselink</eclipselink.artifactid>
+		<eclipselink.version>2.4.2-SNAPSHOT</eclipselink.version>
+	</properties>
+
+	<repositories>
+		<repository>
+			<id>Java.Net</id>
+			<url>http://download.java.net/maven/2/</url>
+		</repository>
+		<repository>
+			<id>EclipseLink</id>
+			<url>http://download.eclipse.org/rt/eclipselink/maven.repo</url>
+		</repository>
+	</repositories>
+
+	<dependencies>
+		<dependency>
+			<groupId>${eclipselink.groupid}</groupId>
+			<artifactId>${eclipselink.artifactid}</artifactId>
+			<version>${eclipselink.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>${eclipselink.groupid}</groupId>
+					<artifactId>commonj.sdo</artifactId>
+				</exclusion>
+			</exclusions>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<finalName>service</finalName>
+		<defaultGoal>test</defaultGoal>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.5.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.7.2</version>
+                <executions>
+                    <execution>
+                        <id>emp-test</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <forkMode>once</forkMode>
+                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                            <includes>
+                                <include>**/EmpServiceTestSuite.java</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>2.14.1</version>
+                <executions>
+                    <execution>
+                        <id>generate-emp-test-report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
+		</plugins>
+	</build>
+    
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jxr-plugin</artifactId>
+                <version>${jxr-maven-plugin.version}</version>
+                <configuration>
+                    <aggregate>true</aggregate>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>${maven-surefire-report-plugin.version}</version>
+                <configuration>
+                    <forkMode>once</forkMode>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+</project>

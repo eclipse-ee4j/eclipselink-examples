@@ -3,8 +3,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eclipselink.example.dbws</groupId>
 	<artifactId>dbws.simple</artifactId>
-	<packaging>war</packaging>
 	<version>2.4.2-SNAPSHOT</version>
+	<packaging>war</packaging>
 
 	<name>EclipseLink Simple DBWS Example</name>
 	<url>http://wiki.eclipse.org/EclipseLink/Examples/DBWS</url>
@@ -84,32 +84,24 @@
 			<version>5.1.24</version>
 			<scope>test</scope>
 		</dependency>
-        
+		
         <dependency>
-            <groupId>com.oracle</groupId>
-            <artifactId>ojdbc6</artifactId>
-            <version>11.2.0</version>
-            <scope>test</scope>
-        </dependency>
-
-		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
-			<artifactId>oracleddlparser</artifactId>
-			<version>${eclipselink.version}</version>
+			<artifactId>org.eclipse.persistence.oracleddlparser</artifactId>
+			<version>2.4.2-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
 
 		<dependency>
-			<groupId>org.eclipse.persistence</groupId>
-			<artifactId>javax.servlet</artifactId>
-			<version>2.4.0</version>
-			<scope>provided</scope>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.4</version>
 		</dependency>
         
 		<dependency>
-			<groupId>org.eclipse.persistence</groupId>
-			<artifactId>javax.wsdl</artifactId>
-			<version>1.6.2</version>
+			<groupId>wsdl4j</groupId>
+			<artifactId>wsdl4j</artifactId>
+			<version>1.6.3</version>
 			<scope>test</scope>
 		</dependency>
 		
@@ -190,42 +182,33 @@
 				</executions>
 			</plugin>
             
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.7.2</version>
-                <executions>
-                    <execution>
-                        <id>emp-test</id>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                        <configuration>
-                            <forkMode>once</forkMode>
-                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                            <includes>
-                                <include>**/EmpServiceTestSuite.java</include>
-                            </includes>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>2.14.1</version>
-                <executions>
-                    <execution>
-                        <id>generate-emp-test-report</id>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+            <!--
+             <target
+             name="reset-database"
+             depends="init"
+             >
+             <sql
+             onerror="continue"
+             driver="${db.driver}"
+             url="${db.url}"
+             userid="${db.user}"
+             password="${db.pwd}"
+             classpathref="db.path"
+             delimiter="|"
+             src="${config.dir}/teardown.sql"
+             />
+             <sql
+             onerror="continue"
+             driver="${db.driver}"
+             url="${db.url}"
+             userid="${db.user}"
+             password="${db.pwd}"
+             classpathref="db.path"
+             delimiter="|"
+             src="${config.dir}/setup.sql"
+             />
+             </target>
+             -->
 
             <plugin>
                 <groupId>com.google.code.maven-replacer-plugin</groupId>
@@ -299,27 +282,4 @@
 		</resources>
 
 	</build>
-    
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jxr-plugin</artifactId>
-                <version>${jxr-maven-plugin.version}</version>
-                <configuration>
-                    <aggregate>true</aggregate>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>${maven-surefire-report-plugin.version}</version>
-                <configuration>
-                    <forkMode>once</forkMode>
-                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                </configuration>
-            </plugin>
-        </plugins>
-    </reporting>
-
 </project>
