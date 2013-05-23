@@ -5,7 +5,7 @@
 	<parent>
 		<relativePath>..</relativePath>
 		<groupId>eclipselink.example.jpa</groupId>
-		<artifactId>employee</artifactId>
+		<artifactId>employee.parent</artifactId>
 		<version>2.4.2-SNAPSHOT</version>
 	</parent>
 
