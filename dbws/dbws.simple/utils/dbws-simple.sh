@@ -10,7 +10,8 @@
 # http://www.eclipse.org/org/documents/edl-v10.php.
 #
 # Contributors:
-#  - egwin - May 2013 - Initial implementation
+#  - egwin   - May 2013 - Initial implementation
+#  - dmccann - May 2013 - Modified paths since the script will live in dbws.simple
 #****************************************************************************************
 
 #==========================
@@ -35,9 +36,11 @@ usage() {
 
 unset clean
 clean() {
-    # Usage: createPath path
+        cd ..
 		mvn clean
-		cd dbws.simple
+        cd dbws.maven
+        mvn clean
+		cd ../dbws.simple
 		mvn clean
 		cd service
 		mvn clean
@@ -45,15 +48,19 @@ clean() {
 
 unset build
 build() {
-  	mvn
-		cd dbws.simple
+        cd ..
+        mvn
+        cd dbws.maven
+        mvn
+        cd ../dbws.simple
 		mvn
+        echo " "
 		echo "**** Build complete. Deploy the generated war file, then run '$PROGNAME test'. ****"
 }
 
 unset test
 test() {
-		cd dbws.simple/service
+		cd service
 		mvn
         mvn site surefire-report:report-only
 }

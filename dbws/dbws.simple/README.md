@@ -7,12 +7,19 @@ http://wiki.eclipse.org/EclipseLink/Examples/DBWS/DBWSBasicTable
 
 For more DBWS examples please see: http://wiki.eclipse.org/EclipseLink/Examples/DBWS
 
+This example consists of three phases: 
+
+1.  WAR generation
+2.  WAR deployment
+3.  Test the generated JAX-WS web service
+
+
 Running the Example
 -------------------
 
 1.  Download the example - Clone the examples GIT repo
-2.  Configure database and application server information for use by the DBWS builder (dbws-builder.xml)
-3.  Configure application server information for use by the DBWS runtime (../config.properties)
+2.  Configure database and application server information for use by the DBWS builder (${project.basedir}/dbws-builder.xml)
+3.  Configure application server information for use by the DBWS runtime (${examples.home}/dbws/config.properties)
     The following two properties must be set according to the target application server:
         - server.name
         - external.txn.controller.name
@@ -29,5 +36,6 @@ Running the Example
         - WebSphere
             - org.eclipse.persistence.platform.server.was.WebSphere_7_Platform
             - org.eclipse.persistence.transaction.was.WebSphereTransactionController
-4.  Run the Packaging: mvn package
-5.  Test the generated web service by executing 'mvn' in the service sub-directory
+4.  Run the packaging: run.builder/mvn
+5.  Deploy the generated WAR to a compatible target server
+6.  Test the generated web service: service.test/mvn

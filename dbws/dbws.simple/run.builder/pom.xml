@@ -249,7 +249,7 @@
 						</goals>
 						<configuration>
 							<files>
-								<file>${basedir}/../config.properties</file>
+								<file>${project.basedir}/../../config.properties</file>
 							</files>
 						</configuration>
 					</execution>

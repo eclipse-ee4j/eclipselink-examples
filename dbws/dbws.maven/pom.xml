@@ -6,6 +6,12 @@
 	<version>2.4.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
     
+    <parent>
+        <groupId>eclipselink.example.dbws</groupId>
+        <artifactId>dbws</artifactId>
+        <version>2.4.2-SNAPSHOT</version>
+    </parent>
+    
 	<scm>
 		<connection>git://git.eclipse.org/gitroot/eclipselink/examples.git</connection>
 		<url>http://git.eclipse.org/c/eclipselink/examples.git/</url>
@@ -73,6 +79,25 @@
 
 	<build>
 		<defaultGoal>install</defaultGoal>
-		<plugins></plugins>
+		<plugins>
+            <plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>properties-maven-plugin</artifactId>
+				<version>1.0-alpha-2</version>
+				<executions>
+					<execution>
+						<phase>initialize</phase>
+						<goals>
+							<goal>read-project-properties</goal>
+						</goals>
+						<configuration>
+							<files>
+								<file>${project.basedir}/../config.properties</file>
+							</files>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+        </plugins>
 	</build>
 </project>

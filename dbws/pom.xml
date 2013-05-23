@@ -6,6 +6,10 @@
 	<version>2.4.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
+    <modules>
+        <module>dbws.maven</module>
+    </modules>
+        
 	<scm>
 		<connection>git://git.eclipse.org/gitroot/eclipselink/examples.git</connection>
 		<url>http://git.eclipse.org/c/eclipselink/examples.git/</url>
@@ -94,6 +98,7 @@
 			</plugin>
 
 			<plugin>
+                <inherited>false</inherited>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>properties-maven-plugin</artifactId>
 				<version>1.0-alpha-2</version>

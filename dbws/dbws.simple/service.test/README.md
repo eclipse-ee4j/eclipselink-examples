@@ -1,5 +1,5 @@
-EclipseLink DBWS: Simple Example Service Test
-=============================================
+EclipseLink DBWS: Simple Example - Service Test
+===============================================
 
 This test will execute a FindAll request against the generated empService.
 
