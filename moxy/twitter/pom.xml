@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eclipselink.example.moxy</groupId>
 	<artifactId>twitter</artifactId>
-	<version>2.4.2-SNAPSHOT</version>
+	<version>2.4.2-RC2</version>
 
 	<name>EclipseLink MOXy Twitter Example</name>
 	<url>http://wiki.eclipse.org/EclipseLink/Examples/MOXy</url>
@@ -42,7 +42,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<eclipselink.groupid>org.eclipse.persistence</eclipselink.groupid>
 		<eclipselink.artifactid>eclipselink</eclipselink.artifactid>
-		<eclipselink.version>2.4.2-SNAPSHOT</eclipselink.version>
+		<eclipselink.version>2.4.2-RC2</eclipselink.version>
 	</properties>
 
 	<repositories>
@@ -118,13 +118,21 @@
 					<classpathScope>test</classpathScope>
 					<mainClass>eclipselink.example.moxy.twitter.Main</mainClass>
 					<systemProperties>
-						<systemProperty>
-							<key>java.net.useSystemProxies</key>
-							<value>true</value>
-						</systemProperty>
 						<!-- <systemProperty> <key>proxySet</key> <value>true</value> </systemProperty> 
 							<systemProperty> <key>proxyHost</key> <value>www.proxy.com</value> </systemProperty> 
 							<systemProperty> <key>proxyPort</key> <value>80</value> </systemProperty> -->
+                            						<systemProperty>
+							<key>proxySet</key>
+							<value>true</value>
+						</systemProperty>
+						<systemProperty>
+							<key>proxyHost</key>
+							<value>emea-proxy.uk.oracle.com</value>
+						</systemProperty>
+						<systemProperty>
+							<key>proxyPort</key>
+							<value>80</value>
+						</systemProperty>
 					</systemProperties>
 				</configuration>
 			</plugin>

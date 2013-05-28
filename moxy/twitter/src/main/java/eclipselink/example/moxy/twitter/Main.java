@@ -30,6 +30,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
         JAXBContext jc = JAXBContext.newInstance(SearchResults.class);
 
+        System.out.println();
         System.out.println("Running EclipseLink MOXy Twitter Example");
 
         Unmarshaller unmarshaller = jc.createUnmarshaller();
