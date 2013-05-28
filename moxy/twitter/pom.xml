@@ -118,21 +118,15 @@
 					<classpathScope>test</classpathScope>
 					<mainClass>eclipselink.example.moxy.twitter.Main</mainClass>
 					<systemProperties>
-						<!-- <systemProperty> <key>proxySet</key> <value>true</value> </systemProperty> 
-							<systemProperty> <key>proxyHost</key> <value>www.proxy.com</value> </systemProperty> 
-							<systemProperty> <key>proxyPort</key> <value>80</value> </systemProperty> -->
-                            						<systemProperty>
-							<key>proxySet</key>
+                        <systemProperty>
+							<key>java.net.useSystemProxies</key>
 							<value>true</value>
 						</systemProperty>
-						<systemProperty>
-							<key>proxyHost</key>
-							<value>emea-proxy.uk.oracle.com</value>
-						</systemProperty>
-						<systemProperty>
-							<key>proxyPort</key>
-							<value>80</value>
-						</systemProperty>
+						<!--
+                        <systemProperty> <key>proxySet</key> <value>true</value> </systemProperty> 
+						<systemProperty> <key>proxyHost</key> <value>www.proxy.com</value> </systemProperty> 
+                        <systemProperty> <key>proxyPort</key> <value>80</value> </systemProperty>
+                        -->
 					</systemProperties>
 				</configuration>
 			</plugin>
