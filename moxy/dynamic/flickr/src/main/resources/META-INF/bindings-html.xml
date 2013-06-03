@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<xml-bindings xmlns="http://www.eclipse.org/eclipselink/xsds/persistence/oxm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    package-name="eclipselink.example.moxy.dynamic.flickr">
+
+    <java-types>
+
+        <java-type name="eclipselink.example.moxy.dynamic.flickr.HtmlPage">
+            <xml-root-element name="html" />
+            <java-attributes>
+                <xml-element java-attribute="title" xml-path="head/title/text()" type="java.lang.String" />
+                <xml-attribute java-attribute="css" xml-path="head/link/@href" type="java.lang.String" />
+                <xml-attribute java-attribute="rel" xml-path="head/link/@rel" type="java.lang.String" />
+                <xml-attribute java-attribute="type" xml-path="head/link/@type" type="java.lang.String" />
+                <xml-attribute java-attribute="media" xml-path="head/link/@media" type="java.lang.String" />
+                <xml-element java-attribute="body" xml-path="body" type="eclipselink.example.moxy.dynamic.flickr.HtmlBody" />
+            </java-attributes>
+        </java-type>
+
+        <java-type name="eclipselink.example.moxy.dynamic.flickr.HtmlBody">
+            <java-attributes>
+                <xml-element java-attribute="title" xml-path="p/h1/text()" type="java.lang.String" />
+                <xml-element java-attribute="divs" xml-path="p/p" type="eclipselink.example.moxy.dynamic.flickr.HtmlDiv" container-type="java.util.ArrayList" />
+            </java-attributes>
+        </java-type>
+
+        <java-type name="eclipselink.example.moxy.dynamic.flickr.HtmlDiv">
+            <java-attributes>
+                <xml-attribute java-attribute="id" xml-path="div/@id" type="java.lang.String" />
+                <xml-element java-attribute="span" type="eclipselink.example.moxy.dynamic.flickr.HtmlItem" container-type="java.util.ArrayList">
+                    <xml-element-wrapper name="div" />
+                </xml-element>
+            </java-attributes>
+        </java-type>
+
+        <java-type name="eclipselink.example.moxy.dynamic.flickr.HtmlItem"/>
+
+        <java-type name="eclipselink.example.moxy.dynamic.flickr.HtmlText" super-type="eclipselink.example.moxy.dynamic.flickr.HtmlItem">
+            <java-attributes>
+                <xml-element java-attribute="text" xml-path="p/small/text()" type="java.lang.String" />
+            </java-attributes>
+        </java-type>
+
+        <java-type name="eclipselink.example.moxy.dynamic.flickr.HtmlLink" super-type="eclipselink.example.moxy.dynamic.flickr.HtmlItem">
+            <java-attributes>
+                <xml-attribute java-attribute="url" xml-path="a/@href" type="java.lang.String" />
+            </java-attributes>
+        </java-type>
+
+        <java-type name="eclipselink.example.moxy.dynamic.flickr.HtmlTextLink" super-type="eclipselink.example.moxy.dynamic.flickr.HtmlLink">
+            <java-attributes>
+                <xml-element java-attribute="title" xml-path="a/text()" type="java.lang.String" />
+            </java-attributes>
+        </java-type>
+
+        <java-type name="eclipselink.example.moxy.dynamic.flickr.HtmlImageLink" super-type="eclipselink.example.moxy.dynamic.flickr.HtmlLink">
+            <java-attributes>
+                <xml-attribute java-attribute="image" xml-path="a/img/@src" type="java.lang.String" />
+                <xml-attribute java-attribute="width" xml-path="a/img/@width" type="java.lang.Integer" />
+                <xml-attribute java-attribute="height" xml-path="a/img/@height" type="java.lang.Integer" />
+            </java-attributes>
+        </java-type>
+
+    </java-types>
+
+</xml-bindings>

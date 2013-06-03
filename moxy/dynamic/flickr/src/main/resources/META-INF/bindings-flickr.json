@@ -1,0 +1,40 @@
+{
+   "package-name" : "eclipselink.example.moxy.dynamic.flickr",
+   "xml-schema" : {
+      "element-form-default" : "QUALIFIED",
+      "namespace" : "http://www.w3.org/2005/Atom"
+   },
+   "java-types" : {
+      "java-type" : [ {
+         "name" : "eclipselink.example.moxy.dynamic.flickr.FlickrResults",
+         "xml-root-element" : {
+            "name" : "feed"
+         },
+         "java-attributes" : {
+            "xml-element" : [ {
+               "java-attribute" : "description",
+               "type" : "java.lang.String",
+               "xml-path" : "title/text()"
+            }, {
+               "java-attribute" : "items",
+               "container-type" : "java.util.ArrayList",
+               "type" : "eclipselink.example.moxy.dynamic.flickr.FlickrItem",
+               "xml-path" : "entry"
+            } ]
+         }
+      }, {
+         "name" : "eclipselink.example.moxy.dynamic.flickr.FlickrItem",
+         "java-attributes" : {
+            "xml-attribute" : [ {
+               "java-attribute" : "flickrPage",
+               "type" : "java.lang.String",
+               "xml-path" : "link[@rel='alternate']/@href"
+            }, {
+               "java-attribute" : "imageUrl",
+               "type" : "java.lang.String",
+               "xml-path" : "link[@type='image/jpeg']/@href"
+            } ]
+         }
+      } ]
+   }
+}

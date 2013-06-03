@@ -1,0 +1,31 @@
+{
+   "package-name" : "eclipselink.example.moxy.dynamic.flickr",
+   "java-types" : {
+      "java-type" : [ {
+         "name" : "eclipselink.example.moxy.dynamic.flickr.RedditResults",
+         "xml-root-element" : {
+         },
+         "java-attributes" : {
+            "xml-element" : [ {
+               "java-attribute" : "posts",
+               "container-type" : "java.util.ArrayList",
+               "type" : "eclipselink.example.moxy.dynamic.flickr.RedditPost",
+               "xml-path" : "data/children"
+            } ]
+         }
+      }, {
+         "name" : "eclipselink.example.moxy.dynamic.flickr.RedditPost",
+         "java-attributes" : {
+            "xml-element" : [ {
+               "java-attribute" : "title",
+               "type" : "java.lang.String",
+               "xml-path" : "data/title/text()"
+            }, {
+               "java-attribute" : "url",
+               "type" : "java.lang.String",
+               "xml-path" : "data/url/text()"
+            } ]
+         }
+      } ]
+   }
+}

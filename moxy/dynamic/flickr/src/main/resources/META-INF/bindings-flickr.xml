@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<xml-bindings xmlns="http://www.eclipse.org/eclipselink/xsds/persistence/oxm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" package-name="eclipselink.example.moxy.dynamic.flickr">
+
+    <xml-schema element-form-default="QUALIFIED" namespace="http://www.w3.org/2005/Atom"/>
+
+    <java-types>
+
+        <java-type name="eclipselink.example.moxy.dynamic.flickr.FlickrResults">
+            <xml-root-element name="feed"/>
+            <java-attributes>
+                <xml-element java-attribute="description" xml-path="title/text()" type="java.lang.String"/>
+                <xml-element java-attribute="items" xml-path="entry" type="eclipselink.example.moxy.dynamic.flickr.FlickrItem" container-type="java.util.ArrayList"/>
+            </java-attributes>
+        </java-type>
+
+        <java-type name="eclipselink.example.moxy.dynamic.flickr.FlickrItem">
+            <java-attributes>
+                <xml-attribute java-attribute="flickrPage" xml-path="link[@rel='alternate']/@href" type="java.lang.String"/>
+                <xml-attribute java-attribute="imageUrl" xml-path="link[@type='image/jpeg']/@href" type="java.lang.String"/>
+            </java-attributes>
+        </java-type>
+
+    </java-types>
+
+</xml-bindings>
