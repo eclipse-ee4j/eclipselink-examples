@@ -150,7 +150,7 @@ public class Main {
 
     private void writeHtml() throws Exception {
         DynamicEntity html = context.newDynamicEntity("eclipselink.example.moxy.dynamic.flickr.HtmlPage");
-        html.set("title", "TopLink MOXy - Dynamic JAXB");
+        html.set("title", "EclipseLink MOXy - Dynamic JAXB");
         html.set("css", "style.css");
         html.set("rel", "stylesheet");
         html.set("type", "text/css");
