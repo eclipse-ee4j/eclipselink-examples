@@ -63,8 +63,6 @@ public class Main {
 
     private void run() {
         try {
-            writeJsonBindings();
-
             init();
 
             readRedditPosts();
