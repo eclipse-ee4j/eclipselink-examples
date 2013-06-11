@@ -17,7 +17,9 @@
 				value="27017" />
 			<property name="eclipselink.nosql.property.mongo.host"
 				value="localhost" />
+			
 			<property name="eclipselink.nosql.property.mongo.db" value="polyglot" />
+			
 			<property name="eclipselink.logging.level" value="FINEST" />
 			<property name="eclipselink.logging.timestamp" value="false" />
 			<property name="eclipselink.logging.thread" value="false" />

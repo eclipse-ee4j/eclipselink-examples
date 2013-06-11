@@ -70,10 +70,13 @@ public class PolyglotDemo {
         
         em = emf.createEntityManager();
         Order queriedOrder = em.find(Order.class, orderId);
-        System.err.println(queriedOrder.getDescription());
+        System.out.println(queriedOrder.getDescription());
         for (OrderLine orderLine : queriedOrder.getOrderLines()) {
-			System.err.println("  " + orderLine.getProduct().getDescription());
+			System.out.println("  " + orderLine.getProduct().getDescription());
 		}
+        
+        System.out.flush();
+        
         em.close();
     }
 }

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><entities>
+	<entity>
+		<entity-name>eclipselink.example.jpamoxy.simple.model.Address</entity-name>
+		<entity-width>120</entity-width>
+		<entity-height>166</entity-height>
+		<entity-X-Coordinate>430</entity-X-Coordinate>
+		<entity-Y-Coordinate>308</entity-Y-Coordinate>
+		<primary-collapsed>false</primary-collapsed>
+		<relation-collapsed>false</relation-collapsed>
+		<basic-collapsed>false</basic-collapsed>
+	</entity>
+
+	<entity>
+		<entity-name>eclipselink.example.jpamoxy.simple.model.Customer</entity-name>
+		<entity-width>120</entity-width>
+		<entity-height>186</entity-height>
+		<entity-X-Coordinate>220</entity-X-Coordinate>
+		<entity-Y-Coordinate>69</entity-Y-Coordinate>
+		<primary-collapsed>false</primary-collapsed>
+		<relation-collapsed>false</relation-collapsed>
+		<basic-collapsed>false</basic-collapsed>
+	</entity>
+
+	<entity>
+		<entity-name>eclipselink.example.jpamoxy.simple.model.PhoneNumber</entity-name>
+		<entity-width>120</entity-width>
+		<entity-height>166</entity-height>
+		<entity-X-Coordinate>520</entity-X-Coordinate>
+		<entity-Y-Coordinate>54</entity-Y-Coordinate>
+		<primary-collapsed>false</primary-collapsed>
+		<relation-collapsed>false</relation-collapsed>
+		<basic-collapsed>false</basic-collapsed>
+	</entity>
+</entities>

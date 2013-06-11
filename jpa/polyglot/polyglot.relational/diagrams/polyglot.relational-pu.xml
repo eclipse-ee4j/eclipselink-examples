@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><entities>
+	<entity>
+		<entity-name>relational.model.Discount</entity-name>
+		<entity-width>120</entity-width>
+		<entity-height>108</entity-height>
+		<entity-X-Coordinate>490</entity-X-Coordinate>
+		<entity-Y-Coordinate>260</entity-Y-Coordinate>
+		<primary-collapsed>false</primary-collapsed>
+		<relation-collapsed>false</relation-collapsed>
+		<basic-collapsed>false</basic-collapsed>
+	</entity>
+
+	<entity>
+		<entity-name>relational.model.Product</entity-name>
+		<entity-width>120</entity-width>
+		<entity-height>108</entity-height>
+		<entity-X-Coordinate>270</entity-X-Coordinate>
+		<entity-Y-Coordinate>180</entity-Y-Coordinate>
+		<primary-collapsed>false</primary-collapsed>
+		<relation-collapsed>false</relation-collapsed>
+		<basic-collapsed>false</basic-collapsed>
+	</entity>
+</entities>

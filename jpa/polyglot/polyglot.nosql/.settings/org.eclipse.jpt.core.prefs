@@ -1,0 +1,7 @@
+eclipse.preferences.version=1
+org.eclipse.jpt.core.platform=eclipselink2_4
+org.eclipse.jpt.jpa.core.discoverAnnotatedClasses=false
+problem.TARGET_ENTITY_IS_NOT_AN_ENTITY=warning
+problem.VIRTUAL_ATTRIBUTE_TARGET_ENTITY_IS_NOT_AN_ENTITY=warning
+problem.VIRTUAL_ATTRIBUTE_TARGET_ENTITY_NOT_DEFINED=warning
+workspace_preferences_overriden=true

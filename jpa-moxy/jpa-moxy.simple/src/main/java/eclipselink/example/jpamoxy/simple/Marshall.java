@@ -1,5 +1,6 @@
 package eclipselink.example.jpamoxy.simple;
 
+import java.awt.Desktop;
 import java.io.File;
 
 import javax.persistence.EntityManager;
@@ -37,7 +38,18 @@ public class Marshall {
         marshaller.setProperty("eclipselink.json.wrapper-as-array-name", true);
         File file = new File("target/customer." + mediaType);
 		marshaller.marshal(customer, file);
+		
+		launchSystemBrowser(file);
 
 	}
+	
+    public static void launchSystemBrowser(File file) {
+        try {
+            Desktop.getDesktop().browse(file.toURI());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
 }
