@@ -8,7 +8,7 @@
  * and the Eclipse Distribution License is available at
  * http://www.eclipse.org/org/documents/edl-v10.php.
  ******************************************************************************/
-package eclipselink.example.moxy.dynamic.flickr;
+package eclipselink.example.moxy.socialbinding;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -24,6 +24,11 @@ import org.eclipse.persistence.jaxb.JAXBContextProperties;
 import org.eclipse.persistence.jaxb.dynamic.DynamicJAXBContext;
 import org.eclipse.persistence.jaxb.dynamic.DynamicJAXBContextFactory;
 
+/**
+ * 
+ * @author rbarkhous
+ * @since EclipseLink 2.4.2
+ */
 public class FlikrReader {
 
     private DynamicJAXBContext context;
@@ -56,7 +61,7 @@ public class FlikrReader {
             System.out.println();
             System.out.println("Headline: [" + post.get("title") + "]");
 
-            String keywords = new AlchemyAccessor().extractConcepts(post.get("title").toString());
+            String keywords = new KeywordExtractor().extractKeywords(post.get("title").toString());
 
             String flickrUrlString = FLICKR_URL + keywords;
             System.out.print("Searching Flickr: [" + flickrUrlString + "]... ");

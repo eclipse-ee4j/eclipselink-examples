@@ -1,7 +1,9 @@
-EclipseLink Dynamic MOXy Flickr Example
+EclipseLink Social-Binding Example
 ---------------------------------------
 
-This example will demonstrate how to use MOXy's Dynamic JAXB features to work with public JSON and XML feeds, without having to create concrete Java classes. The following concepts are demonstrated:
+This example will demonstrate how to use EclipseLink MOXyto work with public JSON and XML feeds using a declarative binding approach. 
+
+The following concepts are demonstrated:
 
 * Mapping to JSON and XML data without writing or generating concrete Java classes
 * Using multiple MOXy metadata files to modularize your metadata

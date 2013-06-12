@@ -8,7 +8,7 @@
  * and the Eclipse Distribution License is available at
  * http://www.eclipse.org/org/documents/edl-v10.php.
  ******************************************************************************/
-package eclipselink.example.moxy.dynamic.flickr;
+package eclipselink.example.moxy.socialbinding;
 
 import java.awt.Desktop;
 import java.io.File;
@@ -27,6 +27,11 @@ import org.eclipse.persistence.jaxb.JAXBContextProperties;
 import org.eclipse.persistence.jaxb.dynamic.DynamicJAXBContext;
 import org.eclipse.persistence.jaxb.dynamic.DynamicJAXBContextFactory;
 
+/**
+ * 
+ * @author rbarkhous
+ * @since EclipseLink 2.4.2
+ */
 public class HTMLWriter {
 
     private DynamicJAXBContext context;
