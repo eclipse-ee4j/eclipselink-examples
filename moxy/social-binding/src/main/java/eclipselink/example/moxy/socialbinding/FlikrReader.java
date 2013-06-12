@@ -10,6 +10,7 @@
  ******************************************************************************/
 package eclipselink.example.moxy.socialbinding;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -52,24 +53,13 @@ public class FlikrReader {
 
     }
 
-    public Map<Object, DynamicEntity> readFlickrResults(Map<Object, DynamicEntity> redditMap) throws Exception {
-        Map<Object, DynamicEntity> results = new HashMap<Object, DynamicEntity>();
-        
-        for (Object postUrl : redditMap.keySet()) {
+    public Map<String, DynamicEntity> readFlickrResults(Map<String, DynamicEntity> redditMap) {
+        Map<String, DynamicEntity> results = new HashMap<String, DynamicEntity>();
+
+        for (String postUrl : redditMap.keySet()) {
             DynamicEntity post = redditMap.get(postUrl);
+            DynamicEntity flickrResults = readFlickrResult(postUrl, post);
 
-            System.out.println();
-            System.out.println("Headline: [" + post.get("title") + "]");
-
-            String keywords = new KeywordExtractor().extractKeywords(post.get("title").toString());
-
-            String flickrUrlString = FLICKR_URL + keywords;
-            System.out.print("Searching Flickr: [" + flickrUrlString + "]... ");
-            InputStream flickrStream = new URL(flickrUrlString).openConnection().getInputStream();
-            System.out.println("Done.");
-
-            Unmarshaller u = context.createUnmarshaller();
-            DynamicEntity flickrResults = (DynamicEntity) u.unmarshal(flickrStream);
 
             results.put(postUrl, flickrResults);
 
@@ -86,8 +76,40 @@ public class FlikrReader {
                 System.out.println("\tNo results found.");
             }
         }
-        
+
         return results;
+
+    }
+
+    public DynamicEntity readFlickrResult(String postUrl, DynamicEntity post) {
+
+        System.out.println("\nHeadline: [" + post.get("title") + "]");
+
+        String keywords = new KeywordExtractor().extractKeywords(post.get("title").toString());
+
+        String flickrUrlString = FLICKR_URL + keywords;
+        System.out.print("Searching Flickr: [" + flickrUrlString + "]... ");
+
+        InputStream flickrStream = null;
+
+        try {
+            flickrStream = new URL(flickrUrlString).openConnection().getInputStream();
+
+            System.out.println("Done.");
+
+            Unmarshaller u = context.createUnmarshaller();
+            return (DynamicEntity) u.unmarshal(flickrStream);
+        } catch (IOException | JAXBException e) {
+            throw new RuntimeException("FLIKR access failed", e);
+        } finally {
+            if (flickrStream != null) {
+                try {
+                    flickrStream.close();
+                } catch (IOException e) {// ignore in this example }
+                }
+            }
+        }
+
     }
 
     // ========================================================================

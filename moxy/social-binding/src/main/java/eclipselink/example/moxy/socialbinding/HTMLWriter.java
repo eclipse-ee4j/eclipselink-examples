@@ -10,7 +10,6 @@
  ******************************************************************************/
 package eclipselink.example.moxy.socialbinding;
 
-import java.awt.Desktop;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -19,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
@@ -28,6 +28,7 @@ import org.eclipse.persistence.jaxb.dynamic.DynamicJAXBContext;
 import org.eclipse.persistence.jaxb.dynamic.DynamicJAXBContextFactory;
 
 /**
+ * HTML writer using dynamic MOXy to marshall into HTML.
  * 
  * @author rbarkhous
  * @since EclipseLink 2.4.2
@@ -36,8 +37,10 @@ public class HTMLWriter {
 
     private DynamicJAXBContext context;
 
-    private File outputFile;
-
+    /**
+     * Create the {@link JAXBContext} that MOXy will use for HTML writing
+     * (Marshalling)
+     */
     public HTMLWriter() {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
@@ -53,19 +56,17 @@ public class HTMLWriter {
         } catch (JAXBException e) {
             throw new RuntimeException("Context creation failed", e);
         }
-
-        outputFile = new File("output.html");
     }
 
-    public void write(String topic, int imageLimit, Map<Object, DynamicEntity> redditMap, Map<Object, DynamicEntity> flickrMap) throws Exception {
-        DynamicEntity html = context.newDynamicEntity("eclipselink.example.moxy.dynamic.flickr.HtmlPage");
-        html.set("title", "EclipseLink MOXy - Dynamic JAXB");
+    public File write(String topic, String fileLocation, int imageLimit, Map<String, DynamicEntity> redditMap, Map<String, DynamicEntity> flickrMap) {
+        DynamicEntity html = context.newDynamicEntity("HtmlPage");
+        html.set("title", "EclipseLink Social Binding Example");
         html.set("css", "style.css");
         html.set("rel", "stylesheet");
         html.set("type", "text/css");
         html.set("media", "screen");
 
-        DynamicEntity body = context.newDynamicEntity("eclipselink.example.moxy.dynamic.flickr.HtmlBody");
+        DynamicEntity body = context.newDynamicEntity("HtmlBody");
         body.set("title", "Reddit /" + topic + " - Today's Top Posts");
 
         ArrayList<DynamicEntity> divs = new ArrayList<DynamicEntity>();
@@ -77,12 +78,12 @@ public class HTMLWriter {
             // Article Link
             // ================================================================
 
-            DynamicEntity redditDiv = context.newDynamicEntity("eclipselink.example.moxy.dynamic.flickr.HtmlDiv");
+            DynamicEntity redditDiv = context.newDynamicEntity("HtmlDiv");
             redditDiv.set("id", "redditPost");
 
             ArrayList<DynamicEntity> divContent = new ArrayList<DynamicEntity>();
 
-            DynamicEntity redditLink = context.newDynamicEntity("eclipselink.example.moxy.dynamic.flickr.HtmlTextLink");
+            DynamicEntity redditLink = context.newDynamicEntity("HtmlTextLink");
             redditLink.set("url", post.get("url"));
             redditLink.set("title", post.get("title"));
             divContent.add(redditLink);
@@ -92,12 +93,12 @@ public class HTMLWriter {
             // Flickr description and images
             // ================================================================
 
-            DynamicEntity flickrDiv = context.newDynamicEntity("eclipselink.example.moxy.dynamic.flickr.HtmlDiv");
+            DynamicEntity flickrDiv = context.newDynamicEntity("HtmlDiv");
             flickrDiv.set("id", "flickrResults");
 
             divContent = new ArrayList<DynamicEntity>();
 
-            DynamicEntity flickrDescription = context.newDynamicEntity("eclipselink.example.moxy.dynamic.flickr.HtmlText");
+            DynamicEntity flickrDescription = context.newDynamicEntity("HtmlText");
             flickrDescription.set("text", flickrResults.get("description"));
             divContent.add(flickrDescription);
 
@@ -107,7 +108,7 @@ public class HTMLWriter {
             if (flickrItems != null) {
                 Collections.shuffle(flickrItems, new Random(System.nanoTime()));
                 for (DynamicEntity flickrItem : flickrItems) {
-                    DynamicEntity flickrImageLink = context.newDynamicEntity("eclipselink.example.moxy.dynamic.flickr.HtmlImageLink");
+                    DynamicEntity flickrImageLink = context.newDynamicEntity("HtmlImageLink");
                     flickrImageLink.set("url", flickrItem.get("flickrPage"));
                     flickrImageLink.set("image", flickrItem.get("imageUrl"));
                     flickrImageLink.set("height", HTML_IMAGE_HEIGHT);
@@ -118,7 +119,7 @@ public class HTMLWriter {
                     }
                 }
             } else {
-                DynamicEntity noneText = context.newDynamicEntity("eclipselink.example.moxy.dynamic.flickr.HtmlText");
+                DynamicEntity noneText = context.newDynamicEntity("HtmlText");
                 noneText.set("text", "No results found.");
                 divContent.add(noneText);
             }
@@ -132,24 +133,21 @@ public class HTMLWriter {
 
         html.set("body", body);
 
-        Marshaller m = context.createMarshaller();
-        m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        m.setProperty(Marshaller.JAXB_FRAGMENT, true);
-        m.marshal(html, outputFile);
-    }
-
-    public void launchSystemBrowser() {
+        Marshaller m;
         try {
-            Desktop.getDesktop().browse(outputFile.toURI());
-        } catch (Exception e) {
-            e.printStackTrace();
+            m = context.createMarshaller();
+            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            m.setProperty(Marshaller.JAXB_FRAGMENT, true);
+            File outputFile = new File(fileLocation);
+            m.marshal(html, outputFile);
+            return outputFile;
+        } catch (JAXBException e) {
+            throw new RuntimeException("HTML marshall failed", e);
         }
     }
 
     // ========================================================================
 
     private final String HTML_BINDINGS = "META-INF/bindings-html.xml";
-
-    private final Integer HTML_IMAGE_HEIGHT = Integer.valueOf(80);
-
+    private final Integer HTML_IMAGE_HEIGHT = 80;
 }

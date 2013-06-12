@@ -10,11 +10,14 @@
  ******************************************************************************/
 package eclipselink.example.moxy.socialbinding;
 
+import java.awt.Desktop;
+import java.io.File;
 import java.util.Map;
 
 import org.eclipse.persistence.dynamic.DynamicEntity;
 
 /**
+ * Main example execution.
  * 
  * @author rbarkhous
  * @since EclipseLink 2.4.2
@@ -22,15 +25,22 @@ import org.eclipse.persistence.dynamic.DynamicEntity;
 public class Main {
 
     public static void main(String[] args) {
-        String topic = "software";
-        
-        try {
-            Map<Object, DynamicEntity> redditResults = new RedditReader().readRedditPosts(topic);
-            Map<Object, DynamicEntity> flickrResults = new FlikrReader().readFlickrResults(redditResults);
+        File file = create("technology", "target/classes/output.html", 5);
 
-            HTMLWriter writer = new HTMLWriter();
-            writer.write(topic, 6, redditResults, flickrResults);
-            writer.launchSystemBrowser();
+        launchSystemBrowser(file);
+    }
+
+    public static File create(String topic, String targetFile, int maxResults) {
+        Map<String, DynamicEntity> redditResults = new RedditReader().readRedditPosts(topic);
+        Map<String, DynamicEntity> flickrResults = new FlikrReader().readFlickrResults(redditResults);
+
+        HTMLWriter writer = new HTMLWriter();
+        return writer.write(topic, targetFile, maxResults, redditResults, flickrResults);
+    }
+
+    public static void launchSystemBrowser(File file) {
+        try {
+            Desktop.getDesktop().browse(file.toURI());
         } catch (Exception e) {
             e.printStackTrace();
         }

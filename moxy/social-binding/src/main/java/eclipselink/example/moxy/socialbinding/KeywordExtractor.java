@@ -16,6 +16,8 @@ import java.util.Comparator;
 import java.util.StringTokenizer;
 
 /**
+ * Simple utility class to extract and prioritize a set of keywords based on the
+ * title provided.
  * 
  * @author rbarkhous
  * @since EclipseLink 2.4.2

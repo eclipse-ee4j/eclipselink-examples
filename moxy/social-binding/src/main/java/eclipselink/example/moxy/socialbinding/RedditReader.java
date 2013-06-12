@@ -21,6 +21,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 
 import org.eclipse.persistence.dynamic.DynamicEntity;
+import org.eclipse.persistence.dynamic.DynamicType;
 import org.eclipse.persistence.jaxb.JAXBContextProperties;
 import org.eclipse.persistence.jaxb.UnmarshallerProperties;
 import org.eclipse.persistence.jaxb.dynamic.DynamicJAXBContext;
@@ -28,6 +29,9 @@ import org.eclipse.persistence.jaxb.dynamic.DynamicJAXBContextFactory;
 import org.eclipse.persistence.oxm.MediaType;
 
 /**
+ * Example of using EclipseLink MOXy to read (unmarshall) the JSON returned from
+ * Reddit (http://www.reddit.com/). It uses the available interface that returns
+ * JSON based on a provided topic.
  * 
  * @author rbarkhous
  * @since EclipseLink 2.4.2
@@ -53,28 +57,36 @@ public class RedditReader {
         }
     }
 
-    public Map<Object, DynamicEntity> readRedditPosts(String topic) throws Exception {
-        Unmarshaller u = context.createUnmarshaller();
-        u.setProperty(UnmarshallerProperties.MEDIA_TYPE, MediaType.APPLICATION_JSON);
-        u.setProperty(UnmarshallerProperties.JSON_INCLUDE_ROOT, false);
+    public Map<String, DynamicEntity> readRedditPosts(String topic) {
+        DynamicEntity redditResults = null;
 
-        Class<? extends DynamicEntity> redditResultsClass = context.newDynamicEntity("eclipselink.example.moxy.dynamic.flickr.RedditResults").getClass();
+        try {
+            Unmarshaller u = context.createUnmarshaller();
+            u.setProperty(UnmarshallerProperties.MEDIA_TYPE, MediaType.APPLICATION_JSON);
+            u.setProperty(UnmarshallerProperties.JSON_INCLUDE_ROOT, false);
 
-        System.out.println();
-        System.out.print("Reading Today's Hot Topics from Reddit r/" + topic + "... ");
-        DynamicEntity redditResults = u.unmarshal(new StreamSource(getRedditURL(topic)), redditResultsClass).getValue();
+            DynamicType resultType = this.context.getDynamicType("RedditResults");
+            Class<? extends DynamicEntity> redditResultsClass = resultType.getJavaClass();
+
+            System.out.print("\nReading Today's Hot Topics from Reddit r/" + topic + "... ");
+
+            redditResults = u.unmarshal(new StreamSource(getRedditURL(topic)), redditResultsClass).getValue();
+        } catch (JAXBException e) {
+            throw new RuntimeException("Unmarshall from REDDIT failed", e);
+        }
+
         System.out.println("Done.");
 
         List<DynamicEntity> posts = redditResults.get("posts");
-        Map<Object, DynamicEntity> results = new HashMap<Object, DynamicEntity>();
+        Map<String, DynamicEntity> results = new HashMap<String, DynamicEntity>();
 
         for (DynamicEntity post : posts) {
-            results.put(post.get("url"), post);
+            results.put(post.get("url").toString(), post);
         }
 
         return results;
     }
-    
+
     private String getRedditURL(String topic) {
         return "http://www.reddit.com/r/" + topic + "/top/.json?sort=top&t=today&limit=" + REDDIT_LIMIT;
     }
@@ -82,5 +94,5 @@ public class RedditReader {
     // See http://www.reddit.com/dev/api
     private final int REDDIT_LIMIT = 5;
 
-    private final String REDDIT_BINDINGS = "META-INF/bindings-reddit.xml";
+    private final String REDDIT_BINDINGS = "META-INF/bindings-reddit.json";
 }
