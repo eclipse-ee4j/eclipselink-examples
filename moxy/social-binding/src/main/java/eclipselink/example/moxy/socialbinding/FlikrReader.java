@@ -26,6 +26,7 @@ import org.eclipse.persistence.jaxb.dynamic.DynamicJAXBContext;
 import org.eclipse.persistence.jaxb.dynamic.DynamicJAXBContextFactory;
 
 /**
+ * Example of how EclipseLink MOXy can be used
  * 
  * @author rbarkhous
  * @since EclipseLink 2.4.2
@@ -34,7 +35,11 @@ public class FlikrReader {
 
     private DynamicJAXBContext context;
 
-    public FlikrReader() {
+    /**
+     * Initialize the MOXy context that will be used to unmarshal the Flikr
+     * results.
+     */
+    public FlikrReader(ClassLoader cl) throws JAXBException {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
         InputStream flickrBindings = loader.getResourceAsStream(FLICKR_BINDINGS);
@@ -44,60 +49,21 @@ public class FlikrReader {
 
         Map<String, Object> properties = new HashMap<String, Object>();
         properties.put(JAXBContextProperties.OXM_METADATA_SOURCE, dataBindings);
-        try {
-            context = DynamicJAXBContextFactory.createContextFromOXM(loader, properties);
-        } catch (JAXBException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
 
+        context = DynamicJAXBContextFactory.createContextFromOXM(loader, properties);
     }
 
-    public Map<String, DynamicEntity> readFlickrResults(Map<String, DynamicEntity> redditMap) {
-        Map<String, DynamicEntity> results = new HashMap<String, DynamicEntity>();
-
-        for (String postUrl : redditMap.keySet()) {
-            DynamicEntity post = redditMap.get(postUrl);
-            DynamicEntity flickrResults = readFlickrResult(postUrl, post);
-
-
-            results.put(postUrl, flickrResults);
-
-            ArrayList<DynamicEntity> flickerItems = flickrResults.get("items");
-            if (flickerItems != null) {
-                int size = flickerItems.size();
-                if (size >= IMAGE_LIMIT) {
-                    size = IMAGE_LIMIT;
-                }
-                for (int i = 0; i < size; i++) {
-                    System.out.println("\t" + flickerItems.get(i).get("imageUrl"));
-                }
-            } else {
-                System.out.println("\tNo results found.");
-            }
-        }
-
-        return results;
-
-    }
-
-    public DynamicEntity readFlickrResult(String postUrl, DynamicEntity post) {
-
-        System.out.println("\nHeadline: [" + post.get("title") + "]");
-
-        String keywords = new KeywordExtractor().extractKeywords(post.get("title").toString());
-
+    public DynamicEntity readFlickrResult(String keywords) {
         String flickrUrlString = FLICKR_URL + keywords;
         System.out.print("Searching Flickr: [" + flickrUrlString + "]... ");
 
         InputStream flickrStream = null;
 
         try {
+            Unmarshaller u = context.createUnmarshaller();
+
             flickrStream = new URL(flickrUrlString).openConnection().getInputStream();
 
-            System.out.println("Done.");
-
-            Unmarshaller u = context.createUnmarshaller();
             return (DynamicEntity) u.unmarshal(flickrStream);
         } catch (IOException | JAXBException e) {
             throw new RuntimeException("FLIKR access failed", e);
@@ -112,10 +78,7 @@ public class FlikrReader {
 
     }
 
-    // ========================================================================
-
     // See http://www.flickr.com/services/feeds/
-    private final int IMAGE_LIMIT = 6;
     private final String FLICKR_URL = "http://api.flickr.com/services/feeds/photos_public.gne?safe_search=1&tags=";
     private final String FLICKR_BINDINGS = "META-INF/bindings-flickr.json";
 

@@ -40,21 +40,16 @@ public class RedditReader {
 
     private DynamicJAXBContext context;
 
-    public RedditReader() {
-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
-
-        InputStream redditBindings = loader.getResourceAsStream(REDDIT_BINDINGS);
+    public RedditReader(ClassLoader cl) throws JAXBException {
+        InputStream redditBindings = cl.getResourceAsStream(REDDIT_BINDINGS);
 
         ArrayList<InputStream> dataBindings = new ArrayList<InputStream>(3);
         dataBindings.add(redditBindings);
 
         Map<String, Object> properties = new HashMap<String, Object>();
         properties.put(JAXBContextProperties.OXM_METADATA_SOURCE, dataBindings);
-        try {
-            context = DynamicJAXBContextFactory.createContextFromOXM(loader, properties);
-        } catch (JAXBException e) {
-            throw new RuntimeException("Context creation failed", e);
-        }
+
+        this.context = DynamicJAXBContextFactory.createContextFromOXM(cl, properties);
     }
 
     public Map<String, DynamicEntity> readRedditPosts(String topic) {

@@ -8,7 +8,7 @@
  * and the Eclipse Distribution License is available at
  * http://www.eclipse.org/org/documents/edl-v10.php.
  ******************************************************************************/
-package eclipselink.example.moxy.socialbinding;
+package eclipselink.example.moxy.socialbinding.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,7 +24,7 @@ import java.util.StringTokenizer;
  */
 public class KeywordExtractor {
 
-    public String extractKeywords(String postTitle) {
+    public static String extractKeywords(String postTitle) {
         StringTokenizer tokenizer = new StringTokenizer(postTitle, ",.!?()[]'\" \t\n\r\f/");
 
         ArrayList<String> words = new ArrayList<String>();
@@ -49,7 +49,7 @@ public class KeywordExtractor {
         return keywords;
     }
 
-    private class StringLengthComparator implements Comparator<String> {
+    private static class StringLengthComparator implements Comparator<String> {
         public int compare(String o1, String o2) {
             if (o1.length() > o2.length()) {
                 return -1;

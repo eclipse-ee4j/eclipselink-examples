@@ -14,8 +14,8 @@
     <dependencies>
 		<dependency>
 			<groupId>${eclipselink.groupid}</groupId>
-			<artifactId>javax.persistence</artifactId>
-			<version>2.0.5</version>
+			<artifactId>eclipselink</artifactId>
+			<version>${eclipselink.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${eclipselink.groupid}</groupId>

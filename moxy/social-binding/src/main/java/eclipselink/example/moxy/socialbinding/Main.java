@@ -12,9 +12,17 @@ package eclipselink.example.moxy.socialbinding;
 
 import java.awt.Desktop;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.xml.bind.JAXBException;
 
 import org.eclipse.persistence.dynamic.DynamicEntity;
+
+import eclipselink.example.moxy.socialbinding.util.KeywordExtractor;
 
 /**
  * Main example execution.
@@ -24,18 +32,43 @@ import org.eclipse.persistence.dynamic.DynamicEntity;
  */
 public class Main {
 
-    public static void main(String[] args) {
-        File file = create("technology", "target/classes/output.html", 5);
+    private static Logger logger = Logger.getLogger("eclipselink.example.moxy.socialbinding");
+
+    public static void main(String[] args) throws JAXBException {
+        File file = create("technology", "target/classes/output.html", 5, 5);
 
         launchSystemBrowser(file);
     }
 
-    public static File create(String topic, String targetFile, int maxResults) {
-        Map<String, DynamicEntity> redditResults = new RedditReader().readRedditPosts(topic);
-        Map<String, DynamicEntity> flickrResults = new FlikrReader().readFlickrResults(redditResults);
+    public static File create(String topic, String targetFile, int maxResults, int imageLimit) throws JAXBException {
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
 
-        HTMLWriter writer = new HTMLWriter();
-        return writer.write(topic, targetFile, maxResults, redditResults, flickrResults);
+        Map<String, DynamicEntity> redditResults = new RedditReader(cl).readRedditPosts(topic);
+        Map<String, DynamicEntity> flickrResults = new HashMap<String, DynamicEntity>();
+        FlikrReader flikrReader = new FlikrReader(cl);
+
+        for (String postUrl : redditResults.keySet()) {
+            DynamicEntity post = redditResults.get(postUrl);
+
+            logger.log(Level.INFO, "\nHeadline: [" + post.get("title") + "]");
+
+            String keywords = KeywordExtractor.extractKeywords(post.get("title").toString());
+            DynamicEntity flickrResult = flikrReader.readFlickrResult(keywords);
+
+            flickrResults.put(postUrl, flickrResult);
+
+            ArrayList<DynamicEntity> flickerItems = flickrResult.get("items");
+            if (flickerItems != null) {
+                for (int i = 0; i < flickerItems.size() && i <= imageLimit; i++) {
+                    logger.log(Level.INFO, "\t" + flickerItems.get(i).get("imageUrl"));
+                }
+            } else {
+                logger.log(Level.WARNING, "\tNo results found.");
+            }
+
+        }
+
+        return new HTMLWriter().write(topic, targetFile, maxResults, redditResults, flickrResults);
     }
 
     public static void launchSystemBrowser(File file) {
