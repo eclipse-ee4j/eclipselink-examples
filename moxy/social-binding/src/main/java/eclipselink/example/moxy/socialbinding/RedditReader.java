@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -38,6 +40,8 @@ import org.eclipse.persistence.oxm.MediaType;
  */
 public class RedditReader {
 
+    private static Logger logger = Logger.getLogger("eclipselink.example.moxy.socialbinding");
+    
     private DynamicJAXBContext context;
 
     public RedditReader(ClassLoader cl) throws JAXBException {
@@ -63,14 +67,12 @@ public class RedditReader {
             DynamicType resultType = this.context.getDynamicType("RedditResults");
             Class<? extends DynamicEntity> redditResultsClass = resultType.getJavaClass();
 
-            System.out.print("\nReading Today's Hot Topics from Reddit r/" + topic + "... ");
+            logger.log(Level.INFO, "Reading Today's Hot Topics from Reddit r/" + topic + "... ");
 
             redditResults = u.unmarshal(new StreamSource(getRedditURL(topic)), redditResultsClass).getValue();
         } catch (JAXBException e) {
             throw new RuntimeException("Unmarshall from REDDIT failed", e);
         }
-
-        System.out.println("Done.");
 
         List<DynamicEntity> posts = redditResults.get("posts");
         Map<String, DynamicEntity> results = new HashMap<String, DynamicEntity>();

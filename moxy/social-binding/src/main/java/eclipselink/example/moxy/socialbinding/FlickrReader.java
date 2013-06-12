@@ -16,6 +16,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -31,15 +33,16 @@ import org.eclipse.persistence.jaxb.dynamic.DynamicJAXBContextFactory;
  * @author rbarkhous
  * @since EclipseLink 2.4.2
  */
-public class FlikrReader {
+public class FlickrReader {
 
+    private static Logger logger = Logger.getLogger("eclipselink.example.moxy.socialbinding");
+    
     private DynamicJAXBContext context;
 
     /**
-     * Initialize the MOXy context that will be used to unmarshal the Flikr
-     * results.
+     * Initialize the MOXy context that will be used to unmarshal the Flickr results.
      */
-    public FlikrReader(ClassLoader cl) throws JAXBException {
+    public FlickrReader(ClassLoader cl) throws JAXBException {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
         InputStream flickrBindings = loader.getResourceAsStream(FLICKR_BINDINGS);
@@ -55,7 +58,7 @@ public class FlikrReader {
 
     public DynamicEntity readFlickrResult(String keywords) {
         String flickrUrlString = FLICKR_URL + keywords;
-        System.out.print("Searching Flickr: [" + flickrUrlString + "]... ");
+        logger.log(Level.INFO, "Searching Flickr: [" + flickrUrlString + "]... ");
 
         InputStream flickrStream = null;
 
@@ -66,7 +69,7 @@ public class FlikrReader {
 
             return (DynamicEntity) u.unmarshal(flickrStream);
         } catch (IOException | JAXBException e) {
-            throw new RuntimeException("FLIKR access failed", e);
+            throw new RuntimeException("FLICKR access failed", e);
         } finally {
             if (flickrStream != null) {
                 try {

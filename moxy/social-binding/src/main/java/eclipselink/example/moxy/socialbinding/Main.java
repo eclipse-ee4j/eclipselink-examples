@@ -45,25 +45,25 @@ public class Main {
 
         Map<String, DynamicEntity> redditResults = new RedditReader(cl).readRedditPosts(topic);
         Map<String, DynamicEntity> flickrResults = new HashMap<String, DynamicEntity>();
-        FlikrReader flikrReader = new FlikrReader(cl);
+        FlickrReader flickrReader = new FlickrReader(cl);
 
         for (String postUrl : redditResults.keySet()) {
             DynamicEntity post = redditResults.get(postUrl);
 
-            logger.log(Level.INFO, "\nHeadline: [" + post.get("title") + "]");
+            logger.log(Level.INFO, "Headline: [" + post.get("title") + "]");
 
             String keywords = KeywordExtractor.extractKeywords(post.get("title").toString());
-            DynamicEntity flickrResult = flikrReader.readFlickrResult(keywords);
+            DynamicEntity flickrResult = flickrReader.readFlickrResult(keywords);
 
             flickrResults.put(postUrl, flickrResult);
 
             ArrayList<DynamicEntity> flickerItems = flickrResult.get("items");
             if (flickerItems != null) {
                 for (int i = 0; i < flickerItems.size() && i <= imageLimit; i++) {
-                    logger.log(Level.INFO, "\t" + flickerItems.get(i).get("imageUrl"));
+                    logger.log(Level.INFO, flickerItems.get(i).get("imageUrl").toString());
                 }
             } else {
-                logger.log(Level.WARNING, "\tNo results found.");
+                logger.log(Level.WARNING, "No results found.");
             }
 
         }

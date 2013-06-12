@@ -1,11 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>eclipselink.example.moxy.dynamic</groupId>
-    <artifactId>flicker</artifactId>
+    <groupId>eclipselink.example.moxy</groupId>
+    <artifactId>social-binding</artifactId>
     <version>2.4.2-RC2</version>
 
-    <name>EclipseLink Dynamic MOXy Flickr Example</name>
+    <name>EclipseLink Dynamic MOXy Social Binding Example</name>
     <url>http://wiki.eclipse.org/EclipseLink/Examples/MOXy</url>
 
     <scm>
@@ -112,7 +112,7 @@
                 </executions>
                 <configuration>
                     <classpathScope>test</classpathScope>
-                    <mainClass>eclipselink.example.moxy.dynamic.flickr.Main</mainClass>
+                    <mainClass>eclipselink.example.moxy.socialbinding.Main</mainClass>
                     <systemProperties>
                         <systemProperty>
                             <key>java.net.useSystemProxies</key>
