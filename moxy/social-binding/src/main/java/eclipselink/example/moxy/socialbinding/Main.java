@@ -35,7 +35,13 @@ public class Main {
     private static Logger logger = Logger.getLogger("eclipselink.example.moxy.socialbinding");
 
     public static void main(String[] args) throws JAXBException {
-        File file = create("technology", "target/classes/output.html", 5, 5);
+        String topic = "technology";
+        
+        if (args.length == 1) {
+            topic = args[0];
+        }
+        
+        File file = create(topic, "target/classes/output.html", 5, 5);
 
         launchSystemBrowser(file);
     }
