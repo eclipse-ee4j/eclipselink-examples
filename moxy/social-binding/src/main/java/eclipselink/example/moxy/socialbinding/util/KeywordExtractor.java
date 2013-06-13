@@ -10,6 +10,9 @@
  ******************************************************************************/
 package eclipselink.example.moxy.socialbinding.util;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -24,29 +27,55 @@ import java.util.StringTokenizer;
  */
 public class KeywordExtractor {
 
+    /**
+     * Return the longest word in the title (preferably a capitalized word).
+     */
     public static String extractKeywords(String postTitle) {
-        StringTokenizer tokenizer = new StringTokenizer(postTitle, ",.!?()[]'\" \t\n\r\f/");
+        ArrayList<String> allWords = new WordList();
+        ArrayList<String> upperCaseWords = new WordList();        
 
-        ArrayList<String> words = new ArrayList<String>();
+        ArrayList<String> excludeWords = buildExlucdeWordsList();
 
+        StringTokenizer tokenizer = new StringTokenizer(postTitle, ",.!?():;-[]'\" \t\n\r\f/");
         while (tokenizer.hasMoreElements()) {
-            String token = tokenizer.nextToken();
-            if (token.length() > 3 || token.toUpperCase().equals(token)) {
-                words.add(token);
+            String word = tokenizer.nextToken();
+            if (!excludeWords.contains(word)) {
+                allWords.add(word);
+                if (Character.isUpperCase(word.toCharArray()[0])) {
+                    upperCaseWords.add(word);
+                }
             }
         }
+        
+        StringLengthComparator comparator = new StringLengthComparator();
+        Collections.sort(allWords, comparator);
+        Collections.sort(upperCaseWords, comparator);
 
-        // Sort words, longest one first
-        Collections.sort(words, new StringLengthComparator());
-
-        String keywords = null;
-        if (words.size() > 1) {
-            keywords = words.get(0) + "," + words.get(1);
+        if (upperCaseWords.size() > 1) {
+            return upperCaseWords.get(0);
         } else {
-            keywords = words.get(0);
+            return allWords.get(0);
         }
+   }
+    
+    private static ArrayList<String> buildExlucdeWordsList() {
+        ArrayList<String> excludeWords = new WordList();
 
-        return keywords;
+        try {
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            InputStream is = cl.getResourceAsStream("META-INF/exclude-words.txt");
+            InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader br = new BufferedReader(isr);
+            String line;
+            while ((line = br.readLine()) != null) {
+                excludeWords.add(line);
+            }
+            br.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return excludeWords;
     }
 
     private static class StringLengthComparator implements Comparator<String> {
@@ -60,5 +89,18 @@ public class KeywordExtractor {
             }
         }
     }
+    
+    private static class WordList extends ArrayList<String> {
+        private static final long serialVersionUID = 4780991427891054829L;
 
+        @Override
+        public boolean contains(Object o) {
+            String s = (String) o;
+            for (String string : this) {
+                if (s.equalsIgnoreCase(string)) return true;
+            }
+            return false;
+        }
+    }
+    
 }
