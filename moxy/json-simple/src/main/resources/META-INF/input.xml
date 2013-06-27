@@ -1,0 +1,10 @@
+<customer 
+    xmlns="http://www.example.com/foo" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    id="123">
+    <firstName>Jane</firstName>
+    <lastName xsi:nil="true"/>
+    <phoneNumbers>
+        <phoneNumber type="work">555-1111</phoneNumber>
+    </phoneNumbers>
+</customer>

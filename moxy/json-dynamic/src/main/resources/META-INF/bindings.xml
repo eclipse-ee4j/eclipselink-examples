@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<xml-bindings xmlns="http://www.eclipse.org/eclipselink/xsds/persistence/oxm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    package-name="eclipselink.example.moxy.json.dynamic">
+
+    <xml-schema namespace="http://www.example.com/foo" element-form-default="QUALIFIED" />
+    
+    <java-types>
+        <java-type name="eclipselink.example.moxy.json.dynamic.Customer">
+            <xml-root-element/>
+            <java-attributes>
+                <xml-attribute java-attribute="id" type="java.lang.Integer" />
+                <xml-element java-attribute="firstName" type="java.lang.String" />
+                <xml-element java-attribute="lastName" type="java.lang.String" nillable="true" />                
+                <xml-element java-attribute="phoneNumbers" name="phoneNumber" container-type="java.util.List" type="eclipselink.example.moxy.json.dynamic.PhoneNumber" >
+                    <xml-element-wrapper name="phoneNumbers" />
+                </xml-element>
+            </java-attributes>
+        </java-type>
+
+        <java-type name="eclipselink.example.moxy.json.dynamic.PhoneNumber">
+            <java-attributes>
+                <xml-attribute java-attribute="type" type="java.lang.String" />
+                <xml-value java-attribute="number" type="java.lang.String" />
+            </java-attributes>
+        </java-type>
+    </java-types>
+
+</xml-bindings>
