@@ -4,8 +4,8 @@
 	version="2.0">
 	<persistence-unit name="composite-pu" transaction-type="RESOURCE_LOCAL">
 		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-		<jar-file>relational-pu.jar</jar-file>
-		<jar-file>nosql-pu.jar</jar-file>
+		<jar-file>polyglot.relational.jar</jar-file>
+		<jar-file>polyglot.nosql.jar</jar-file>
 		<properties>
 			<property name="eclipselink.composite-unit" value="true" />
 			<property name="eclipselink.logging.level" value="FINE" />
