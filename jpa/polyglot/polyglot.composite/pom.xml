@@ -16,12 +16,12 @@
 		<dependency>
 			<groupId>eclipselink.example.polyglot</groupId>
 			<artifactId>polyglot.nosql</artifactId>
-			<version>${eclipselink.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>eclipselink.example.polyglot</groupId>
 			<artifactId>polyglot.relational</artifactId>
-			<version>${eclipselink.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 </project>
