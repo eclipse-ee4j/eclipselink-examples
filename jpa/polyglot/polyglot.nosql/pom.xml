@@ -15,17 +15,15 @@
 		<dependency>
 			<groupId>${eclipselink.groupid}</groupId>
 			<artifactId>eclipselink</artifactId>
-			<version>${eclipselink.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${eclipselink.groupid}</groupId>
 			<artifactId>org.eclipse.persistence.nosql</artifactId>
-			<version>${eclipselink.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>eclipselink.example.polyglot</groupId>
 			<artifactId>polyglot.relational</artifactId>
-			<version>${eclipselink.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mongodb</groupId>
