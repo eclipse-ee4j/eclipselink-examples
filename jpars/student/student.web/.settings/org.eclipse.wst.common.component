@@ -4,7 +4,7 @@
         <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-        <dependent-module archiveName="student.model-2.4.2-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/jpars.student.model/jpars.student.model">
+        <dependent-module archiveName="student.model-2.4.2.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/jpars.student.model/jpars.student.model">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="java-output-path" value="/jpars.student.web/target/classes"/>

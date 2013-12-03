@@ -7,7 +7,7 @@
 		<relativePath>..</relativePath>
 		<groupId>eclipselink.example</groupId>
 		<artifactId>parent</artifactId>
-		<version>2.4.2-SNAPSHOT</version>
+		<version>2.4.2</version>
 	</parent>
     
     <groupId>eclipselink.example.jpa</groupId>

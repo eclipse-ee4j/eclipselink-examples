@@ -6,7 +6,7 @@
 		<relativePath>..</relativePath>
 		<groupId>eclipselink.example.jpa</groupId>
 		<artifactId>employee.parent</artifactId>
-		<version>2.4.2-SNAPSHOT</version>
+		<version>2.4.2</version>
 	</parent>
 
 	<artifactId>employee.model</artifactId>
@@ -166,11 +166,11 @@
 								</property>
 								<property>
 									<name>javax.persistence.jdbc.user</name>
-									<value>root</value>
+									<value>employee</value>
 								</property>
 								<property>
 									<name>javax.persistence.jdbc.password</name>
-									<value>password</value>
+									<value>employee</value>
 								</property>
 							</systemProperties>
 						</configuration>

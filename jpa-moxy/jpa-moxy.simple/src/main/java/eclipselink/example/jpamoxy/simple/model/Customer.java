@@ -1,12 +1,11 @@
 package eclipselink.example.jpamoxy.simple.model;
 
-import static javax.persistence.CascadeType.*;
+import static javax.persistence.CascadeType.ALL;
 
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -53,7 +52,7 @@ public class Customer implements Serializable {
 	@OneToMany(mappedBy="customer", cascade = ALL)
 	private Set<PhoneNumber> phoneNumbers = new HashSet<PhoneNumber>();
 
-    public Customer() {
+	public Customer() {
     }
 
 	public long getId() {

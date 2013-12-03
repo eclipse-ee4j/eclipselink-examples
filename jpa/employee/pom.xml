@@ -7,12 +7,10 @@
 		<relativePath>..</relativePath>
 		<groupId>eclipselink.example.jpa</groupId>
 		<artifactId>parent</artifactId>
-		<version>2.4.2-SNAPSHOT</version>
+		<version>2.4.2</version>
 	</parent>
     
-	<groupId>eclipselink.example.jpa</groupId>
 	<artifactId>employee.parent</artifactId>
-	<version>2.4.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>Employee Example</name>
@@ -21,8 +19,8 @@
 
 	<modules>
         <module>employee.model</module>
-        <module>employee.web</module>
         <module>employee.web-js</module>
+        <module>employee.web</module>
 	</modules>
 
 	<build>

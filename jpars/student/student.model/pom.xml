@@ -5,7 +5,7 @@
 		<relativePath>..</relativePath>
 		<groupId>eclipselink.example.jpars</groupId>
 		<artifactId>student</artifactId>
-		<version>2.4.2-SNAPSHOT</version>
+		<version>2.4.2</version>
 	</parent>
 
 	<artifactId>student.model</artifactId>

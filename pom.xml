@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eclipselink.example</groupId>
 	<artifactId>parent</artifactId>
-	<version>2.4.2-SNAPSHOT</version>
+	<version>2.4.2</version>
 	<packaging>pom</packaging>
 
 	<name>Employee Example</name>
@@ -45,7 +45,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
  		<eclipselink.groupid>org.eclipse.persistence</eclipselink.groupid>
 		<eclipselink.artifactid>eclipselink</eclipselink.artifactid>
-		<eclipselink.version>2.4.2-SNAPSHOT</eclipselink.version>
+		<eclipselink.version>2.4.2</eclipselink.version>
 	</properties>
 
 	<repositories>
