@@ -1,46 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
     <parent>
-		<relativePath>..</relativePath>
-		<groupId>eclipselink.example</groupId>
-		<artifactId>parent</artifactId>
-		<version>2.4.2</version>
-	</parent>
+        <relativePath>..</relativePath>
+        <groupId>eclipselink.example</groupId>
+        <artifactId>parent</artifactId>
+        <version>2.4.2</version>
+    </parent>
     
     <groupId>eclipselink.example.jpa</groupId>
-	<artifactId>parent</artifactId>
-	<packaging>pom</packaging>
+    <artifactId>parent</artifactId>
+    <version>2.6.0</version>
+    <packaging>pom</packaging>
 
-	<name>JPA Examples</name>
-	<url>http://wiki.eclipse.org/EclipseLink/Examples/JPA</url>
+    <name>JPA Examples</name>
+    <url>http://wiki.eclipse.org/EclipseLink/Examples/JPA</url>
 
-	<properties>
-		<jpa.version>2.0.5</jpa.version>
-	</properties>
+    <properties>
+        <jpa.version>2.1.0</jpa.version>
+    </properties>
 	
-	<modules>
+    <modules>
         <module>employee</module>
         <module>employee.dynamic</module>
         <module>polyglot</module>
-	</modules>
+    </modules>
 
-	<build>
-		<defaultGoal>install</defaultGoal>
+    <build>
+        <defaultGoal>install</defaultGoal>
         
         <plugins>
             <plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
-				</configuration>
-			</plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
         </plugins>
-	</build>
-    
+    </build>
 </project>

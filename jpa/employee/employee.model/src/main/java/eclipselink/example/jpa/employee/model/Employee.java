@@ -10,6 +10,7 @@
  * Contributors:
  *              dclarke - initial JPA Employee example using XML (bug 217884)
  *              mbraeuer - annotated version, transformation
+ *              jclingan - Updated to use JPA 2.1 Attribute Converters
  ******************************************************************************/
 package eclipselink.example.jpa.employee.model;
 
@@ -22,6 +23,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -38,9 +40,6 @@ import javax.persistence.QueryHint;
 import javax.persistence.SecondaryTable;
 import javax.persistence.Version;
 
-import org.eclipse.persistence.annotations.ConversionValue;
-import org.eclipse.persistence.annotations.Convert;
-import org.eclipse.persistence.annotations.ObjectTypeConverter;
 import org.eclipse.persistence.annotations.PrivateOwned;
 import org.eclipse.persistence.config.HintValues;
 import org.eclipse.persistence.config.QueryHints;
@@ -49,11 +48,11 @@ import org.eclipse.persistence.config.QueryHints;
  * TODO
  * 
  * @author dclarke
- * @since EclipseLink 1.1
+ * @author jclingan
+ * @since EclipseLink 2.5.2
  */
 @Entity
 @SecondaryTable(name = "SALARY")
-@ObjectTypeConverter(name = "gender", objectType = Gender.class, dataType = String.class, conversionValues = { @ConversionValue(dataValue = "M", objectValue = "Male"), @ConversionValue(dataValue = "F", objectValue = "Female") })
 @NamedQueries({ 
 	@NamedQuery(name = "Employee.findAll", query = "SELECT e FROM Employee e ORDER BY e.id"),
 	@NamedQuery(name = "Employee.findByName", query = "SELECT e FROM Employee e WHERE e.firstName LIKE :firstName AND e.lastName LIKE :lastName"),
@@ -80,7 +79,7 @@ public class Employee {
      */
     @Basic
     @Column(name = "GENDER")
-    @Convert("gender")
+    @Convert(converter = GenderConverter.class)
     private Gender gender = Gender.Male;
 
     @Column(name = "L_NAME")

@@ -19,6 +19,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
 
 import eclipselink.example.jpa.employee.model.Employee;
+import eclipselink.example.jpa.employee.model.Gender;
 import eclipselink.example.jpa.employee.model.SamplePopulation;
 import eclipselink.example.jpa.employee.test.PersistenceTesting;
 
@@ -42,6 +43,15 @@ public class JavaSEExample {
 
             em.getTransaction().begin();
             new SamplePopulation().createNewEmployees(em, 10);
+
+            // Add employee with 555 area code to satisfy a test query
+            Employee e = new Employee();
+            e.setFirstName("John");
+            e.setLastName("Doe");
+            e.setGender(Gender.Male);
+            e.addPhoneNumber("HOME", "555", "5552222");
+            em.persist(e);
+
             em.getTransaction().commit();
             em.clear();
 
@@ -68,9 +78,8 @@ public class JavaSEExample {
         List<Employee> results = em.createQuery("SELECT e FROM Employee e", Employee.class).getResultList();
 
         System.out.println("Query All Results: " + results.size());
-        for (Employee emp : results) {
-            System.out.println("\t> " + emp);
-        }
+
+        results.forEach(e -> System.out.println("\t>" + e));
     }
 
     public void queryEmployeeLikeAreaCode55(EntityManager em) {
@@ -79,9 +88,7 @@ public class JavaSEExample {
         TypedQuery<Employee> query = em.createQuery("SELECT e FROM Employee e JOIN e.phoneNumbers phones WHERE phones.areaCode LIKE '55%'", Employee.class);
         List<Employee> emps = query.getResultList();
 
-        for (Employee e : emps) {
-            System.out.println("> " + e);
-        }
+        emps.forEach(e -> System.out.println("> " + e));
     }
 
     public void modifyEmployee(EntityManager em, int id) {

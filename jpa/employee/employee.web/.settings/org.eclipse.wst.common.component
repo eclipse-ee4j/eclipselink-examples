@@ -4,7 +4,7 @@
         <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-        <dependent-module archiveName="employee.model-2.4.2.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/employee.model/employee.model">
+        <dependent-module archiveName="employee.model-2.6.0-M3.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/employee.model/employee.model">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="java-output-path" value="/Employee Example - web/target/classes"/>

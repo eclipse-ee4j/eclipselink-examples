@@ -84,10 +84,10 @@ public class Admin {
             // Truncate at 5 messages
             trace.truncate(5, "... SQL trace truncated");
 
-            for (String entry : trace.getEntries()) {
+            trace.getEntries().forEach(entry -> {
                 FacesMessage msg = new FacesMessage(entry);
                 FacesContext.getCurrentInstance().addMessage("SQL", msg);
-            }
+            });
         }
         return null;
     }

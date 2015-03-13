@@ -68,9 +68,8 @@ public class PageIdsInEmployeesTest {
         for (int index = 0; index < 5; index++) {
             List<Employee> emps = paging.get(index + 1);
             Assert.assertEquals(5, emps.size());
-            for (Employee e : emps) {
-                System.out.println("> " + e);
-            }
+            System.out.println("Page 5 by Index:");
+            emps.forEach(e -> System.out.println("> " + e));
         }
 
         Assert.assertFalse(paging.hasNext());
@@ -101,9 +100,7 @@ public class PageIdsInEmployeesTest {
         for (int index = 0; index < 5; index++) {
             List<Employee> emps = paging.next();
             Assert.assertEquals(5, emps.size());
-            for (Employee e : emps) {
-                System.out.println("> " + e);
-            }
+            emps.forEach(e -> System.out.println("> " + e));
         }
 
         Assert.assertFalse(paging.hasNext());
@@ -136,9 +133,7 @@ public class PageIdsInEmployeesTest {
         for (int index = 0; index < paging.getNumPages(); index++) {
             List<Employee> emps = paging.get(index + 1);
             Assert.assertEquals(index < 2 ? 10 : 5, emps.size());
-            for (Employee e : emps) {
-                System.out.println("> " + e);
-            }
+            emps.forEach(e -> System.out.println("> " + e));
         }
 
         Assert.assertFalse(paging.hasNext());
@@ -170,9 +165,7 @@ public class PageIdsInEmployeesTest {
         for (int index = 0; index < paging.getNumPages(); index++) {
             List<Employee> emps = paging.next();
             Assert.assertEquals(index < 2 ? 10 : 5, emps.size());
-            for (Employee e : emps) {
-                System.out.println("> " + e);
-            }
+            emps.forEach(e -> System.out.println("> " + e));
         }
 
         Assert.assertFalse(paging.hasNext());

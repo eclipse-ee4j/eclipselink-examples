@@ -5,11 +5,9 @@
 
 	<package>example.jpa.dynamic.model.employee</package>
 
-	<object-type-converter name="gender-converter"
-		object-type="String" data-type="String">
-		<conversion-value object-value="Male" data-value="M" />
-		<conversion-value object-value="Female" data-value="F" />
-	</object-type-converter>
+	<!--object-type-converter name="gender-converter" object-type="String" data-type="String">
+		<conversion-value object-value="Male" data-value="M" /> <conversion-value
+		object-value="Female" data-value="F" /> </object-type-converter -->
 
 	<named-query name="Employee.findAll">
 		<query>SELECT e FROM Employee e ORDER BY e.lastName, e.firstName
@@ -18,7 +16,8 @@
 	</named-query>
 
 	<named-query name="Employee.findMin">
-		<query>SELECT e FROM Employee e WHERE e.id IN (SELECT MIN(ee.id) FROM Employee ee)
+		<query>SELECT e FROM Employee e WHERE e.id IN (SELECT MIN(ee.id) FROM
+			Employee ee)
 		</query>
 	</named-query>
 
@@ -85,8 +84,11 @@
 			</basic>
 			<basic name="gender" attribute-type="String">
 				<column name="GENDER" />
-				<convert>gender-converter</convert>
 			</basic>
+			<entity class="eclipselink.example.jpa.employee.model.Employee">
+				<convert converter="eclipselink.example.jpa.employee.model.GenderConverter"
+					attribute-name="gender" />
+			</entity>
 			<basic name="salary" attribute-type="Integer">
 				<column table="SALARY" />
 			</basic>
