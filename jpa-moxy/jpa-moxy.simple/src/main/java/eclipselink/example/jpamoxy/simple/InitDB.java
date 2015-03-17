@@ -14,7 +14,7 @@ import eclipselink.example.jpamoxy.simple.model.PhoneNumber;
 public class InitDB {
 
 	public static void main(String[] args) {
-		Map<String, Object> properties = new HashMap<String, Object>();
+		Map<String, Object> properties = new HashMap<>();
 		properties.put("eclipselink.ddl-generation", "drop-and-create-tables");
 		properties.put("eclipselink.ddl-generation.output-mode", "database");
 		properties.put("eclipselink.logging.level", "FINE");

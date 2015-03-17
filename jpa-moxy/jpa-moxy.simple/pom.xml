@@ -113,9 +113,10 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.2.1</version>
+						<version>1.3.2</version>
 						<configuration>
-							<mainClass>eclipselink.example.jpamoxy.simple.InitDB</mainClass>
+                                                    <cleanupDaemonThreads>false</cleanupDaemonThreads>
+                                                    <mainClass>eclipselink.example.jpamoxy.simple.InitDB</mainClass>
 						</configuration>
 					</plugin>
 				</plugins>
@@ -128,7 +129,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.2.1</version>
+						<version>1.3.2</version>
 						<configuration>
 							<mainClass>eclipselink.example.jpamoxy.simple.Marshall</mainClass>
 							<arguments>
@@ -146,7 +147,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.2.1</version>
+						<version>1.3.2</version>
 						<configuration>
 							<mainClass>eclipselink.example.jpamoxy.simple.Marshall</mainClass>
 							<arguments>
@@ -164,7 +165,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.2.1</version>
+						<version>1.3.2</version>
 						<configuration>
 							<mainClass>eclipselink.example.jpamoxy.simple.Unmarshall</mainClass>
 							<arguments>
@@ -182,7 +183,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.2.1</version>
+						<version>1.3.2</version>
 						<configuration>
 							<mainClass>eclipselink.example.jpamoxy.simple.Unmarshall</mainClass>
 							<arguments>
