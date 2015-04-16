@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<persistence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+        version="2.0" xmlns="http://java.sun.com/xml/ns/persistence">
+    <persistence-unit name="employee" transaction-type="JTA">
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <jta-data-source>jdbc/EmployeeDS</jta-data-source>
+        <properties>
+            <!-- Configure the JEE server platform. -->
+            <property name="eclipselink.target-server" value="weblogic" />
+
+            <!-- The database platform is auto-detected by default,
+                 if you want to set a specific platform this can be set. -->
+            <!-- property name=""eclipselink.target-database" value="Oracle" / -->
+
+            <!-- Configure cache size. -->
+            <!--
+                Full is used for this example to ensure nothing garbage collects,
+                but is not a good practice in general Soft, SoftCache or HardCache are best
+            -->
+            <property name="eclipselink.cache.type.default" value="Full" />
+            <property name="eclipselink.cache.size.default" value="1000" />
+
+            <property name="eclipselink.cache.coordination.protocol" value="jgroups" />
+            
+            <!-- additional JGroups configuration may be passed if needed -->
+            <property name="eclipselink.cache.coordination.jgroups.config" value="META-INF/jgroups-udp-config.xml" />
+
+            <!-- Configure database to be created on startup if not already existing. -->
+            <property name="eclipselink.ddl-generation" value="create-tables" />
+
+            <!-- Configure logging for demonstration. -->
+            <property name="eclipselink.logging.logger" value="DefaultLogger" />
+            <property name="eclipselink.logging.level" value="FINEST" />
+        </properties>
+    </persistence-unit>
+</persistence>
