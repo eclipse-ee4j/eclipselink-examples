@@ -13,11 +13,14 @@ package eclipselink.example.moxy.json.jsonprocessing.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 public class Customer {
 
     private int id;
 	private String firstName;
     private String lastName;
+
     private List<PhoneNumber> phoneNumbers;
 
     public Customer() {

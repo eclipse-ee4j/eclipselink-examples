@@ -15,9 +15,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -28,6 +29,16 @@ import javax.json.JsonReader;
 import javax.json.JsonWriter;
 import javax.json.stream.JsonGenerator;
 import javax.json.stream.JsonParser;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.stream.StreamSource;
+
+import org.eclipse.persistence.jaxb.JAXBContextFactory;
+import org.eclipse.persistence.jaxb.JAXBContextProperties;
+import org.eclipse.persistence.oxm.json.JsonParserSource;
 
 import eclipselink.example.moxy.json.jsonprocessing.model.Customer;
 import eclipselink.example.moxy.json.jsonprocessing.model.PhoneNumber;
@@ -38,14 +49,20 @@ import eclipselink.example.moxy.json.jsonprocessing.model.PhoneNumber;
  * 1) Create a Customer instance that embeds a list of Phone Numbers
  *
  * 2) Use the JSON Writer API to write the customer from a file in JSON format
+ * using the JSR 353 JSON Writer API.
  *
  * 3) Use the JSON Reader API to read the JSON representation of a customer from
- * a file
+ * a file using the JSR 353 JSON Reader API
  *
- * 4) Use the JSON Generator API to write a Customer to a file in JSON format
+ * 4) Use the JSR 353 JSON Generator API to write a Customer to a file in JSON
+ * format
  *
- * 5) Use the JSON Parser API to read the JSON representation of a customer
- * from a file
+ * 5) Use the JSR 353 JSON Parser API to read the JSON representation of a
+ * customer from a file
+ *
+ * 6) Use MOXy to write a customer to a file in JSON format
+ *
+ * 7) Use MOXy to read a customer from a JSON-formatted file
  *
  * @author johnclingan
  * @since EclipseLink 2.6.0
@@ -55,8 +72,11 @@ public class Main {
 	public static final String FILENAME_WRITER = "target" + File.separator
 			+ "customer.writer.json";
 
-	public static final String FILENAME_GENERATOR = "target"
-			+ File.separator + "customer.generator.json";
+	public static final String FILENAME_GENERATOR = "target" + File.separator
+			+ "customer.generator.json";
+
+	public static final String FILENAME_MOXY = "target" + File.separator
+			+ "customer.moxy.json";
 
 	public static void main(String[] args) throws Exception {
 
@@ -72,8 +92,10 @@ public class Main {
 			JsonObject jsonCustomer = createCustomerJsonObject(customer);
 			writer.writeObject(jsonCustomer);
 			System.out.println();
-			System.out.println("Customer instance written to " + FILENAME_WRITER
-					+ " using JsonWriter");
+		    System.out.println("*******************************************************************************");
+			System.out.println("*****************       Using JSON reader/writer       ************************");
+			System.out.println("*");
+			System.out.println("* Customer instance written to " + FILENAME_WRITER);
 		}
 
 		// Step 3 - Read JSON representation of a customer from a file using
@@ -82,10 +104,11 @@ public class Main {
 				FILENAME_WRITER))) {
 			JsonObject jsonObject = reader.readObject();
 			Customer customer2 = createCustomerFromJsonObject(jsonObject);
+			System.out.println("*");
+			System.out.println("* Customer read from " + FILENAME_WRITER);
+			System.out.println("* " + customer2);
+		    System.out.println("*******************************************************************************");
 			System.out.println();
-			System.out.println("Customer read from "
-			     + FILENAME_WRITER + " using JsonReader:");
-			System.out.println(customer2);
 		}
 
 		// Step 4 - Write a Customer to a file using the JsonGenerator API
@@ -93,17 +116,34 @@ public class Main {
 				.createGenerator(new FileOutputStream(FILENAME_GENERATOR))) {
 			generateCustomer(customer, generator);
 			System.out.println();
-			System.out.println("Customer instance written to " + FILENAME_GENERATOR
-					+ " using JsonGenerator");
+		    System.out.println("*******************************************************************************");
+			System.out.println("*****************      Using JSON paser/generator     *************************");
+			System.out.println("*");
+			System.out.println("* Customer instance written to " + FILENAME_GENERATOR);
 		}
 
 		// Step 5 - Read JSON representation of customer from a file
 		// using JsonParser
 		Customer parsedCustomer = parseJsonCustomer(FILENAME_GENERATOR);
+		System.out.println("*");
+		System.out.println("* Customer read from " + FILENAME_GENERATOR);
+		System.out.println("* " + parsedCustomer);
+		System.out.println("*******************************************************************************");
 		System.out.println();
-		System.out.println("Customer read from "
-		         + FILENAME_GENERATOR + " using JsonParser:");
-		System.out.println(parsedCustomer);
+
+		// Step 6 - Write Customer using MOXy
+		System.out.println("*******************************************************************************");
+		System.out.println("************************      Using MOXy     **********************************");
+		System.out.println("*");
+		System.out.println("* Writing customer to " + FILENAME_MOXY);
+		writeCustomerUsingMoxy(customer, FILENAME_MOXY);
+
+		// Step 7 - Read Customer using MOXy
+
+		System.out.println("*");
+		System.out.println("* Customer read from " + FILENAME_MOXY + " is:");
+		System.out.println("*" + parseCustomerUsingMoxy(FILENAME_WRITER));
+		System.out.println("*******************************************************************************");
 
 		System.out.println();
 		System.out.println();
@@ -177,8 +217,7 @@ public class Main {
 	 * 1) A potentially very large JsonObject does not have to be stored in
 	 * memory
 	 *
-	 * 2) If only a subset of data is needed, parsing can immediately
-	 * return
+	 * 2) If only a subset of data is needed, parsing can immediately return
 	 *
 	 *************************************************************************/
 
@@ -264,8 +303,7 @@ public class Main {
 	 *************************************************************************/
 	private static void generateCustomer(Customer customer,
 			JsonGenerator generator) {
-		generator.writeStartObject()
-				.write("id", customer.getId())
+		generator.writeStartObject().write("id", customer.getId())
 				.write("firstName", customer.getFirstName())
 				.write("lastName", customer.getLastName())
 				.writeStartArray("phoneNumbers");
@@ -276,8 +314,43 @@ public class Main {
 					.write("type", phoneNumber.getType()).writeEnd();
 		}
 
-		generator.writeEnd()   // Write end of phone number array
-				.writeEnd();	// Write end of customer
+		generator.writeEnd() // Write end of phone number array
+				.writeEnd(); // Write end of customer
 	}
 
+	private static Customer parseCustomerUsingMoxy(String filename)
+			throws FileNotFoundException, JAXBException {
+		StreamSource source = new StreamSource(new FileInputStream(filename));
+		Map<String, Object> jaxbProperties = new HashMap<String, Object>();
+
+		jaxbProperties.put(JAXBContextProperties.JSON_INCLUDE_ROOT, false);
+		jaxbProperties
+				.put(JAXBContextProperties.MEDIA_TYPE, "application/json");
+
+		JAXBContext context = JAXBContextFactory.createContext(
+				new Class[] { Customer.class }, jaxbProperties);
+
+		Unmarshaller unmarshaller = context.createUnmarshaller();
+
+		JAXBElement<Customer> elementCustomer = unmarshaller.unmarshal(source,
+				Customer.class);
+
+		return elementCustomer.getValue();
+	}
+
+	private static void writeCustomerUsingMoxy(Customer customer,
+			String filename) throws FileNotFoundException, JAXBException {
+		Map<String, Object> jaxbProperties = new HashMap<String, Object>();
+
+		// set media type
+		jaxbProperties
+				.put(JAXBContextProperties.MEDIA_TYPE, "application/json");
+
+		JAXBContext context = JAXBContextFactory.createContext(
+				new Class[] { Customer.class }, jaxbProperties);
+
+		Marshaller marshaller = context.createMarshaller();
+
+		marshaller.marshal(customer, new File(filename));
+	}
 }
