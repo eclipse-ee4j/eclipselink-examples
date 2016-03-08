@@ -2,7 +2,7 @@
 <!-- This build file configures and runs the example on a WebLogic Cluster. -->
 <project basedir="." default="build" name="org.eclipse.persistence.example.jpa.server.cachecoordination">
     <property environment="env"/>
-    <property name="JEE_HOME" value="/scratch/wls/12.1.3"/>
+    <property name="JEE_HOME" value="/scratch/wls/12.2.1"/>
     <property name="WEBLOGIC_HOME" value="${JEE_HOME}/wlserver"/>
     <property name="JEE_SERVER" value="${WEBLOGIC_HOME}/server"/>
     <!-- localhost may not work, machine name/ip my be required. -->
@@ -21,9 +21,9 @@
     <property name="DB_USER" value="scott"/>
     <property name="DB_PASSWORD" value="tiger"/>
     <!-- These will differ depending on the version of WebLogic. -->
-    <property name="JPA_LIB" value="${JEE_HOME}/oracle_common/modules/javax.persistence_2.2.0.0_1-0-2.jar"/>
-    <property name="EJB_LIB" value="${JEE_HOME}/oracle_common/modules/javax.ejb_3.3.0.jar"/>
-    <property name="ECLIPSELINK_LIB" value="${JEE_HOME}/oracle_common/modules/oracle.toplink_12.1.3/eclipselink.jar"/>
+    <property name="JPA_LIB" value="${JEE_HOME}/oracle_common/modules/javax.persistence.jar"/>
+    <property name="EJB_LIB" value="${JEE_HOME}/oracle_common/modules/javax.ejb.javax.ejb-api.jar"/>
+    <property name="ECLIPSELINK_LIB" value="${JEE_HOME}/oracle_common/modules/oracle.toplink/eclipselink.jar"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <path id="example.classpath">
         <pathelement location="classes"/>
@@ -97,14 +97,17 @@
             <query domain="mydomain" type="Cluster" name="employee-cluster" property="cluster"/>
             <create type="Server" name="server1">
                 <set attribute="ListenPort" value="${JEE_PORT1}"/>
+                <set attribute="ListenAddress" value="localhost"/>
                 <set attribute="Cluster" value="${cluster}"/>
             </create>
             <create type="Server" name="server2">
                 <set attribute="ListenPort" value="${JEE_PORT2}"/>
+                <set attribute="ListenAddress" value="localhost"/>
                 <set attribute="Cluster" value="${cluster}"/>
             </create>
             <create type="Server" name="server3">
                 <set attribute="ListenPort" value="${JEE_PORT3}"/>
+                <set attribute="ListenAddress" value="localhost"/>
                 <set attribute="Cluster" value="${cluster}"/>
             </create>
         </wlconfig>
