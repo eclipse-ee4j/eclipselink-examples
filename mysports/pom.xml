@@ -41,11 +41,11 @@
 	<repositories>
 		<repository>
 			<id>Java.Net</id>
-			<url>http://download.java.net/maven/2/</url>
+			<url>https://download.java.net/maven/2/</url>
 		</repository>
 		<repository>
 			<id>EclipseLink</id>
-			<url>http://download.eclipse.org/rt/eclipselink/maven.repo</url>
+			<url>https://download.eclipse.org/rt/eclipselink/maven.repo</url>
 		</repository>
 	</repositories>
 
